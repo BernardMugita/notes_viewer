@@ -10,18 +10,19 @@ class DesktopUnitHolder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width / 6.5,
+      width: MediaQuery.of(context).size.width / 6,
       decoration: BoxDecoration(
           color: AppUtils.$mainWhite,
           borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 224, 224, 224),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(10, 5),
-            )
-          ]),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: const Color.fromARGB(255, 224, 224, 224),
+          //     spreadRadius: 5,
+          //     blurRadius: 7,
+          //     offset: Offset(10, 5),
+          //   )
+          // ]
+          ),
       child: Column(
         children: [
           Icon(
