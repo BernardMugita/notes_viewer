@@ -7,6 +7,7 @@ import 'package:note_viewer/views/auth/login/login_view.dart';
 import 'package:note_viewer/views/dashboard/desktop_dashboard.dart';
 import 'package:note_viewer/views/dashboard/mobile_dashboard.dart';
 import 'package:note_viewer/views/dashboard/tablet_dashboard.dart';
+import 'package:note_viewer/views/notes/notes_view.dart';
 import 'package:note_viewer/views/units/units_view.dart';
 import 'package:provider/provider.dart';
 
@@ -33,14 +34,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Note Viewer',
-      initialRoute: '/',
-      // Provider.of<AuthProvider>(context, listen: false).isAuthenticated
-      //     ? '/'
-      //     : '/login',
+      initialRoute:
+          // '/',
+          Provider.of<AuthProvider>(context, listen: false).isAuthenticated
+              ? '/'
+              : '/login',
       routes: {
         '/login': (context) => const LoginView(),
         '/course': (context) => const CourseView(),
         '/units': (context) => const UnitsView(),
+        '/units/notes': (context) => const NotesView(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

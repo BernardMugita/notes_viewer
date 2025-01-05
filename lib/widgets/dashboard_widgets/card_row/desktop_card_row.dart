@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/desktop_widgets/card_row/desktop_card.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card.dart';
 
 class DesktopCardRow extends StatelessWidget {
   const DesktopCardRow({super.key});

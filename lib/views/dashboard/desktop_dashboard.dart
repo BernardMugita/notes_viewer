@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/desktop_widgets/card_row/desktop_card_row.dart';
-import 'package:note_viewer/widgets/desktop_widgets/recent_activities/desktop_activities.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 

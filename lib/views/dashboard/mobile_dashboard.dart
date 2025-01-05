@@ -5,17 +5,16 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/responsive/responsive_layout.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/desktop_widgets/card_row/desktop_card_row.dart';
-import 'package:note_viewer/widgets/desktop_widgets/card_row/mobile_card_row.dart';
-import 'package:note_viewer/widgets/desktop_widgets/card_row/tablet_card_row.dart';
-import 'package:note_viewer/widgets/desktop_widgets/recent_activities/desktop_activities.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/card_row/mobile_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/card_row/tablet_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
 class MobileDashboard extends StatelessWidget {
   MobileDashboard({super.key});
 
-  // Define a global key to control the scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -27,14 +26,13 @@ class MobileDashboard extends StatelessWidget {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            // Use the global key to open the drawer
             _scaffoldKey.currentState?.openDrawer();
           },
           child: const Icon(FluentIcons.re_order_24_regular),
         ),
       ),
       drawer: const ResponsiveNav(),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -61,8 +59,8 @@ class MobileDashboard extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         style: ButtonStyle(
-                          padding: WidgetStatePropertyAll(
-                              const EdgeInsets.all(20)),
+                          padding:
+                              WidgetStatePropertyAll(const EdgeInsets.all(20)),
                           backgroundColor:
                               WidgetStatePropertyAll(AppUtils.$mainBlue),
                           shape: WidgetStatePropertyAll(
@@ -81,10 +79,10 @@ class MobileDashboard extends StatelessWidget {
                           context.read<TogglesProvider>().toggleSearchBar();
                         },
                         style: ButtonStyle(
-                          padding: WidgetStatePropertyAll(
-                              const EdgeInsets.all(20)),
-                          backgroundColor: WidgetStatePropertyAll(
-                              const Color(0xFFF1F1F1)),
+                          padding:
+                              WidgetStatePropertyAll(const EdgeInsets.all(20)),
+                          backgroundColor:
+                              WidgetStatePropertyAll(const Color(0xFFF1F1F1)),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),

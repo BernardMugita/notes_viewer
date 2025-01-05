@@ -27,6 +27,10 @@ class DesktopUnits extends StatelessWidget {
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Icon(
+                        FluentIcons.class_24_regular,
+                        color: AppUtils.$mainBlue,
+                      ),
                       Text(
                         "Units",
                         style: TextStyle(
@@ -34,10 +38,6 @@ class DesktopUnits extends StatelessWidget {
                           color: AppUtils.$mainBlue,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      Icon(
-                        FluentIcons.class_24_regular,
-                        color: AppUtils.$mainBlue,
                       ),
                       Spacer(),
                       ElevatedButton(
