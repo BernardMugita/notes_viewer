@@ -3,28 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class DesktopNotesOverview extends StatelessWidget {
-  const DesktopNotesOverview({super.key});
+class TabletNotesOverview extends StatelessWidget {
+  const TabletNotesOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height / 2.8,
         decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 224, 224, 224),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(10, 5),
-              )
-            ]),
+          color: AppUtils.$mainWhite,
+          borderRadius: BorderRadius.circular(5),
+        ),
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
+          
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 width: double.infinity,

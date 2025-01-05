@@ -8,10 +8,7 @@ class SideNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String currentRoute =
-        ModalRoute.of(context)!.settings.name!.split('/')[1];
-
-    print(currentRoute);
+    String currentRoute = ModalRoute.of(context)!.settings.name!.split('/')[1];
 
     return Container(
       decoration: BoxDecoration(color: AppUtils.$mainBlue),
@@ -88,7 +85,9 @@ class SideNavigation extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.popAndPushNamed(context, '/login');
+            },
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(

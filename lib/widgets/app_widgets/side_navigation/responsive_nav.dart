@@ -8,8 +8,7 @@ class ResponsiveNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String currentRoute =
-        ModalRoute.of(context)!.settings.name!.replaceAll('/', '');
+    String currentRoute = ModalRoute.of(context)!.settings.name!.split('/')[1];
 
     return Container(
       width: MediaQuery.of(context).size.width / 1.5,
@@ -87,7 +86,9 @@ class ResponsiveNav extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.popAndPushNamed(context, '/login');
+            },
             style: ButtonStyle(
               shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
@@ -132,11 +133,11 @@ class ResponsiveNav extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive ? AppUtils.$mainWhite : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppUtils.$mainGrey),
         ),
         child: Row(
           children: [
-            Icon(icon, color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite),
+            Icon(icon,
+                color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite),
             const Gap(5),
             Text(
               label,
