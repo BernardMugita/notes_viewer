@@ -8,6 +8,7 @@ import 'package:note_viewer/views/dashboard/desktop_dashboard.dart';
 import 'package:note_viewer/views/dashboard/mobile_dashboard.dart';
 import 'package:note_viewer/views/dashboard/tablet_dashboard.dart';
 import 'package:note_viewer/views/notes/notes_view.dart';
+import 'package:note_viewer/views/study/study_view.dart';
 import 'package:note_viewer/views/units/units_view.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Note Viewer',
       initialRoute:
-          // '/',
           Provider.of<AuthProvider>(context, listen: false).isAuthenticated
               ? '/'
               : '/login',
@@ -44,6 +44,25 @@ class MyApp extends StatelessWidget {
         '/course': (context) => const CourseView(),
         '/units': (context) => const UnitsView(),
         '/units/notes': (context) => const NotesView(),
+      },
+      onGenerateRoute: (settings) {
+        final uri = Uri.parse(settings.name ?? '');
+
+        if (uri.pathSegments.length == 3 &&
+            uri.pathSegments[0] == 'units' &&
+            uri.pathSegments[1] == 'study') {
+          final lessonName = uri.pathSegments[2];
+
+          return MaterialPageRoute(
+            builder: (context) => const StudyView(),
+            settings: RouteSettings(
+              name: settings.name,
+              arguments: lessonName,
+            ),
+          );
+        }
+
+        return null;
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

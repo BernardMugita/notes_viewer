@@ -86,7 +86,14 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   : AppUtils.$mainBlue),
                         ),
                       ),
-                      const Text("2"),
+                      Text(
+                        "2",
+                        style: TextStyle(
+                          color: _isHovered
+                              ? AppUtils.$mainWhite
+                              : AppUtils.$mainBlue,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -109,7 +116,14 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   : AppUtils.$mainBlue),
                         ),
                       ),
-                      const Text("4"),
+                      Text(
+                        "4",
+                        style: TextStyle(
+                          color: _isHovered
+                              ? AppUtils.$mainWhite
+                              : AppUtils.$mainBlue,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -132,7 +146,14 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   : AppUtils.$mainBlue),
                         ),
                       ),
-                      const Text("1"),
+                      Text(
+                        "1",
+                        style: TextStyle(
+                          color: _isHovered
+                              ? AppUtils.$mainWhite
+                              : AppUtils.$mainBlue,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -155,7 +176,14 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   : AppUtils.$mainBlue),
                         ),
                       ),
-                      const Text("1"),
+                      Text(
+                        "1",
+                        style: TextStyle(
+                          color: _isHovered
+                              ? AppUtils.$mainWhite
+                              : AppUtils.$mainBlue,
+                        ),
+                      ),
                     ],
                   ),
                 ],

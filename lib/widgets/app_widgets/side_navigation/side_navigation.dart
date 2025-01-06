@@ -8,7 +8,8 @@ class SideNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String currentRoute = ModalRoute.of(context)!.settings.name!.split('/')[1];
+    final routeName = ModalRoute.of(context)?.settings.name;
+    final currentRoute = routeName != null ? routeName.split('/')[1] : '';
 
     return Container(
       decoration: BoxDecoration(color: AppUtils.$mainBlue),

@@ -119,7 +119,10 @@ class DesktopNotesOverview extends StatelessWidget {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  final routeName = '/units/study/Introduction to Anatomy';
+                  Navigator.pushNamed(context, routeName);
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

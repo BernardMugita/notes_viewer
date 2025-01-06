@@ -15,7 +15,6 @@ class TabletNotesOverview extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
-          
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,7 +112,10 @@ class TabletNotesOverview extends StatelessWidget {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  final routeName = '/units/study/Introduction to Anatomy';
+                  Navigator.pushNamed(context, routeName);
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

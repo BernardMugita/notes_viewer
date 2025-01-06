@@ -5,6 +5,10 @@ class TogglesProvider extends ChangeNotifier {
   bool showCoursesDropDown = false;
   bool rememberSelection = false;
   bool showSearchBar = false;
+  bool showGroupDropDown = false;
+  bool showFilterDropDown = false;
+  bool showSortDropDown = false;
+  bool selectGroup = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -23,6 +27,32 @@ class TogglesProvider extends ChangeNotifier {
 
   void toggleSearchBar() {
     showSearchBar = !showSearchBar;
+    notifyListeners();
+  }
+
+  void toggleGroupDropDown() {
+    showGroupDropDown = !showGroupDropDown;
+    showFilterDropDown = false;
+    showSortDropDown = false;
+    notifyListeners();
+  }
+
+  void toggleFilterDropDown() {
+    showFilterDropDown = !showFilterDropDown;
+    showGroupDropDown = false;
+    showSortDropDown = false;
+    notifyListeners();
+  }
+
+  void toggleSortDropDown() {
+    showSortDropDown = !showSortDropDown;
+    showGroupDropDown = false;
+    showFilterDropDown = false;
+    notifyListeners();
+  }
+
+  void toggleSelectGroup() {
+    selectGroup = !selectGroup;
     notifyListeners();
   }
 }

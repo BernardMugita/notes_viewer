@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
+// import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
@@ -14,7 +14,7 @@ class DesktopDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(context.read<AuthProvider>().user);
+    // print(context.read<AuthProvider>().user);
 
     return Scaffold(
       body: Flex(

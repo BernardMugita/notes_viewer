@@ -10,106 +10,108 @@ class ResponsiveNav extends StatelessWidget {
   Widget build(BuildContext context) {
     String currentRoute = ModalRoute.of(context)!.settings.name!.split('/')[1];
 
-    return Container(
-      width: MediaQuery.of(context).size.width / 1.5,
-      decoration: BoxDecoration(color: AppUtils.$mainBlue),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppUtils.$mainWhite,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: AppUtils.$mainBlue,
-                ),
-                const Gap(10),
-                Text(
-                  "Full Name",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: Container(
+        width: MediaQuery.of(context).size.width / 1.5,
+        decoration: BoxDecoration(color: AppUtils.$mainBlue),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppUtils.$mainWhite,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: AppUtils.$mainBlue,
                   ),
-                ),
-                const Text("fullname@email.com"),
-              ],
-            ),
-          ),
-          const Gap(40),
-          Expanded(
-            child: Column(
-              children: [
-                // Dashboard Menu Item
-                _buildNavItem(
-                  context,
-                  route: '/',
-                  currentRoute: currentRoute,
-                  icon: FluentIcons.gauge_24_regular,
-                  label: 'Dashboard',
-                ),
-                const Gap(10),
-                // Units Menu Item
-                _buildNavItem(
-                  context,
-                  route: '/units',
-                  currentRoute: currentRoute,
-                  icon: FluentIcons.class_24_regular,
-                  label: 'Units',
-                ),
-                const Gap(10),
-                // Settings Menu Item
-                _buildNavItem(
-                  context,
-                  route: '/settings',
-                  currentRoute: currentRoute,
-                  icon: FluentIcons.settings_24_regular,
-                  label: 'Settings',
-                ),
-                const Gap(10),
-                // Account Menu Item
-                _buildNavItem(
-                  context,
-                  route: '/account',
-                  currentRoute: currentRoute,
-                  icon: FluentIcons.person_accounts_24_regular,
-                  label: 'Account',
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.popAndPushNamed(context, '/login');
-            },
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
+                  const Gap(10),
+                  Text(
+                    "Full Name",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppUtils.$mainBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text("fullname@email.com"),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(FluentIcons.sign_out_24_regular,
-                    color: AppUtils.$mainBlack),
-                const Gap(5),
-                const Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
-                ),
-              ],
+            const Gap(40),
+            Expanded(
+              child: Column(
+                children: [
+                  // Dashboard Menu Item
+                  _buildNavItem(
+                    context,
+                    route: '/',
+                    currentRoute: currentRoute,
+                    icon: FluentIcons.gauge_24_regular,
+                    label: 'Dashboard',
+                  ),
+                  const Gap(10),
+                  // Units Menu Item
+                  _buildNavItem(
+                    context,
+                    route: '/units',
+                    currentRoute: currentRoute,
+                    icon: FluentIcons.class_24_regular,
+                    label: 'Units',
+                  ),
+                  const Gap(10),
+                  // Settings Menu Item
+                  _buildNavItem(
+                    context,
+                    route: '/settings',
+                    currentRoute: currentRoute,
+                    icon: FluentIcons.settings_24_regular,
+                    label: 'Settings',
+                  ),
+                  const Gap(10),
+                  // Account Menu Item
+                  _buildNavItem(
+                    context,
+                    route: '/account',
+                    currentRoute: currentRoute,
+                    icon: FluentIcons.person_accounts_24_regular,
+                    label: 'Account',
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            ElevatedButton(
+              onPressed: () {
+                Navigator.popAndPushNamed(context, '/login');
+              },
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(FluentIcons.sign_out_24_regular,
+                      color: AppUtils.$mainBlack),
+                  const Gap(5),
+                  const Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
