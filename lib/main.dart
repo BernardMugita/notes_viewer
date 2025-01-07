@@ -10,6 +10,7 @@ import 'package:note_viewer/views/dashboard/tablet_dashboard.dart';
 import 'package:note_viewer/views/notes/notes_view.dart';
 import 'package:note_viewer/views/study/study_view.dart';
 import 'package:note_viewer/views/units/units_view.dart';
+import 'package:note_viewer/views/view_notes/view_notes_view.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         final uri = Uri.parse(settings.name ?? '');
 
+        // /units/study/{lessonName}
         if (uri.pathSegments.length == 3 &&
             uri.pathSegments[0] == 'units' &&
             uri.pathSegments[1] == 'study') {
@@ -58,6 +60,22 @@ class MyApp extends StatelessWidget {
             settings: RouteSettings(
               name: settings.name,
               arguments: lessonName,
+            ),
+          );
+        }
+
+        // /units/study/{lessonName}/filename.ext
+        if (uri.pathSegments.length == 4 &&
+            uri.pathSegments[0] == 'units' &&
+            uri.pathSegments[1] == 'study') {
+          final lessonName = uri.pathSegments[2];
+          final fileName = uri.pathSegments[3];
+
+          return MaterialPageRoute(
+            builder: (context) => ViewNotesView(),
+            settings: RouteSettings(
+              name: settings.name,
+              arguments: {'lessonName': lessonName, 'fileName': fileName},
             ),
           );
         }

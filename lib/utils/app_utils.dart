@@ -7,4 +7,5 @@ class AppUtils {
   static const Color $mainGrey = Color(0xFFBEBEBE);
   static const Color $mainRed = Color(0xFFFF1900);
   static const Color $mainGreen = Color(0xFF88FF00);
+  static const Color $mainBlueAccent = Color(0xFFf9f9ff);
 }
