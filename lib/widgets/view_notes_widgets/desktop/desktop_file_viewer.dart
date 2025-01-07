@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/desktop_document_viewer.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/desktop_video_viewer.dart';
+import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_document_viewer.dart';
+import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_video_viewer.dart';
 
 class DesktopFileViewer extends StatefulWidget {
   final String fileName;

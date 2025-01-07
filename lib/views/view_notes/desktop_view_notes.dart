@@ -2,9 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/desktop_file_viewer.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/desktop_relevant_documents.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/desktop_relevant_videos.dart';
+import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_file_viewer.dart';
+import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_documents.dart';
+import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_videos.dart';
 
 class DesktopViewNotes extends StatelessWidget {
   const DesktopViewNotes({super.key});

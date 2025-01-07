@@ -47,7 +47,7 @@ class TabletNotesItem extends StatelessWidget {
             contentPadding: const EdgeInsets.all(0),
             content: SizedBox(
               width: MediaQuery.of(context).size.height * 0.75,
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.35,
               child: TabletNotesOverview(),
             ),
           );
