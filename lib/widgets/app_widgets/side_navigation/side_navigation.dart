@@ -1,7 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:provider/provider.dart';
 
 class SideNavigation extends StatelessWidget {
   const SideNavigation({super.key});
@@ -85,30 +87,32 @@ class SideNavigation extends StatelessWidget {
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.popAndPushNamed(context, '/login');
-            },
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+          Consumer<AuthProvider>(builder: (context, authContext, child) {
+            return ElevatedButton(
+              onPressed: () {
+                authContext.logout(context);
+              },
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(FluentIcons.sign_out_24_regular,
-                    color: AppUtils.$mainBlack),
-                const Gap(5),
-                const Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
-                ),
-              ],
-            ),
-          ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(FluentIcons.sign_out_24_regular,
+                      color: AppUtils.$mainBlack),
+                  const Gap(5),
+                  const Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
+                  ),
+                ],
+              ),
+            );
+          })
         ],
       ),
     );

@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:provider/provider.dart';
 
 class TabletLogin extends StatelessWidget {
@@ -12,78 +14,95 @@ class TabletLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding:
-            const EdgeInsets.only(top: 20, bottom: 20, left: 40, right: 40),
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage('assets/images/mobile_banner.png'),
-          ),
-        ),
-        child: Column(
-          children: [
-            const Expanded(
-              flex: 1,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "WELCOME",
-                      style: TextStyle(
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "This platform was designed under the visionary leadership of Francis Flynn Chacha",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text("Powered by Labs"),
-                  ],
-                ),
+      body: Stack(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.only(top: 20, bottom: 20, left: 40, right: 40),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/mobile_banner.png'),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: DefaultTabController(
-                length: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Gap(MediaQuery.of(context).size.height / 4),
-                    TabBar(
-                      labelColor: AppUtils.$mainBlue,
-                      unselectedLabelColor: AppUtils.$mainBlack,
-                      indicatorColor: Colors.blue,
-                      labelStyle: TextStyle(fontSize: 18),
-                      tabs: const [
-                        Tab(text: "Sign in"),
-                        Tab(text: "Sign up"),
+            child: Column(
+              children: [
+                const Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "WELCOME",
+                          style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "This platform was designed under the visionary leadership of Francis Flynn Chacha",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text("Powered by Labs"),
                       ],
                     ),
-                    const Gap(20),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          SignInTab(),
-                          SignUpTab(),
-                        ],
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  flex: 2,
+                  child: DefaultTabController(
+                    length: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Gap(MediaQuery.of(context).size.height / 4),
+                        TabBar(
+                          labelColor: AppUtils.$mainBlue,
+                          unselectedLabelColor: AppUtils.$mainBlack,
+                          indicatorColor: Colors.blue,
+                          labelStyle: TextStyle(fontSize: 18),
+                          tabs: const [
+                            Tab(text: "Sign in"),
+                            Tab(text: "Sign up"),
+                          ],
+                        ),
+                        const Gap(20),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              SignInTab(),
+                              SignUpTab(),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          if (context.watch<AuthProvider>().success)
+            Positioned(
+                top: 20,
+                right: 20,
+                child: SuccessWidget(
+                    message: context.watch<AuthProvider>().message))
+          else if (context.watch<AuthProvider>().error)
+            Positioned(
+              top: 20,
+              right: 20,
+              child:
+                  FailedWidget(message: context.watch<AuthProvider>().message),
+            )
+        ],
       ),
     );
   }
@@ -143,20 +162,41 @@ class SignInTab extends StatelessWidget {
             ),
           ),
           const Gap(20),
-          ElevatedButton(
-            onPressed: () {
-              context
-                  .read<AuthProvider>()
-                  .login(emailController.text, passwordController.text);
-              Navigator.popAndPushNamed(context, '/course');
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              return ElevatedButton(
+                onPressed: authProvider.isLoading
+                    ? null
+                    : () {
+                        authProvider.login(
+                          emailController.text,
+                          passwordController.text,
+                        );
+                      },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    authProvider.isLoading ? Colors.grey : AppUtils.$mainBlue,
+                  ),
+                  padding: WidgetStatePropertyAll(
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  ),
+                ),
+                child: authProvider.isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : const Text(
+                        'Sign In',
+                        style:
+                            TextStyle(fontSize: 16, color: AppUtils.$mainWhite),
+                      ),
+              );
             },
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(AppUtils.$mainBlue),
-              padding: WidgetStatePropertyAll(
-                  EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10)),
-            ),
-            child: const Text('Sign In',
-                style: TextStyle(fontSize: 16, color: AppUtils.$mainWhite)),
           ),
         ],
       ),
@@ -169,6 +209,13 @@ class SignUpTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController phoneController = TextEditingController();
+    TextEditingController regNoController = TextEditingController();
+    // TextEditingController imageController = TextEditingController();
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -244,16 +291,40 @@ class SignUpTab extends StatelessWidget {
             ),
           ),
           const Gap(20),
-          ElevatedButton(
-            onPressed: () {},
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(AppUtils.$mainBlue),
-              padding: WidgetStatePropertyAll(
-                  EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10)),
-            ),
-            child: const Text('Sign Up',
-                style: TextStyle(fontSize: 16, color: AppUtils.$mainWhite)),
-          )
+          Consumer<AuthProvider>(builder: (context, authProvider, child) {
+            return ElevatedButton(
+              onPressed: authProvider.isLoading
+                  ? null
+                  : () {
+                      authProvider.register(
+                          usernameController.text,
+                          emailController.text,
+                          passwordController.text,
+                          phoneController.text,
+                          regNoController.text,
+                          'test.jpg');
+                    },
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  authProvider.isLoading ? Colors.grey : AppUtils.$mainBlue,
+                ),
+                padding: WidgetStatePropertyAll(
+                    EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10)),
+              ),
+              child: authProvider.isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : const Text('Sign Up',
+                      style:
+                          TextStyle(fontSize: 16, color: AppUtils.$mainWhite)),
+            );
+          })
         ],
       ),
     );

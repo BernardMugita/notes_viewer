@@ -38,6 +38,11 @@ dependencies:
   flutter_launcher_icons: ^0.14.2
   fluentui_system_icons: ^1.1.270
   provider: ^6.1.2
+  dio: ^5.7.0
+  http: ^1.2.2
+  dart_jsonwebtoken: ^2.14.2
+  jwt_decoder: ^2.0.1
+  shared_preferences: ^2.3.5
 
 dev_dependencies:
   flutter_test:

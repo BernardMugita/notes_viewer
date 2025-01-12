@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TogglesProvider extends ChangeNotifier {
   bool showPassword = false;
@@ -20,8 +21,18 @@ class TogglesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleRememberSelection() {
+  void toggleRememberSelection() async {
     rememberSelection = !rememberSelection;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('remember_selection', rememberSelection);
+    print(prefs.get('remember_selection'));
+    notifyListeners();
+  }
+
+  Future<void> loadRememberSelection() async {
+    final prefs = await SharedPreferences.getInstance();
+    rememberSelection = prefs.getBool('remember_selection') ?? false;
     notifyListeners();
   }
 

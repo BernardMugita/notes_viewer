@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/responsive/responsive_layout.dart';
 import 'package:note_viewer/views/auth/course/course_view.dart';
 import 'package:note_viewer/views/auth/login/login_view.dart';
@@ -13,15 +15,23 @@ import 'package:note_viewer/views/units/units_view.dart';
 import 'package:note_viewer/views/view_notes/view_notes_view.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final authProvider = AuthProvider();
+  await authProvider.checkLogin();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => AuthProvider()..checkLogin(),
-        ),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(
           create: (context) => TogglesProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CoursesProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UnitsProvider(),
         ),
       ],
       child: const MyApp(),
@@ -29,65 +39,118 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  late Future<void> _loadPreferences;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences = Provider.of<TogglesProvider>(context, listen: false)
+        .loadRememberSelection(); // Initialize the loading of preferences
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Note Viewer',
-      initialRoute:
-          Provider.of<AuthProvider>(context, listen: false).isAuthenticated
-              ? '/'
-              : '/login',
-      routes: {
-        '/login': (context) => const LoginView(),
-        '/course': (context) => const CourseView(),
-        '/units': (context) => const UnitsView(),
-        '/units/notes': (context) => const NotesView(),
-      },
-      onGenerateRoute: (settings) {
-        final uri = Uri.parse(settings.name ?? '');
+    final authProvider = Provider.of<AuthProvider>(context);
+    final togglesProvider = Provider.of<TogglesProvider>(context);
 
-        // /units/study/{lessonName}
-        if (uri.pathSegments.length == 3 &&
-            uri.pathSegments[0] == 'units' &&
-            uri.pathSegments[1] == 'study') {
-          final lessonName = uri.pathSegments[2];
-
-          return MaterialPageRoute(
-            builder: (context) => const StudyView(),
-            settings: RouteSettings(
-              name: settings.name,
-              arguments: lessonName,
+    return FutureBuilder(
+      future: _loadPreferences,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show loading screen while preferences are being loaded
+          return MaterialApp(
+            title: 'Note Viewer',
+            home: const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             ),
           );
         }
 
-        // /units/study/{lessonName}/filename.ext
-        if (uri.pathSegments.length == 4 &&
-            uri.pathSegments[0] == 'units' &&
-            uri.pathSegments[1] == 'study') {
-          final lessonName = uri.pathSegments[2];
-          final fileName = uri.pathSegments[3];
+        final isAuthenticated = authProvider.isAuthenticated;
+        final isRememberSelection = togglesProvider.rememberSelection;
 
-          return MaterialPageRoute(
-            builder: (context) => ViewNotesView(),
-            settings: RouteSettings(
-              name: settings.name,
-              arguments: {'lessonName': lessonName, 'fileName': fileName},
-            ),
-          );
-        }
+        return MaterialApp(
+          title: 'Note Viewer',
+          home: Builder(builder: (context) {
+            if (isAuthenticated) {
+              return isRememberSelection
+                  ? const MyHomePage(title: 'Note Viewer')
+                  : const CourseView();
+            } else {
+              return const LoginView();
+            }
+          }),
+          routes: {
+            '/login': (context) => const LoginView(),
+            '/course': (context) => isRememberSelection
+                ? const MyHomePage(title: 'Note Viewer')
+                : const CourseView(),
+            '/units': (context) =>
+                isAuthenticated ? const UnitsView() : const LoginView(),
+            '/units/notes': (context) =>
+                isAuthenticated ? const NotesView() : const LoginView(),
+          },
+          onGenerateRoute: (settings) {
+            final uri = Uri.parse(settings.name ?? '');
 
-        return null;
+            if (!authProvider.isAuthenticated) {
+              return MaterialPageRoute(
+                builder: (context) => const LoginView(),
+              );
+            }
+
+            // Existing route handling logic
+            if (uri.pathSegments.length == 3 &&
+                uri.pathSegments[0] == 'units' &&
+                uri.pathSegments[1] == 'study') {
+              final lessonName = uri.pathSegments[2];
+
+              return MaterialPageRoute(
+                builder: (context) => const StudyView(),
+                settings: RouteSettings(
+                  name: settings.name,
+                  arguments: lessonName,
+                ),
+              );
+            }
+
+            if (uri.pathSegments.length == 4 &&
+                uri.pathSegments[0] == 'units' &&
+                uri.pathSegments[1] == 'study') {
+              final lessonName = uri.pathSegments[2];
+              final fileName = uri.pathSegments[3];
+
+              return MaterialPageRoute(
+                builder: (context) => ViewNotesView(),
+                settings: RouteSettings(
+                  name: settings.name,
+                  arguments: {
+                    'lessonName': lessonName,
+                    'fileName': fileName,
+                  },
+                ),
+              );
+            }
+
+            return null;
+          },
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF2A68AF)),
+            useMaterial3: true,
+            fontFamily: 'Jost',
+          ),
+        );
       },
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2A68AF)),
-          useMaterial3: true,
-          fontFamily: 'Jost'),
-      home: const MyHomePage(title: 'Note Viewer'),
     );
   }
 }
