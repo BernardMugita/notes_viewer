@@ -1,10 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
 class DesktopUnitHolder extends StatefulWidget {
-  const DesktopUnitHolder({super.key});
+  final Map unit;
+
+  const DesktopUnitHolder({super.key, required this.unit});
 
   @override
   State<DesktopUnitHolder> createState() => _DesktopUnitHolderState();
@@ -15,6 +18,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
 
   @override
   Widget build(BuildContext context) {
+    final unit = widget.unit;
+
     return MouseRegion(
       onEnter: (_) => setState(() {
         _isHovered = true;
@@ -24,7 +29,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
       }),
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/units/notes');
+          context.go('/units/notes');
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -52,7 +57,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                 size: 45,
               ),
               Text(
-                "Anatomy",
+                unit['name'],
                 style: TextStyle(
                   fontSize: 24,
                   color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,

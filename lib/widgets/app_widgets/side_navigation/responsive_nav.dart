@@ -1,14 +1,18 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:provider/provider.dart';
 
 class ResponsiveNav extends StatelessWidget {
   const ResponsiveNav({super.key});
 
   @override
   Widget build(BuildContext context) {
-    String currentRoute = ModalRoute.of(context)!.settings.name!.split('/')[1];
+    final routeName = ModalRoute.of(context)?.settings.name;
+    final currentRoute = routeName != null ? routeName.split('/')[1] : '';
 
     return SafeArea(
       child: Container(
@@ -86,30 +90,33 @@ class ResponsiveNav extends StatelessWidget {
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.popAndPushNamed(context, '/login');
-              },
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+            Consumer<AuthProvider>(builder: (context, authContext, child) {
+              return ElevatedButton(
+                onPressed: () {
+                  authContext.logout(context);
+                },
+                style: ButtonStyle(
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(FluentIcons.sign_out_24_regular,
-                      color: AppUtils.$mainBlack),
-                  const Gap(5),
-                  const Text(
-                    'Logout',
-                    style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
-                  ),
-                ],
-              ),
-            ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FluentIcons.sign_out_24_regular,
+                        color: AppUtils.$mainBlack),
+                    const Gap(5),
+                    const Text(
+                      'Logout',
+                      style:
+                          TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
@@ -127,9 +134,7 @@ class ResponsiveNav extends StatelessWidget {
     final isActive = currentRoute == route.replaceAll('/', '');
 
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, route);
-      },
+      onTap: () => context.go(route),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(

@@ -10,6 +10,8 @@ class TogglesProvider extends ChangeNotifier {
   bool showFilterDropDown = false;
   bool showSortDropDown = false;
   bool selectGroup = false;
+  bool showSemesterDropDown = false;
+  bool isLoading = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -17,23 +19,42 @@ class TogglesProvider extends ChangeNotifier {
   }
 
   void toggleCoursesDropDown() {
+    showSemesterDropDown = false;
+
     showCoursesDropDown = !showCoursesDropDown;
+    notifyListeners();
+  }
+
+  void toggleSemesterDropDown() {
+    showCoursesDropDown = false;
+
+    showSemesterDropDown = !showSemesterDropDown;
     notifyListeners();
   }
 
   void toggleRememberSelection() async {
     rememberSelection = !rememberSelection;
+    notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('remember_selection', rememberSelection);
-    print(prefs.get('remember_selection'));
     notifyListeners();
   }
 
   Future<void> loadRememberSelection() async {
-    final prefs = await SharedPreferences.getInstance();
-    rememberSelection = prefs.getBool('remember_selection') ?? false;
+    isLoading = true;
     notifyListeners();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      rememberSelection = prefs.getBool('remember_selection') ?? false;
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   void toggleSearchBar() {

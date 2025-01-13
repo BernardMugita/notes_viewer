@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
@@ -18,33 +19,10 @@ class SideNavigation extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppUtils.$mainWhite,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: AppUtils.$mainBlue,
-                ),
-                const Gap(10),
-                Text(
-                  "Full Name",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text("fullname@email.com"),
-              ],
-            ),
-          ),
+          Image(
+              height: 200,
+              width: 200,
+              image: AssetImage('assets/images/NV_logo.png')),
           const Gap(40),
           Expanded(
             child: Column(
@@ -52,7 +30,7 @@ class SideNavigation extends StatelessWidget {
                 // Dashboard Menu Item
                 _buildNavItem(
                   context,
-                  route: '/',
+                  route: '/dashboard',
                   currentRoute: currentRoute,
                   icon: FluentIcons.gauge_24_regular,
                   label: 'Dashboard',
@@ -87,6 +65,45 @@ class SideNavigation extends StatelessWidget {
               ],
             ),
           ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: AppUtils.$mainBlueAccent),
+                borderRadius: BorderRadius.circular(5)),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  child: Image(
+                      height: 25,
+                      width: 25,
+                      image:
+                          AssetImage('assets/images/placeholder-profile.png')),
+                ),
+                const Gap(10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Username",
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: AppUtils.$mainWhite,
+                            fontWeight: FontWeight.bold)),
+                    Text("username@email.com",
+                        style: TextStyle(
+                            fontSize: 14, color: AppUtils.$mainWhite)),
+                  ],
+                ),
+                Icon(
+                  FluentIcons.more_vertical_24_regular,
+                  color: AppUtils.$mainWhite,
+                )
+              ],
+            ),
+          ),
+          Gap(5),
+          Divider(),
+          Gap(5),
           Consumer<AuthProvider>(builder: (context, authContext, child) {
             return ElevatedButton(
               onPressed: () {
@@ -129,9 +146,7 @@ class SideNavigation extends StatelessWidget {
     final isActive = currentRoute == route.replaceAll('/', '');
 
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, route);
-      },
+      onTap: () => context.go(route),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(

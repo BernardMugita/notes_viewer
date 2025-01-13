@@ -19,6 +19,9 @@ class AuthProvider extends ChangeNotifier {
 
   // Load token from persistent storage
   Future<void> _loadToken() async {
+    isLoading = true;
+    notifyListeners();
+
     try {
       final prefs = await SharedPreferences.getInstance();
       token = prefs.getString('authToken');
@@ -32,9 +35,10 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       isAuthenticated = false;
       token = null;
-      // Optionally log or display an error
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   // Save token to persistent storage
@@ -144,13 +148,19 @@ class AuthProvider extends ChangeNotifier {
       if (updateCourseRequest['status'] == "success") {
         message = 'Course updated successfully';
         success = true;
+        isLoading = false;
+        notifyListeners();
       } else {
         error = true;
         message = 'Course update failed';
+        isLoading = false;
+        notifyListeners();
       }
     } catch (e) {
       error = true;
+      isLoading = false;
       message = 'Error: $e';
+      notifyListeners();
     }
 
     return {};
@@ -166,6 +176,7 @@ class AuthProvider extends ChangeNotifier {
     } else {
       isAuthenticated = false;
     }
+
     notifyListeners();
   }
 
