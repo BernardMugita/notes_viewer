@@ -3,6 +3,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/router/router.dart'; // Make sure to import this
 import 'package:note_viewer/views/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => toggleProvider),
         ChangeNotifierProvider(create: (_) => CoursesProvider()),
         ChangeNotifierProvider(create: (_) => UnitsProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: MyApp(
         authProvider: authProvider,
@@ -52,7 +54,8 @@ class MyApp extends StatelessWidget {
       );
     }
 
-    final router = createRouter(authProvider, toggleProvider);  // This will now work
+    final router =
+        createRouter(authProvider, toggleProvider); // This will now work
 
     return MaterialApp.router(
       title: 'Note Viewer',

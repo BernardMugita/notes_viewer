@@ -150,12 +150,12 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                 contentPadding: const EdgeInsets.all(0),
                 content: Container(
                   padding: const EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.3,
                   height: togglesProvider.showCoursesDropDown
-                      ? MediaQuery.of(context).size.height * 0.5
+                      ? MediaQuery.of(context).size.height * 0.6
                       : togglesProvider.showSemesterDropDown
-                          ? MediaQuery.of(context).size.height * 0.55
-                          : MediaQuery.of(context).size.height * 0.35,
+                          ? MediaQuery.of(context).size.height * 0.7
+                          : MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
                     color: AppUtils.$mainWhite,
                     borderRadius: BorderRadius.circular(5),
@@ -187,7 +187,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                         alignment: WrapAlignment.start,
                         children: [
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.225,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: TextField(
                               controller: nameController,
                               decoration: InputDecoration(
@@ -204,7 +204,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.225,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: TextField(
                               controller: codeController,
                               decoration: InputDecoration(
@@ -221,7 +221,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.225,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: Column(
                               children: [
                                 TextField(
@@ -308,7 +308,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.225,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: Column(
                               children: [
                                 TextField(
@@ -419,7 +419,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                       Consumer<UnitsProvider>(
                           builder: (context, unitProvider, child) {
                         return SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.225,
+                          width: MediaQuery.of(context).size.width * 0.25,
                           child: ElevatedButton(
                             onPressed: unitProvider.isLoading
                                 ? null

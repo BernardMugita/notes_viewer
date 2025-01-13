@@ -3,16 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 
-class SideNavigation extends StatelessWidget {
+class SideNavigation extends StatefulWidget {
   const SideNavigation({super.key});
+
+  @override
+  State<SideNavigation> createState() => _SideNavigationState();
+}
+
+class _SideNavigationState extends State<SideNavigation> {
+  Map<String, dynamic> user = {};
+
+  String tokenRef = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String? token = context.read<AuthProvider>().token;
+      if (token != null) {
+        tokenRef = token;
+        context.read<UserProvider>().fetchUserDetails(token);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final routeName = ModalRoute.of(context)?.settings.name;
     final currentRoute = routeName != null ? routeName.split('/')[1] : '';
+
+    user = context.read<UserProvider>().user;
 
     return Container(
       decoration: BoxDecoration(color: AppUtils.$mainBlue),
@@ -22,6 +46,7 @@ class SideNavigation extends StatelessWidget {
           Image(
               height: 200,
               width: 200,
+              fit: BoxFit.cover,
               image: AssetImage('assets/images/NV_logo.png')),
           const Gap(40),
           Expanded(
@@ -71,7 +96,6 @@ class SideNavigation extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5)),
             padding: const EdgeInsets.all(10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CircleAvatar(
                   child: Image(
@@ -84,16 +108,33 @@ class SideNavigation extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Username",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: AppUtils.$mainWhite,
-                            fontWeight: FontWeight.bold)),
-                    Text("username@email.com",
-                        style: TextStyle(
-                            fontSize: 14, color: AppUtils.$mainWhite)),
+                    if (context.watch<UserProvider>().isLoading)
+                      LinearProgressIndicator(
+                        color: AppUtils.$mainWhite,
+                      )
+                    else
+                      Text(user.isNotEmpty ? user['username'] : 'Guest',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: AppUtils.$mainWhite,
+                              fontWeight: FontWeight.bold)),
+                    if (context.watch<UserProvider>().isLoading)
+                      LinearProgressIndicator(
+                        color: AppUtils.$mainWhite,
+                      )
+                    else
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                            user.isNotEmpty ? user['email'] : 'guest@email.com',
+                            style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 12,
+                                color: AppUtils.$mainWhite)),
+                      ),
                   ],
                 ),
+                Spacer(),
                 Icon(
                   FluentIcons.more_vertical_24_regular,
                   color: AppUtils.$mainWhite,
@@ -102,7 +143,7 @@ class SideNavigation extends StatelessWidget {
             ),
           ),
           Gap(5),
-          Divider(),
+          // Divider(),
           Gap(5),
           Consumer<AuthProvider>(builder: (context, authContext, child) {
             return ElevatedButton(

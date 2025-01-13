@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AppUtils {
   static const Color $mainBlue = Color(0xFF2a68af);
@@ -10,4 +11,10 @@ class AppUtils {
   static const Color $mainBlueAccent = Color(0xFFf9f9ff);
 
   static const String $baseUrl = 'https://1b47-41-90-172-240.ngrok-free.app';
+
+  static String formatDate(String dateTime) {
+    DateTime parsedDate = DateTime.parse(dateTime);
+    return DateFormat('d MMMM y')
+        .format(parsedDate); // Formats as '20th March 2025'
+  }
 }

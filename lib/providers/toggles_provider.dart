@@ -12,6 +12,8 @@ class TogglesProvider extends ChangeNotifier {
   bool selectGroup = false;
   bool showSemesterDropDown = false;
   bool isLoading = false;
+  bool accountView = true;
+  bool membershipView = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -85,6 +87,18 @@ class TogglesProvider extends ChangeNotifier {
 
   void toggleSelectGroup() {
     selectGroup = !selectGroup;
+    notifyListeners();
+  }
+
+  void toggleMembershipView() {
+    membershipView = true;
+    accountView = false;
+    notifyListeners();
+  }
+
+  void toggleAccountView() {
+    accountView = true;
+    membershipView = false;
     notifyListeners();
   }
 }
