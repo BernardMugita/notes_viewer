@@ -164,7 +164,7 @@ class _DesktopCourseState extends State<DesktopCourse> {
                                 token, selectedCourse['id']);
                             if (mounted) {
                               Future.delayed(const Duration(seconds: 3), () {
-                                context.go('/'); // GoRouter navigation
+                                context.go('/dashboard');
                               });
                             }
                           }

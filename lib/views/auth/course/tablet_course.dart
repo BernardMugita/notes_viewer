@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
@@ -156,7 +157,7 @@ class _TabletCourseState extends State<TabletCourse> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3.5,
                   child: ElevatedButton(
-                    onPressed: authProvider.isLoading |
+                    onPressed: authProvider.isLoading ||
                             courseController.text.isEmpty
                         ? null
                         : () async {
@@ -166,8 +167,7 @@ class _TabletCourseState extends State<TabletCourse> {
                                   token, selectedCourse['id']);
                               if (mounted) {
                                 Future.delayed(const Duration(seconds: 3), () {
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.popAndPushNamed(context, '/');
+                                  context.go('/dashboard');
                                 });
                               }
                             }

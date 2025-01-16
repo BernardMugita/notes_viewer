@@ -3,16 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 
-class ResponsiveNav extends StatelessWidget {
+class ResponsiveNav extends StatefulWidget {
   const ResponsiveNav({super.key});
+
+  @override
+  State<ResponsiveNav> createState() => _ResponsiveNavState();
+}
+
+class _ResponsiveNavState extends State<ResponsiveNav> {
+  Map<String, dynamic> user = {};
+
+  String tokenRef = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String? token = context.read<AuthProvider>().token;
+      if (token != null) {
+        tokenRef = token;
+        context.read<UserProvider>().fetchUserDetails(token);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final routeName = ModalRoute.of(context)?.settings.name;
     final currentRoute = routeName != null ? routeName.split('/')[1] : '';
+
+    user = context.watch<UserProvider>().user;
+
+    print(user);
 
     return SafeArea(
       child: Container(
@@ -21,33 +47,11 @@ class ResponsiveNav extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppUtils.$mainWhite,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: AppUtils.$mainBlue,
-                  ),
-                  const Gap(10),
-                  Text(
-                    "Full Name",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppUtils.$mainBlue,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Text("fullname@email.com"),
-                ],
-              ),
-            ),
+            Image(
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/NV_logo.png')),
             const Gap(40),
             Expanded(
               child: Column(
@@ -55,7 +59,7 @@ class ResponsiveNav extends StatelessWidget {
                   // Dashboard Menu Item
                   _buildNavItem(
                     context,
-                    route: '/',
+                    route: '/dashboard',
                     currentRoute: currentRoute,
                     icon: FluentIcons.gauge_24_regular,
                     label: 'Dashboard',
@@ -87,9 +91,65 @@ class ResponsiveNav extends StatelessWidget {
                     icon: FluentIcons.person_accounts_24_regular,
                     label: 'Account',
                   ),
+                  Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppUtils.$mainBlueAccent),
+                        borderRadius: BorderRadius.circular(5)),
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          child: Image(
+                              height: 25,
+                              width: 25,
+                              image: AssetImage(
+                                  'assets/images/placeholder-profile.png')),
+                        ),
+                        const Gap(10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (context.watch<UserProvider>().isLoading)
+                              LinearProgressIndicator(
+                                color: AppUtils.$mainWhite,
+                              )
+                            else
+                              Text(user.isNotEmpty ? user['username'] : 'Guest',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.$mainWhite,
+                                      fontWeight: FontWeight.bold)),
+                            if (context.watch<UserProvider>().isLoading)
+                              LinearProgressIndicator(
+                                color: AppUtils.$mainWhite,
+                              )
+                            else
+                              SizedBox(
+                                width: 100,
+                                child: Text(
+                                    user.isNotEmpty
+                                        ? user['email']
+                                        : 'guest@email.com',
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 12,
+                                        color: AppUtils.$mainWhite)),
+                              ),
+                          ],
+                        ),
+                        Spacer(),
+                        Icon(
+                          FluentIcons.more_vertical_24_regular,
+                          color: AppUtils.$mainWhite,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
+            Gap(5),
             Consumer<AuthProvider>(builder: (context, authContext, child) {
               return ElevatedButton(
                 onPressed: () {

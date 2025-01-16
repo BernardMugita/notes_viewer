@@ -1,16 +1,26 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class MobileUnitHolder extends StatelessWidget {
-  const MobileUnitHolder({super.key});
+class MobileUnitHolder extends StatefulWidget {
+  final Map unit;
+
+  const MobileUnitHolder({super.key, required this.unit});
 
   @override
+  State<MobileUnitHolder> createState() => _MobileUnitHolderState();
+}
+
+class _MobileUnitHolderState extends State<MobileUnitHolder> {
+  @override
   Widget build(BuildContext context) {
+    final unit = widget.unit;
+
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/units/notes');
+        context.go('/units/notes');
       },
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -25,7 +35,7 @@ class MobileUnitHolder extends StatelessWidget {
               FluentIcons.doctor_24_regular,
               size: 35,
             ),
-            Text("Anatomy",
+            Text(unit['name'],
                 style: TextStyle(
                     fontSize: 20,
                     color: AppUtils.$mainBlue,

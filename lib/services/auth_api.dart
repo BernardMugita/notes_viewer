@@ -18,6 +18,8 @@ class AuthApi {
             'password': password,
           }));
 
+      print(signInRequest);
+
       return jsonDecode(signInRequest.body) as Map<String, dynamic>;
     } on DioException catch (e) {
       return {
