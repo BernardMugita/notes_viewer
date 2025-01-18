@@ -16,6 +16,8 @@ class TogglesProvider extends ChangeNotifier {
   bool membershipView = false;
   bool isHovered = false;
   bool isRightClicked = false;
+  bool isLessonSelected = false;
+  bool showUploadTypeDropdown = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -26,6 +28,11 @@ class TogglesProvider extends ChangeNotifier {
     showSemesterDropDown = false;
 
     showCoursesDropDown = !showCoursesDropDown;
+    notifyListeners();
+  }
+
+  void toggleSelectLesson() {
+    isLessonSelected = true;
     notifyListeners();
   }
 
@@ -42,6 +49,11 @@ class TogglesProvider extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('remember_selection', rememberSelection);
+    notifyListeners();
+  }
+
+  void toggleUploadTypeDropDown() async {
+    showUploadTypeDropdown = !showUploadTypeDropdown;
     notifyListeners();
   }
 

@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
@@ -119,12 +120,25 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                   ),
                   const Gap(20),
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(children: [
-                        DesktopSemesterHolder(units: units)
-                      ] // Convert the Iterable to a List
+                    child: context.watch<UnitsProvider>().isLoading
+                        ? Center(
+                            child: LoadingAnimationWidget.newtonCradle(
+                              color: AppUtils.$mainBlue,
+                              size: 100,
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 30, right: 30, top: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DesktopSemesterHolder(units: units),
+                                ],
+                              ),
+                            ),
                           ),
-                    ),
                   ),
                 ],
               ),

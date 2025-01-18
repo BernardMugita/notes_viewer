@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
@@ -13,6 +14,10 @@ void main() async {
 
   final authProvider = AuthProvider();
   final toggleProvider = TogglesProvider();
+  final lessonsProvider = LessonsProvider();
+  final coursesProvider = CoursesProvider();
+  final unitsProvider = UnitsProvider();
+  final userProvider = UserProvider();
 
   // Load initial state for providers
   await authProvider.checkLogin();
@@ -23,13 +28,18 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => authProvider),
         ChangeNotifierProvider(create: (_) => toggleProvider),
-        ChangeNotifierProvider(create: (_) => CoursesProvider()),
-        ChangeNotifierProvider(create: (_) => UnitsProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider())
+        ChangeNotifierProvider(create: (_) => coursesProvider),
+        ChangeNotifierProvider(create: (_) => unitsProvider),
+        ChangeNotifierProvider(create: (_) => userProvider),
+        ChangeNotifierProvider(create: (_) => lessonsProvider)
       ],
       child: MyApp(
         authProvider: authProvider,
         toggleProvider: toggleProvider,
+        lessonsProvider: lessonsProvider,
+        coursesProvider: coursesProvider,
+        unitsProvider: unitsProvider,
+        userProvider: userProvider,
       ),
     ),
   );
@@ -38,11 +48,19 @@ void main() async {
 class MyApp extends StatelessWidget {
   final AuthProvider authProvider;
   final TogglesProvider toggleProvider;
+  final LessonsProvider lessonsProvider;
+  final CoursesProvider coursesProvider;
+  final UnitsProvider unitsProvider;
+  final UserProvider userProvider;
 
   const MyApp({
     super.key,
     required this.authProvider,
     required this.toggleProvider,
+    required this.lessonsProvider,
+    required this.coursesProvider,
+    required this.unitsProvider,
+    required this.userProvider,
   });
 
   @override
@@ -54,8 +72,8 @@ class MyApp extends StatelessWidget {
       );
     }
 
-    final router =
-        createRouter(authProvider, toggleProvider); // This will now work
+    final router = createRouter(authProvider, toggleProvider, userProvider,
+        unitsProvider, coursesProvider, lessonsProvider);
 
     return MaterialApp.router(
       title: 'Note Viewer',

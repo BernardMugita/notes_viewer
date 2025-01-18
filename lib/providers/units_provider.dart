@@ -8,6 +8,10 @@ class UnitsProvider extends ChangeNotifier {
   String message = '';
   List units = [];
 
+  String unitId = '';
+
+  // String get unitId => _unitId;
+
   UnitsApi unitsApi = UnitsApi();
 
   List<String> semesters = [
@@ -20,6 +24,11 @@ class UnitsProvider extends ChangeNotifier {
     '4.1',
     '4.2'
   ];
+
+  void setUnitId(String id) {
+    unitId = id;
+    notifyListeners();
+  }
 
   Future<Map<String, dynamic>> addUnit(
     String token,

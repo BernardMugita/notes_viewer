@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
+import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/views/account/account_view.dart';
 import 'package:note_viewer/views/auth/course/course_view.dart';
 import 'package:note_viewer/views/auth/login/login_view.dart';
@@ -15,7 +19,12 @@ import 'package:note_viewer/views/view_notes/view_notes_view.dart';
 final authProvider = AuthProvider();
 
 GoRouter createRouter(
-    AuthProvider authProvider, TogglesProvider toggleProvider) {
+    AuthProvider authProvider,
+    TogglesProvider toggleProvider,
+    UserProvider userProvider,
+    UnitsProvider unitsProvider,
+    CoursesProvider coursesProvider,
+    LessonsProvider lessonsProvider) {
   return GoRouter(
     initialLocation: authProvider.isAuthenticated ? '/dashboard' : '/login',
     refreshListenable: Listenable.merge([

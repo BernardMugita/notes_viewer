@@ -91,6 +91,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
           }),
           child: GestureDetector(
             onTap: () {
+              final unitId = unit['id'];
+              context.read<UnitsProvider>().setUnitId(unitId);
               context.go('/units/notes');
             },
             child: Listener(

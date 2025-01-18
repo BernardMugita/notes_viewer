@@ -109,8 +109,12 @@ class _SideNavigationState extends State<SideNavigation> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (context.watch<UserProvider>().isLoading)
-                      LinearProgressIndicator(
-                        color: AppUtils.$mainWhite,
+                      SizedBox(
+                        width: 130,
+                        child: LinearProgressIndicator(
+                          minHeight: 1,
+                          color: AppUtils.$mainWhite,
+                        ),
                       )
                     else
                       Text(user.isNotEmpty ? user['username'] : 'Guest',
@@ -119,8 +123,12 @@ class _SideNavigationState extends State<SideNavigation> {
                               color: AppUtils.$mainWhite,
                               fontWeight: FontWeight.bold)),
                     if (context.watch<UserProvider>().isLoading)
-                      LinearProgressIndicator(
-                        color: AppUtils.$mainWhite,
+                      SizedBox(
+                        width: 130,
+                        child: LinearProgressIndicator(
+                          minHeight: 1,
+                          color: AppUtils.$mainWhite,
+                        ),
                       )
                     else
                       SizedBox(

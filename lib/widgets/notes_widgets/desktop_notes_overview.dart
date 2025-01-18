@@ -1,13 +1,23 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class DesktopNotesOverview extends StatelessWidget {
-  const DesktopNotesOverview({super.key});
+class DesktopNotesOverview extends StatefulWidget {
+  final Map lesson;
+
+  const DesktopNotesOverview({super.key, required this.lesson});
 
   @override
+  State<DesktopNotesOverview> createState() => _DesktopNotesOverviewState();
+}
+
+class _DesktopNotesOverviewState extends State<DesktopNotesOverview> {
+  @override
   Widget build(BuildContext context) {
+    final lesson = widget.lesson;
+
     return Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height / 2.8,
@@ -29,7 +39,7 @@ class DesktopNotesOverview extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: Text(
-                  "Introduction to Anatomy",
+                  lesson['name'],
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -37,76 +47,13 @@ class DesktopNotesOverview extends StatelessWidget {
                 ),
               ),
               Gap(20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    FluentIcons.book_24_regular,
-                    color: AppUtils.$mainBlue,
-                  ),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(
-                      "Notes",
-                      style: TextStyle(fontSize: 18, color: AppUtils.$mainBlue),
-                    ),
-                  ),
-                  const Text("2"),
-                ],
-              ),
-              Gap(20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    FluentIcons.slide_content_24_regular,
-                    color: AppUtils.$mainBlue,
-                  ),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(
-                      "Slides",
-                      style: TextStyle(fontSize: 18, color: AppUtils.$mainBlue),
-                    ),
-                  ),
-                  const Text("4"),
-                ],
-              ),
-              Gap(20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    FluentIcons.video_24_regular,
-                    color: AppUtils.$mainBlue,
-                  ),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(
-                      "Recordings",
-                      style: TextStyle(fontSize: 18, color: AppUtils.$mainBlue),
-                    ),
-                  ),
-                  const Text("1"),
-                ],
-              ),
-              Gap(20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    FluentIcons.person_32_regular,
-                    color: AppUtils.$mainBlue,
-                  ),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(
-                      "Student Contributions",
-                      style: TextStyle(fontSize: 18, color: AppUtils.$mainBlue),
-                    ),
-                  ),
-                  const Text("1"),
-                ],
+              Column(
+                children: lesson['files'].entries.map<Widget>((entry) {
+                  final key = entry.key;
+                  final value = entry.value;
+
+                  return _buildLessonOverviewItems(context, key, value.length);
+                }).toList(),
               ),
               Gap(20),
               ElevatedButton(
@@ -120,8 +67,10 @@ class DesktopNotesOverview extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  final routeName = '/units/study/Introduction to Anatomy';
-                  Navigator.pushNamed(context, routeName);
+                  final routeName = '/units/notes/${lesson['name']}';
+                  context.go(routeName, extra: {
+                    'lesson_id': lesson['id'],
+                  });
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -145,5 +94,35 @@ class DesktopNotesOverview extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  Widget _buildLessonOverviewItems(
+      BuildContext context, String itemName, double itemCount) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            itemName == 'notes'
+                ? FluentIcons.book_24_regular
+                : itemName == 'slides'
+                    ? FluentIcons.slide_content_24_regular
+                    : itemName == 'recordings'
+                        ? FluentIcons.video_24_regular
+                        : FluentIcons.person_32_regular,
+            color: AppUtils.$mainBlue,
+          ),
+          const Gap(5),
+          Expanded(
+            child: Text(
+              itemName,
+              style: TextStyle(fontSize: 18, color: AppUtils.$mainBlue),
+            ),
+          ),
+          Text(itemCount.toString()),
+        ],
+      ),
+    );
   }
 }

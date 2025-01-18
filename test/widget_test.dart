@@ -9,13 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:note_viewer/main.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
+import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Create mock instances of the required providers
     final authProvider = AuthProvider();
     final toggleProvider = TogglesProvider();
+    final coursesProvider = CoursesProvider();
+    final unitsProvider = UnitsProvider();
+    final userProvider = UserProvider();
+    final lessonsProvider = LessonsProvider();
 
     // Initialize providers with default values if necessary
     await authProvider.checkLogin();
@@ -25,6 +33,10 @@ void main() {
     await tester.pumpWidget(MyApp(
       authProvider: authProvider,
       toggleProvider: toggleProvider,
+      coursesProvider: coursesProvider,
+      unitsProvider: unitsProvider,
+      userProvider: userProvider,
+      lessonsProvider: lessonsProvider,
     ));
 
     // Verify that our counter starts at 0
