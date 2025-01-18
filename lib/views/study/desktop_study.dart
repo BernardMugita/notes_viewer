@@ -48,6 +48,30 @@ class _DesktopStudyState extends State<DesktopStudy> {
   Widget build(BuildContext context) {
     final lesson = context.watch<LessonsProvider>().lesson;
 
+    List notes = [];
+    List slides = [];
+    List recordings = [];
+    List assignments = [];
+
+    // Ensure lesson and lesson['files'] are not null before accessing
+    if (lesson.isNotEmpty && lesson['files'] != null) {
+      setState(() {
+        notes = lesson['files']['notes'] ?? [];
+        slides = lesson['files']['slides'] ?? [];
+        recordings = lesson['files']['recordings'] ?? [];
+        assignments = lesson['files']['assignments'] ?? [];
+      });
+
+      // Use the variables (notes, slides, etc.) as needed
+      print('Notes: $notes');
+      print('Slides: $slides');
+      print('Recordings: $recordings');
+      print('Assignments: $assignments');
+    } else {
+      // Handle case when lesson or lesson['files'] is null
+      print('Lesson or files are null');
+    }
+
     return Scaffold(
       body: Flex(
         direction: Axis.horizontal,
@@ -106,11 +130,11 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                 color: AppUtils.$mainGrey,
                               ),
                               const Gap(20),
-                              if (lesson.isEmpty ||
-                                  lesson['files']['notes'].isEmpty ||
-                                  lesson['files']['slides'].isEmpty ||
-                                  lesson['files']['recordings'].isEmpty ||
-                                  lesson['files']['assignments'].isEmpty)
+                              if (lesson.isEmpty &&
+                                  notes.isEmpty &&
+                                  slides.isEmpty &&
+                                  recordings.isEmpty &&
+                                  assignments.isEmpty)
                                 Expanded(
                                     child: Center(
                                   child: Container(
@@ -150,34 +174,41 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                   spacing: 40,
                                   runSpacing: 40,
                                   children: [
-                                    lesson['files']['notes'].map((notes) {
-                                      DesktopFile(
-                                        fileName: '',
+                                    // Map notes to DesktopFile widgets and convert to list
+                                    ...notes.map((note) {
+                                      return DesktopFile(
+                                        fileName: note,
                                         icon:
                                             FluentIcons.document_pdf_24_regular,
                                       );
-                                    }),
-                                    lesson['files']['slides'].map((slides) {
-                                      DesktopFile(
-                                        fileName: '',
+                                    }).toList(), // Convert the iterable to a List<Widget>
+
+                                    // Map slides to DesktopFile widgets and convert to list
+                                    ...slides.map((slide) {
+                                      return DesktopFile(
+                                        fileName: slide,
                                         icon:
                                             FluentIcons.slide_layout_24_regular,
                                       );
-                                    }),
-                                    lesson['files']['recordings'].map((record) {
-                                      DesktopRecording(
-                                        fileName: '',
+                                    }).toList(), // Convert the iterable to a List<Widget>
+
+                                    // Map recordings to DesktopRecording widgets and convert to list
+                                    ...recordings.map((recording) {
+                                      return DesktopRecording(
+                                        fileName: recording,
                                         icon: FluentIcons.play_24_filled,
                                       );
-                                    }),
-                                    lesson['files']['assignments'].map((notes) {
-                                      DesktopRecording(
-                                        fileName: '',
+                                    }).toList(), // Convert the iterable to a List<Widget>
+
+                                    // Map assignments to DesktopRecording widgets and convert to list
+                                    ...assignments.map((assignment) {
+                                      return DesktopRecording(
+                                        fileName: assignment,
                                         icon: FluentIcons.play_24_filled,
                                       );
-                                    }),
+                                    }).toList(), // Convert the iterable to a List<Widget>
                                   ],
-                                ),
+                                )
                             ],
                           ),
                         ),

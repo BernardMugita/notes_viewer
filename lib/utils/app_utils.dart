@@ -10,7 +10,7 @@ class AppUtils {
   static const Color $mainGreen = Color(0xFF88FF00);
   static const Color $mainBlueAccent = Color(0xFFf9f9ff);
 
-  static const String $baseUrl = 'https://1360-41-90-172-97.ngrok-free.app';
+  static const String $baseUrl = 'http://localhost:8000';
 
   static String formatDate(String dateTime) {
     DateTime parsedDate = DateTime.parse(dateTime);

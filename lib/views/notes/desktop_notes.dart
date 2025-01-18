@@ -233,7 +233,7 @@ class _DesktopNotesState extends State<DesktopNotes> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: !context
+                    children: context
                             .watch<TogglesProvider>()
                             .showUploadTypeDropdown
                         ? [

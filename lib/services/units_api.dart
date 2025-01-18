@@ -52,6 +52,8 @@ class UnitsApi {
           'Authorization': 'Bearer $token',
         },
       );
+      print(jsonDecode(getUserUnitsRequest.body));
+
       return jsonDecode(getUserUnitsRequest.body);
     } catch (e) {
       throw Exception('Failed to get user units $e');

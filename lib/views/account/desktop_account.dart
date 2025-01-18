@@ -57,6 +57,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
 
+    print(user);
+
     return Scaffold(
         body: Flex(
             crossAxisAlignment: CrossAxisAlignment.start,
