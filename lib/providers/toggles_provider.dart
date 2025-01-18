@@ -14,6 +14,8 @@ class TogglesProvider extends ChangeNotifier {
   bool isLoading = false;
   bool accountView = true;
   bool membershipView = false;
+  bool isHovered = false;
+  bool isRightClicked = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -57,6 +59,16 @@ class TogglesProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future toggleIsHovered() async {
+    isHovered = !isHovered;
+    notifyListeners();
+  }
+
+  Future<void> toggleIsRightClicked() async {
+    isRightClicked = !isRightClicked;
+    notifyListeners();
   }
 
   void toggleSearchBar() {

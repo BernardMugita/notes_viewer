@@ -100,4 +100,68 @@ class UnitsProvider extends ChangeNotifier {
 
     return {};
   }
+
+  Future<Map<String, dynamic>> editUserUnit(String token, Map newUnit) async {
+    isLoading = true;
+    error = false;
+    success = false;
+    notifyListeners();
+
+    try {
+      final editUnitRequest =
+          await unitsApi.editUserUnits(token: token, newUnit: newUnit);
+
+      if (editUnitRequest['status'] == 'success') {
+        isLoading = false;
+        success = true;
+        units = editUnitRequest['units'];
+        message = "Unit edited successfully";
+        notifyListeners();
+      } else {
+        error = true;
+        isLoading = false;
+        message = "Failed to edit unit";
+        notifyListeners();
+      }
+    } catch (e) {
+      error = true;
+      isLoading = false;
+      message = "Failed to edit unit $e";
+      notifyListeners();
+    }
+
+    return {};
+  }
+
+  Future<Map<String, dynamic>> deleteUnit(String token, String unitId) async {
+    isLoading = true;
+    error = false;
+    success = false;
+    notifyListeners();
+
+    try {
+      final deleteRequest =
+          await unitsApi.deleteUnit(token: token, unitId: unitId);
+
+      if (deleteRequest['status'] == 'success') {
+        isLoading = false;
+        success = true;
+        units = deleteRequest['units'];
+        message = "Unit deleted successfully";
+        notifyListeners();
+      } else {
+        error = true;
+        isLoading = false;
+        message = "Failed to delete unit";
+        notifyListeners();
+      }
+    } catch (e) {
+      error = true;
+      isLoading = false;
+      message = "Failed to delete unit $e";
+      notifyListeners();
+    }
+
+    return {};
+  }
 }

@@ -57,4 +57,52 @@ class UnitsApi {
       throw Exception('Failed to get user units $e');
     }
   }
+
+  Future<Map<String, dynamic>> editUserUnits(
+      {required String token, required Map newUnit}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final editUserUnitsRequest = await http.post(
+        Uri.parse('$url/units/edit_unit'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'name': newUnit['name'],
+          'img': newUnit['img'],
+          'code': newUnit['code'],
+          'course_id': newUnit['courseId'],
+          'students': newUnit['students'],
+          'assignments': newUnit['assignments'],
+          'semester': newUnit['semester'],
+        }),
+      );
+      return jsonDecode(editUserUnitsRequest.body);
+    } catch (e) {
+      throw Exception('Failed to get user units $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteUnit(
+      {required String token, required String unitId}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final getUserUnitsRequest = await http.post(
+        Uri.parse('$url/units/delete_unit'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'unit_id': unitId,
+        }),
+      );
+      return jsonDecode(getUserUnitsRequest.body);
+    } catch (e) {
+      throw Exception('Failed to get user units $e');
+    }
+  }
 }
