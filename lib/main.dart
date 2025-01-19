@@ -4,6 +4,7 @@ import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/uploads_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/router/router.dart'; // Make sure to import this
 import 'package:note_viewer/views/splash/splash_screen.dart';
@@ -18,6 +19,7 @@ void main() async {
   final coursesProvider = CoursesProvider();
   final unitsProvider = UnitsProvider();
   final userProvider = UserProvider();
+  final uploadsProvider = UploadsProvider();
 
   // Load initial state for providers
   await authProvider.checkLogin();
@@ -31,7 +33,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => coursesProvider),
         ChangeNotifierProvider(create: (_) => unitsProvider),
         ChangeNotifierProvider(create: (_) => userProvider),
-        ChangeNotifierProvider(create: (_) => lessonsProvider)
+        ChangeNotifierProvider(create: (_) => lessonsProvider),
+        ChangeNotifierProvider(create: (_) => uploadsProvider)
       ],
       child: MyApp(
         authProvider: authProvider,
@@ -40,6 +43,7 @@ void main() async {
         coursesProvider: coursesProvider,
         unitsProvider: unitsProvider,
         userProvider: userProvider,
+        uploadsProvider: uploadsProvider,
       ),
     ),
   );
@@ -52,6 +56,7 @@ class MyApp extends StatelessWidget {
   final CoursesProvider coursesProvider;
   final UnitsProvider unitsProvider;
   final UserProvider userProvider;
+  final UploadsProvider uploadsProvider;
 
   const MyApp({
     super.key,
@@ -61,6 +66,7 @@ class MyApp extends StatelessWidget {
     required this.coursesProvider,
     required this.unitsProvider,
     required this.userProvider,
+    required this.uploadsProvider,
   });
 
   @override

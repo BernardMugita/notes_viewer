@@ -61,7 +61,6 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
       if (token != null) {
         tokenRef = token;
         context.read<CoursesProvider>().fetchCourses(token: token);
-        context.read<UnitsProvider>().fetchUserUnits(token);
 
         nameController.text = widget.unit['name'];
         codeController.text = widget.unit['code'];

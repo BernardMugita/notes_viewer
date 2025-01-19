@@ -13,6 +13,7 @@ import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/uploads_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 
 void main() {
@@ -24,6 +25,7 @@ void main() {
     final unitsProvider = UnitsProvider();
     final userProvider = UserProvider();
     final lessonsProvider = LessonsProvider();
+    final uploadsProvider = UploadsProvider();
 
     // Initialize providers with default values if necessary
     await authProvider.checkLogin();
@@ -37,6 +39,7 @@ void main() {
       unitsProvider: unitsProvider,
       userProvider: userProvider,
       lessonsProvider: lessonsProvider,
+      uploadsProvider: uploadsProvider,
     ));
 
     // Verify that our counter starts at 0

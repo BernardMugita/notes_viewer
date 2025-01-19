@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -10,11 +13,19 @@ class AppUtils {
   static const Color $mainGreen = Color(0xFF88FF00);
   static const Color $mainBlueAccent = Color(0xFFf9f9ff);
 
-  static const String $baseUrl = 'http://localhost:8000';
+  static const String $baseUrl = 'https://21d6-41-90-172-15.ngrok-free.app';
 
   static String formatDate(String dateTime) {
     DateTime parsedDate = DateTime.parse(dateTime);
     return DateFormat('d MMMM y')
         .format(parsedDate); // Formats as '20th March 2025'
+  }
+
+  static Future<String> getTemporaryFilePath(Uint8List fileBytes) async {
+    final tempDir = Directory.systemTemp;
+    final tempFile = File(
+        '${tempDir.path}/tempfile_${DateTime.now().millisecondsSinceEpoch}.tmp');
+    await tempFile.writeAsBytes(fileBytes);
+    return tempFile.path;
   }
 }

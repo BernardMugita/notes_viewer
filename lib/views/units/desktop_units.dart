@@ -448,6 +448,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                         [],
                                         semesterController.text);
                                     if (unitProvider.success) {
+                                      unitProvider.fetchUserUnits(token);
                                       Future.delayed(const Duration(seconds: 2),
                                           () {
                                         Navigator.of(dialogContext).pop();
