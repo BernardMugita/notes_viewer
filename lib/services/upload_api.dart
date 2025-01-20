@@ -20,8 +20,6 @@ class UploadApi {
         'Authorization': 'Bearer $token',
       });
 
-      print("Authorized");
-
       // Check if we are on web or non-web platforms
       if (file.bytes != null) {
         // Web - use file.bytes for uploading
@@ -42,12 +40,8 @@ class UploadApi {
       // Add form data
       request.fields['form'] = form;
 
-      print(request);
-
       // Send the request
       final response = await request.send();
-
-      print(response);
 
       // Get the response body as a string
       final responseBody = await response.stream.bytesToString();

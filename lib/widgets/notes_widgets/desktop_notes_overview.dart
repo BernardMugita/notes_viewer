@@ -70,7 +70,8 @@ class _DesktopNotesOverviewState extends State<DesktopNotesOverview> {
                   final routeName = '/units/notes/${lesson['name']}';
                   context.go(routeName, extra: {
                     'lesson_id': lesson['id'],
-                    'unit_id': lesson['unit_id']
+                    'unit_id': lesson['unit_id'],
+                    'lesson_name': lesson['name'],
                   });
                 },
                 child: Row(

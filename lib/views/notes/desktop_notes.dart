@@ -183,8 +183,9 @@ class _DesktopNotesState extends State<DesktopNotes> {
                             child: Column(
                               children: [
                                 if (context
-                                    .watch<TogglesProvider>()
-                                    .isLessonSelected)
+                                        .watch<TogglesProvider>()
+                                        .isLessonSelected &&
+                                    selectedLesson.isNotEmpty)
                                   DesktopNotesOverview(
                                     lesson: selectedLesson,
                                   )

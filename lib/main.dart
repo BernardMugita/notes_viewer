@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
@@ -9,6 +10,20 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/router/router.dart'; // Make sure to import this
 import 'package:note_viewer/views/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> _requestPermissions() async {
+  if (kIsWeb) {
+    return;
+  }
+
+  // For mobile platforms, request storage permission
+  final status = await Permission.storage.request();
+  if (!status.isGranted) {
+    // Handle the case where the permission is denied
+    print("Permission denied");
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +35,9 @@ void main() async {
   final unitsProvider = UnitsProvider();
   final userProvider = UserProvider();
   final uploadsProvider = UploadsProvider();
+
+  // Request permissions (only on mobile platforms)
+  await _requestPermissions();
 
   // Load initial state for providers
   await authProvider.checkLogin();

@@ -18,6 +18,7 @@ class TogglesProvider extends ChangeNotifier {
   bool isRightClicked = false;
   bool isLessonSelected = false;
   bool showUploadTypeDropdown = false;
+  bool showDocumentMeta = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -54,6 +55,11 @@ class TogglesProvider extends ChangeNotifier {
 
   void toggleUploadTypeDropDown() async {
     showUploadTypeDropdown = !showUploadTypeDropdown;
+    notifyListeners();
+  }
+
+  void toggleDocumentMeta() async {
+    showDocumentMeta = !showDocumentMeta;
     notifyListeners();
   }
 

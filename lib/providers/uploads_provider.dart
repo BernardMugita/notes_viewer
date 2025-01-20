@@ -18,8 +18,6 @@ class UploadsProvider extends ChangeNotifier {
     message = '';
     notifyListeners();
 
-    print("Uploading");
-
     try {
       final uploadRequest = await uploadApi.uploadFile(token, file, form);
 

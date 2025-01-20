@@ -19,9 +19,10 @@ class _DesktopFileViewerState extends State<DesktopFileViewer> {
   Widget build(BuildContext context) {
     final fileExtension = widget.fileName.split('.')[1];
 
-    return fileExtension == 'mp4'
+    return fileExtension == 'mp4' || fileExtension == 'webm'
         ? DesktopVideoViewer(
             fileName: widget.fileName,
+            uploadType: 'recordings',
           )
         : fileExtension == 'docx' ||
                 fileExtension == 'xlxs' ||
@@ -29,6 +30,11 @@ class _DesktopFileViewerState extends State<DesktopFileViewer> {
                 fileExtension == 'ppt'
             ? DesktopDocumentViewer(
                 fileName: widget.fileName,
+                uploadType: fileExtension == 'docx' ||
+                        fileExtension == 'xlxs' ||
+                        fileExtension == 'pdf'
+                    ? 'notes'
+                    : 'slides',
               )
             : Container(
                 decoration: BoxDecoration(

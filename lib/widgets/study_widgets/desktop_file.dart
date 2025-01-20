@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:provider/provider.dart';
 
 class DesktopFile extends StatefulWidget {
   final String fileName;
+  final String lesson;
   final IconData? icon;
 
-  const DesktopFile({super.key, required this.fileName, this.icon});
+  const DesktopFile(
+      {super.key,
+      required this.fileName,
+      required this.lesson,
+      required this.icon});
 
   @override
   State<DesktopFile> createState() => _DesktopFileState();
@@ -17,12 +25,16 @@ class _DesktopFileState extends State<DesktopFile> {
   Widget build(BuildContext context) {
     final fileExtension = widget.fileName.split('.')[1];
 
+    String uploadType = fileExtension == 'pdf' ? 'notes' : 'slides';
+
+    final String url = AppUtils.$baseUrl;
+    final Map lesson = context.read<LessonsProvider>().lesson;
+
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          '/units/study/Introduction to Anatomy/${widget.fileName}',
-        );
+        context.go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
+          "path": "$url/${lesson['path']}/$uploadType/${widget.fileName}"
+        });
       },
       child: Column(
         children: [

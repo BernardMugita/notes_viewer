@@ -29,6 +29,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
   String tokenRef = '';
   String lessonIdRef = '';
   String unitIdRef = '';
+  String lessonNameRef = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
@@ -80,15 +81,20 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
       final String token = authProvider.token ?? '';
       final state = GoRouter.of(context).state;
+
       final lessonId =
           state!.extra != null ? (state.extra as Map)['lesson_id'] : null;
 
       final unitId =
           state.extra != null ? (state.extra as Map)['unit_id'] : null;
 
+      final lessonName =
+          state.extra != null ? (state.extra as Map)['lesson_name'] : null;
+
       if (lessonId.isNotEmpty) {
         lessonIdRef = lessonId;
         unitIdRef = unitId;
+        lessonNameRef = lessonName;
         lessonsProvider.getLesson(token, lessonId);
       }
 
@@ -107,7 +113,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
     List recordings = [];
     List assignments = [];
 
-    // Ensure lesson and lesson['files'] are not null before accessing
     if (lesson.isNotEmpty && lesson['files'] != null) {
       setState(() {
         notes = lesson['files']['notes'] ?? [];
@@ -116,7 +121,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
         assignments = lesson['files']['assignments'] ?? [];
       });
     } else {
-      // Handle case when lesson or lesson['files'] is null
       print('Lesson or files are null');
     }
 
@@ -254,6 +258,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     ...notes.map((note) {
                                       return DesktopFile(
                                         fileName: note,
+                                        lesson: lessonNameRef,
                                         icon:
                                             FluentIcons.document_pdf_24_regular,
                                       );
@@ -263,6 +268,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     ...slides.map((slide) {
                                       return DesktopFile(
                                         fileName: slide,
+                                        lesson: lessonNameRef,
                                         icon:
                                             FluentIcons.slide_layout_24_regular,
                                       );
@@ -272,6 +278,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     ...recordings.map((recording) {
                                       return DesktopRecording(
                                         fileName: recording,
+                                        lesson: lessonNameRef,
                                         icon: FluentIcons.play_24_filled,
                                       );
                                     }).toList(), // Convert the iterable to a List<Widget>
@@ -280,6 +287,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     ...assignments.map((assignment) {
                                       return DesktopRecording(
                                         fileName: assignment,
+                                        lesson: lessonNameRef,
                                         icon: FluentIcons.play_24_filled,
                                       );
                                     }).toList(), // Convert the iterable to a List<Widget>
@@ -517,8 +525,13 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                       print(form);
                                       print(file);
 
-                                      uploadsProvider.uploadNewFile(tokenRef,
-                                          selectedFile!, form.toString());
+                                      uploadsProvider.uploadNewFile(
+                                          tokenRef,
+                                          selectedFile!,
+                                          form
+                                              .toString()
+                                              .replaceAll(']', '')
+                                              .replaceAll('[', ''));
 
                                       if (uploadsProvider.success) {
                                         context

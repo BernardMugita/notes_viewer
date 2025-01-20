@@ -1,14 +1,20 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class DesktopVideoViewer extends StatefulWidget {
   final String fileName;
+  final String uploadType;
 
   const DesktopVideoViewer({
     super.key,
     required this.fileName,
+    required this.uploadType,
   });
 
   @override
@@ -16,13 +22,39 @@ class DesktopVideoViewer extends StatefulWidget {
 }
 
 class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+  final String url = AppUtils.$baseUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    final Map lesson = context.read<LessonsProvider>().lesson;
+    final String filePath =
+        '$url/${lesson['path']}/${widget.uploadType}/${widget.fileName}';
+
+    _controller = VideoPlayerController.networkUrl(
+        Uri.parse(filePath.replaceAll(" ", "%20")));
+
+    _initializeVideoPlayerFuture = _controller.initialize().catchError((e) {
+      print("Error initializing video player: $e");
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
           color: AppUtils.$mainBlack, borderRadius: BorderRadius.circular(5)),
-      height: MediaQuery.of(context).size.height / 1.25,
+      height: MediaQuery.of(context).size.height * 0.95,
       child: Column(
         children: [
           Row(
@@ -59,16 +91,58 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
           ),
           Gap(5),
           Expanded(
-              child: CircleAvatar(
-            radius: 50,
-            child: GestureDetector(
-              onTap: () {},
-              child: Icon(
-                FluentIcons.play_24_regular,
-                size: 30,
-              ),
+            child: FutureBuilder(
+              future: _initializeVideoPlayerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        "Error loading video.",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                  return Stack(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      ),
+                      Positioned(
+                          child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (_controller.value.isPlaying) {
+                              _controller.pause();
+                            } else {
+                              _controller.play();
+                            }
+                          });
+                        },
+                        child: Icon(
+                          FluentIcons.play_24_regular,
+                          size: 30,
+                        ),
+                      ))
+                    ],
+                  );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(
+                    child: LoadingAnimationWidget.newtonCradle(
+                      color: AppUtils.$mainBlue,
+                      size: 100,
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text("Failed to load video"),
+                  );
+                }
+              },
             ),
-          )),
+          ),
           Gap(5),
           Column(
             children: [
@@ -87,9 +161,19 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          setState(() {
+                            if (_controller.value.isPlaying) {
+                              _controller.pause();
+                            } else {
+                              _controller.play();
+                            }
+                          });
+                        },
                         child: Icon(
-                          FluentIcons.play_24_regular,
+                          _controller.value.isPlaying
+                              ? FluentIcons.pause_24_regular
+                              : FluentIcons.play_24_regular,
                           color: AppUtils.$mainWhite,
                           size: 30,
                         ),
