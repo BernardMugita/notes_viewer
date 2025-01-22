@@ -15,7 +15,7 @@ class UserApi {
           'Authorization': 'Bearer $token',
         },
       );
-      
+
       return jsonDecode(getUserRequest.body);
     } catch (e) {
       throw Exception('Failed to get user details $e');
@@ -39,7 +39,7 @@ class UserApi {
           body: jsonEncode(<String, String>{
             'username': username,
             'email': email,
-            'image': image,
+            'img': image,
             'phone': phone,
           }));
 
