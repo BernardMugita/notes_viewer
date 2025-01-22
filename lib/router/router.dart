@@ -11,6 +11,7 @@ import 'package:note_viewer/views/auth/course/course_view.dart';
 import 'package:note_viewer/views/auth/login/login_view.dart';
 import 'package:note_viewer/views/dashboard/dashboard_view.dart';
 import 'package:note_viewer/views/notes/notes_view.dart';
+import 'package:note_viewer/views/settings/settings_view.dart';
 import 'package:note_viewer/views/splash/splash_screen.dart';
 import 'package:note_viewer/views/study/study_view.dart';
 import 'package:note_viewer/views/units/units_view.dart';
@@ -84,6 +85,10 @@ GoRouter createRouter(
       GoRoute(
         path: '/account',
         builder: (context, state) => AccountView(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => SettingsView(),
       )
     ],
   );
