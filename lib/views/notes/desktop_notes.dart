@@ -1,12 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -17,7 +15,10 @@ import 'package:note_viewer/widgets/notes_widgets/desktop_notes_overview.dart';
 import 'package:provider/provider.dart';
 
 class DesktopNotes extends StatefulWidget {
-  const DesktopNotes({super.key});
+  final String tokenRef;
+  final String unitId;
+
+  const DesktopNotes({super.key, required this.tokenRef, required this.unitId});
 
   @override
   State<DesktopNotes> createState() => _DesktopNotesState();
@@ -29,40 +30,14 @@ class _DesktopNotesState extends State<DesktopNotes> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController uploadTypeController = TextEditingController();
 
-  String tokenRef = '';
-  String unitId = '';
-
   Map selectedLesson = {};
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Retrieve token and unitId from providers
-      final authProvider = context.read<AuthProvider>();
-      final unitsProvider = context.read<UnitsProvider>();
-      final lessonsProvider = context.read<LessonsProvider>();
-
-      final String token = authProvider.token ?? '';
-      final String id = unitsProvider.unitId;
-
-      if (id.isNotEmpty) {
-        unitId = id;
-        print('it is $unitId');
-        lessonsProvider.getAllLesson(token, unitId);
-      }
-
-      if (token.isNotEmpty) {
-        tokenRef = token;
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final lessons = context.watch<LessonsProvider>().lessons;
+    final user = context.watch<UserProvider>().user;
 
     return Scaffold(
       body: Flex(
@@ -94,39 +69,40 @@ class _DesktopNotesState extends State<DesktopNotes> {
                         ),
                       ),
                       const Spacer(),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          padding:
-                              WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(AppUtils.$mainBlue),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          _showDialog(context);
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              "Add Lesson",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppUtils.$mainWhite,
+                      if (user.isNotEmpty && user['role'] == 'admin')
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: WidgetStatePropertyAll(
+                                const EdgeInsets.all(20)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            const Gap(5),
-                            Icon(
-                              FluentIcons.book_add_24_regular,
-                              size: 16,
-                              color: AppUtils.$mainWhite,
-                            ),
-                          ],
+                          ),
+                          onPressed: () {
+                            _showDialog(context);
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                "Add Lesson",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppUtils.$mainWhite,
+                                ),
+                              ),
+                              const Gap(5),
+                              Icon(
+                                FluentIcons.book_add_24_regular,
+                                size: 16,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   const Gap(10),
@@ -213,8 +189,6 @@ class _DesktopNotesState extends State<DesktopNotes> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        print(unitId);
-
         return Consumer<LessonsProvider>(
             builder: (context, lessonsProvider, _) {
           return Stack(
@@ -436,14 +410,13 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                       ? null
                                       : () {
                                           lessonProvider.createNewLesson(
-                                              tokenRef,
+                                              widget.tokenRef,
                                               nameController.text,
-                                              unitId);
+                                              widget.unitId);
                                           if (lessonProvider.success) {
-                                            Future.delayed(
-                                                const Duration(seconds: 2), () {
-                                              context.pop();
-                                            });
+                                            lessonProvider.getAllLesson(
+                                                widget.tokenRef, widget.unitId);
+                                            Navigator.pop(context);
                                           }
                                         },
                                   style: ButtonStyle(
@@ -472,7 +445,7 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                             strokeWidth: 2.5,
                                           ),
                                         )
-                                      : const Text('Continue',
+                                      : const Text('Add Lesson',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: AppUtils.$mainWhite)),
