@@ -6,6 +6,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -50,6 +51,8 @@ class _DesktopUnitsState extends State<DesktopUnits> {
     final unitsProvider = context.watch<UnitsProvider>();
     final units = unitsProvider.units;
 
+    final user = context.watch<UserProvider>().user;
+
     return Scaffold(
       body: Flex(
         direction: Axis.horizontal,
@@ -62,72 +65,73 @@ class _DesktopUnitsState extends State<DesktopUnits> {
             flex: 6,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        FluentIcons.class_24_regular,
+              child: context.watch<UnitsProvider>().isLoading
+                  ? Center(
+                      child: LoadingAnimationWidget.newtonCradle(
                         color: AppUtils.$mainBlue,
+                        size: 100,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Units",
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: AppUtils.$mainBlue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Spacer(),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          padding:
-                              const WidgetStatePropertyAll(EdgeInsets.all(20)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(AppUtils.$mainBlue),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => _showDialog(context,
-                            courses: courses, token: tokenRef),
-                        child: Row(
+                    )
+                  : Column(
+                      children: [
+                        Row(
                           children: [
-                            const Text(
-                              "Add units",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Gap(5),
                             Icon(
                               FluentIcons.class_24_regular,
-                              size: 16,
-                              color: AppUtils.$mainWhite,
+                              color: AppUtils.$mainBlue,
                             ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Units",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: AppUtils.$mainBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (user.isNotEmpty && user['role'] == 'admin')
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(
+                                      EdgeInsets.all(20)),
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      AppUtils.$mainBlue),
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () => _showDialog(context,
+                                    courses: courses, token: tokenRef),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "Add units",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Gap(5),
+                                    Icon(
+                                      FluentIcons.class_24_regular,
+                                      size: 16,
+                                      color: AppUtils.$mainWhite,
+                                    ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const Gap(10),
-                  const Divider(
-                    color: Color(0xFFCECECE),
-                  ),
-                  const Gap(20),
-                  Expanded(
-                    child: context.watch<UnitsProvider>().isLoading
-                        ? Center(
-                            child: LoadingAnimationWidget.newtonCradle(
-                              color: AppUtils.$mainBlue,
-                              size: 100,
-                            ),
-                          )
-                        : SingleChildScrollView(
+                        const Gap(10),
+                        const Divider(
+                          color: Color(0xFFCECECE),
+                        ),
+                        const Gap(20),
+                        Expanded(
+                          child: SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 30, right: 30, top: 10),
@@ -139,9 +143,9 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                               ),
                             ),
                           ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ],
@@ -166,7 +170,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                   padding: const EdgeInsets.all(20),
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: togglesProvider.showCoursesDropDown
-                      ? MediaQuery.of(context).size.height * 0.6
+                      ? MediaQuery.of(context).size.height * 0.65
                       : togglesProvider.showSemesterDropDown
                           ? MediaQuery.of(context).size.height * 0.7
                           : MediaQuery.of(context).size.height * 0.45,
