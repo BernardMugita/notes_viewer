@@ -3,11 +3,26 @@ import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/tablet_card.dart';
 
-class TabletCardRow extends StatelessWidget {
-  const TabletCardRow({super.key});
+class TabletCardRow extends StatefulWidget {
+  final Map user;
+  final double users;
+  final Map materialCount;
+
+  const TabletCardRow(
+      {super.key,
+      required this.user,
+      required this.users,
+      required this.materialCount});
 
   @override
+  State<TabletCardRow> createState() => _TabletCardRowState();
+}
+
+class _TabletCardRowState extends State<TabletCardRow> {
+  @override
   Widget build(BuildContext context) {
+    final user = widget.user;
+
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -22,11 +37,18 @@ class TabletCardRow extends StatelessWidget {
               spacing: 10,
               runSpacing: 10,
               children: [
-                TabletCard(),
-                TabletCard(),
-                TabletCard(),
-                TabletCard(),
-                TabletCard(),
+                if (user.isNotEmpty && user['role'] == 'admin')
+                  TabletCard(
+                    users: widget.users,
+                    material: "",
+                    count: 0,
+                  ),
+                for (var material in widget.materialCount.entries)
+                  TabletCard(
+                    users: 0,
+                    material: material.key,
+                    count: widget.materialCount[material.key],
+                  )
               ],
             ),
           ),

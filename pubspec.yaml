@@ -58,6 +58,8 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   path_provider: ^2.1.5
   flutter_cached_pdfview: ^0.4.3
+  video_player_web: ^2.3.3
+  chewie: ^1.9.2
 
 dev_dependencies:
   flutter_test:

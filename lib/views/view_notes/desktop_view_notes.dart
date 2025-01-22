@@ -20,14 +20,6 @@ class DesktopViewNotes extends StatelessWidget {
     final lessonName = args?['lesson'] as String? ?? 'Lesson';
 
     return Scaffold(
-      // appBar: AppBar(
-      //   leading: GestureDetector(
-      //     onTap: () {
-      //       GoRouter.of(context).pop();
-      //     },
-      //     child: const Icon(FluentIcons.arrow_left_24_regular),
-      //   ),
-      // ),
       body: SingleChildScrollView(
         padding:
             const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),

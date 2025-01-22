@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
@@ -64,65 +65,76 @@ class _MobileUnitsState extends State<MobileUnits> {
       drawer: const ResponsiveNav(),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Icon(
-                //   FluentIcons.class_24_regular,
-                //   color: AppUtils.$mainBlue,
-                // ),
-                Text(
-                  "Units",
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: unitsProvider.isLoading
+            ? SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: LoadingAnimationWidget.newtonCradle(
+                  color: AppUtils.$mainBlue,
+                  size: 100,
                 ),
-                Spacer(),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
-                      backgroundColor:
-                          WidgetStatePropertyAll(AppUtils.$mainBlue),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)))),
-                  onPressed: () {
-                    _showDialog(context, courses: courses, token: tokenRef);
-                  },
-                  child: Row(
+              )
+            : Column(
+                children: [
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Add units",
-                          style: TextStyle(
-                              fontSize: 16, color: AppUtils.$mainWhite)),
-                      Gap(5),
-                      Icon(FluentIcons.class_24_regular,
-                          size: 16, color: AppUtils.$mainWhite),
+                      // Icon(
+                      //   FluentIcons.class_24_regular,
+                      //   color: AppUtils.$mainBlue,
+                      // ),
+                      Text(
+                        "Units",
+                        style: TextStyle(
+                          fontSize: 30,
+                          color: AppUtils.$mainBlue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                            shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)))),
+                        onPressed: () {
+                          _showDialog(context,
+                              courses: courses, token: tokenRef);
+                        },
+                        child: Row(
+                          children: [
+                            Text("Add units",
+                                style: TextStyle(
+                                    fontSize: 16, color: AppUtils.$mainWhite)),
+                            Gap(5),
+                            Icon(FluentIcons.class_24_regular,
+                                size: 16, color: AppUtils.$mainWhite),
+                          ],
+                        ),
+                      )
                     ],
                   ),
-                )
-              ],
-            ),
-            const Gap(10),
-            const Divider(
-              color: Color(0xFFCECECE),
-            ),
-            const Gap(20),
-            // Make the scrollable content expand dynamically
-            Expanded(
-              child: SingleChildScrollView(
-                // clipBehavior: Clip.none,
-                child: Column(
-                  children: [
-                    MobileSemesterHolder(units: units),
-                  ],
-                ),
+                  const Gap(10),
+                  const Divider(
+                    color: Color(0xFFCECECE),
+                  ),
+                  const Gap(20),
+                  // Make the scrollable content expand dynamically
+                  Expanded(
+                    child: SingleChildScrollView(
+                      // clipBehavior: Clip.none,
+                      child: Column(
+                        children: [
+                          MobileSemesterHolder(units: units),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

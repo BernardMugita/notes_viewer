@@ -57,8 +57,6 @@ class _DesktopAccountState extends State<DesktopAccount> {
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
 
-    print(user);
-
     return Scaffold(
         body: Flex(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,22 +242,30 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                 title: 'Username',
                                                 value: isLoading
                                                     ? 'username'
-                                                    : user['username']),
+                                                    : user.isNotEmpty
+                                                        ? user['username']
+                                                        : 'Details not found'),
                                             _buildAccountDetails(context,
                                                 title: 'Email',
                                                 value: isLoading
                                                     ? 'email'
-                                                    : user['email']),
+                                                    : user.isNotEmpty
+                                                        ? user['email']
+                                                        : 'Details not found'),
                                             _buildAccountDetails(context,
                                                 title: 'Phone',
                                                 value: isLoading
                                                     ? 'phone'
-                                                    : user['phone']),
+                                                    : user.isNotEmpty
+                                                        ? user['phone']
+                                                        : 'Details not found'),
                                             _buildAccountDetails(context,
                                                 title: 'Registration number',
                                                 value: isLoading
                                                     ? 'reg_no'
-                                                    : user['reg_no']),
+                                                    : user.isNotEmpty
+                                                        ? user['reg_no']
+                                                        : 'Details not found'),
                                             _buildAccountDetails(context,
                                                 title: 'Course',
                                                 value:
@@ -268,8 +274,10 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                 title: 'Date Joined',
                                                 value: isLoading
                                                     ? '0/0/2025'
-                                                    : AppUtils.formatDate(
-                                                        user['created_at'])),
+                                                    : user.isNotEmpty
+                                                        ? AppUtils.formatDate(
+                                                            user['created_at'])
+                                                        : 'Details not found'),
                                             Spacer(),
                                             Text("Account status:"),
                                             Gap(5),

@@ -5,10 +5,12 @@ import 'package:note_viewer/utils/app_utils.dart';
 
 class TabletVideoViewer extends StatefulWidget {
   final String fileName;
+  final String uploadType;
 
   const TabletVideoViewer({
     super.key,
     required this.fileName,
+    required this.uploadType,
   });
 
   @override

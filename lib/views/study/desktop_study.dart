@@ -522,9 +522,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                         uploadTypeController.text
                                       ];
 
-                                      print(form);
-                                      print(file);
-
                                       uploadsProvider.uploadNewFile(
                                           tokenRef,
                                           selectedFile!,
@@ -537,10 +534,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                         context
                                             .read<LessonsProvider>()
                                             .getLesson(tokenRef, lessonIdRef);
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          context.pop();
-                                        });
+                                        Navigator.pop(context);
                                       }
                                     },
                               style: ButtonStyle(

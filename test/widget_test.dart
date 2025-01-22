@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:note_viewer/main.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
+import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
@@ -26,6 +27,7 @@ void main() {
     final userProvider = UserProvider();
     final lessonsProvider = LessonsProvider();
     final uploadsProvider = UploadsProvider();
+    final dashboardProvider = DashboardProvider();
 
     // Initialize providers with default values if necessary
     await authProvider.checkLogin();
@@ -40,6 +42,7 @@ void main() {
       userProvider: userProvider,
       lessonsProvider: lessonsProvider,
       uploadsProvider: uploadsProvider,
+      dashboardProvider: dashboardProvider,
     ));
 
     // Verify that our counter starts at 0

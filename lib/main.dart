@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
@@ -35,6 +36,7 @@ void main() async {
   final unitsProvider = UnitsProvider();
   final userProvider = UserProvider();
   final uploadsProvider = UploadsProvider();
+  final dashboardProvider = DashboardProvider();
 
   // Request permissions (only on mobile platforms)
   await _requestPermissions();
@@ -52,7 +54,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => unitsProvider),
         ChangeNotifierProvider(create: (_) => userProvider),
         ChangeNotifierProvider(create: (_) => lessonsProvider),
-        ChangeNotifierProvider(create: (_) => uploadsProvider)
+        ChangeNotifierProvider(create: (_) => uploadsProvider),
+        ChangeNotifierProvider(create: (_) => dashboardProvider),
       ],
       child: MyApp(
         authProvider: authProvider,
@@ -62,6 +65,7 @@ void main() async {
         unitsProvider: unitsProvider,
         userProvider: userProvider,
         uploadsProvider: uploadsProvider,
+        dashboardProvider: dashboardProvider,
       ),
     ),
   );
@@ -75,6 +79,7 @@ class MyApp extends StatelessWidget {
   final UnitsProvider unitsProvider;
   final UserProvider userProvider;
   final UploadsProvider uploadsProvider;
+  final DashboardProvider dashboardProvider;
 
   const MyApp({
     super.key,
@@ -85,6 +90,7 @@ class MyApp extends StatelessWidget {
     required this.unitsProvider,
     required this.userProvider,
     required this.uploadsProvider,
+    required this.dashboardProvider,
   });
 
   @override
