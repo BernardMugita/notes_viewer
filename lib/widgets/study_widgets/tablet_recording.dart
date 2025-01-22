@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
 class TabletRecording extends StatefulWidget {
   final String fileName;
   final IconData? icon;
+  final String lesson;
 
   const TabletRecording({
     super.key,
     required this.fileName,
+    required this.lesson,
     this.icon,
   });
 
@@ -21,10 +24,7 @@ class _TabletRecordingState extends State<TabletRecording> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          '/units/study/Introduction to Anatomy/${widget.fileName}',
-        );
+        context.go('/units/notes/${widget.lesson}/${widget.fileName}');
       },
       child: Column(
         children: [

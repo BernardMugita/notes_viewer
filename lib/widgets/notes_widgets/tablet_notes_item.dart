@@ -3,11 +3,25 @@ import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/notes_widgets/tablet_notes_overview.dart';
 
-class TabletNotesItem extends StatelessWidget {
-  const TabletNotesItem({super.key});
+class TabletNotesItem extends StatefulWidget {
+  final Map lesson;
+  final Function onPressed;
+
+  const TabletNotesItem(
+      {super.key, required this.lesson, required this.onPressed});
 
   @override
+  State<TabletNotesItem> createState() => _TabletNotesItemState();
+}
+
+class _TabletNotesItemState extends State<TabletNotesItem> {
+  @override
   Widget build(BuildContext context) {
+    final lesson = widget.lesson;
+    final path = lesson['path'].toString();
+    final segments = path.split('/');
+    final lastSegment = segments.last;
+
     return Container(
         padding: const EdgeInsets.all(10),
         margin: const EdgeInsets.only(bottom: 5),
@@ -17,7 +31,7 @@ class TabletNotesItem extends StatelessWidget {
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           SizedBox(
             width: 50,
-            child: Text("UNITCODE001",
+            child: Text(lastSegment,
                 style: TextStyle(
                     fontSize: 14,
                     overflow: TextOverflow.ellipsis,
@@ -25,11 +39,12 @@ class TabletNotesItem extends StatelessWidget {
                     fontWeight: FontWeight.bold)),
           ),
           Gap(10),
-          Text("Introduction to Anatomy", style: TextStyle(fontSize: 14)),
-          Spacer(),
+          Expanded(child: Text(lesson['name'], style: TextStyle(fontSize: 14))),
+          // Spacer(),
           TextButton(
             onPressed: () {
               _showDialog(context);
+              widget.onPressed(lesson);
             },
             style: ButtonStyle(
                 shape: WidgetStatePropertyAll(RoundedRectangleBorder(
@@ -48,7 +63,9 @@ class TabletNotesItem extends StatelessWidget {
             content: SizedBox(
               width: MediaQuery.of(context).size.height * 0.75,
               height: MediaQuery.of(context).size.height * 0.35,
-              child: TabletNotesOverview(),
+              child: TabletNotesOverview(
+                lesson: widget.lesson,
+              ),
             ),
           );
         });

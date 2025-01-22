@@ -22,9 +22,9 @@ class DesktopVideoViewer extends StatefulWidget {
 }
 
 class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
   final String url = AppUtils.$baseUrl;
+
+  late VideoPlayerController videoPlayerController;
 
   @override
   void initState() {
@@ -33,17 +33,19 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
     final String filePath =
         '$url/${lesson['path']}/${widget.uploadType}/${widget.fileName}';
 
-    _controller = VideoPlayerController.networkUrl(
+    videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(filePath.replaceAll(" ", "%20")));
 
-    _initializeVideoPlayerFuture = _controller.initialize().catchError((e) {
+    videoPlayerController.initialize().then((_) {
+      setState(() {});
+    }).catchError((e) {
       print("Error initializing video player: $e");
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    videoPlayerController.dispose();
 
     super.dispose();
   }
@@ -91,58 +93,29 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
           ),
           Gap(5),
           Expanded(
-            child: FutureBuilder(
-              future: _initializeVideoPlayerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "Error loading video.",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }
-                  return Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(_controller),
-                      ),
-                      Positioned(
-                          child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (_controller.value.isPlaying) {
-                              _controller.pause();
-                            } else {
-                              _controller.play();
-                            }
-                          });
-                        },
-                        child: Icon(
-                          FluentIcons.play_24_regular,
-                          size: 30,
-                        ),
-                      ))
-                    ],
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(
-                    child: LoadingAnimationWidget.newtonCradle(
+              child: videoPlayerController.value.isBuffering
+                  ? LoadingAnimationWidget.newtonCradle(
                       color: AppUtils.$mainBlue,
                       size: 100,
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Text("Failed to load video"),
-                  );
-                }
-              },
-            ),
-          ),
+                    )
+                  : videoPlayerController.value.isCompleted
+                      ? Container(
+                          color: AppUtils.$mainRed,
+                          padding: const EdgeInsets.all(20),
+                          child: Center(
+                            child: Text(
+                              "Error loading video.",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        )
+                      : videoPlayerController.value.isInitialized
+                          ? AspectRatio(
+                              aspectRatio:
+                                  videoPlayerController.value.aspectRatio,
+                              child: VideoPlayer(videoPlayerController),
+                            )
+                          : Container()),
           Gap(5),
           Column(
             children: [
@@ -163,15 +136,15 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (_controller.value.isPlaying) {
-                              _controller.pause();
+                            if (videoPlayerController.value.isPlaying) {
+                              videoPlayerController.pause();
                             } else {
-                              _controller.play();
+                              videoPlayerController.play();
                             }
                           });
                         },
                         child: Icon(
-                          _controller.value.isPlaying
+                          videoPlayerController.value.isPlaying
                               ? FluentIcons.pause_24_regular
                               : FluentIcons.play_24_regular,
                           color: AppUtils.$mainWhite,

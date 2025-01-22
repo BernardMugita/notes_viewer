@@ -2,7 +2,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:provider/provider.dart';
 
 class TabletUnitHolder extends StatefulWidget {
   final Map unit;
@@ -20,6 +24,12 @@ class _TabletUnitHolderState extends State<TabletUnitHolder> {
 
     return GestureDetector(
       onTap: () {
+        final unitId = unit['id'];
+        context.read<UnitsProvider>().setUnitId(unitId);
+        String? token = context.read<AuthProvider>().token;
+        if (token != null) {
+          context.read<UserProvider>().fetchUserDetails(token);
+        }
         context.go('/units/notes');
       },
       child: Container(

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
 class TabletFile extends StatefulWidget {
   final String fileName;
   final IconData? icon;
+  final String lesson;
 
-  const TabletFile({super.key, required this.fileName, this.icon});
+  const TabletFile(
+      {super.key, required this.fileName, required this.lesson, this.icon});
 
   @override
   State<TabletFile> createState() => _TabletFileState();
@@ -19,10 +22,7 @@ class _TabletFileState extends State<TabletFile> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          '/units/study/Introduction to Anatomy/${widget.fileName}',
-        );
+        context.go('/units/notes/${widget.lesson}/${widget.fileName}');
       },
       child: Column(
         children: [

@@ -7,6 +7,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -48,8 +49,6 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
           selectedUnit = widget.unit;
         }
       });
-
-      print(selectedUnit);
     }
   }
 
@@ -73,7 +72,10 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<UserProvider>().user;
+
     final unit = widget.unit;
+
     final courses = context.watch<CoursesProvider>().courses;
 
     final isSelectedUnit = widget.unit['id'] == selectedUnit['id'];
@@ -138,144 +140,29 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                     ),
                     const Gap(5),
                     Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentIcons.book_24_regular,
-                              color: _isHovered
-                                  ? AppUtils.$mainWhite
-                                  : AppUtils.$mainBlue,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Text(
-                                "Notes",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: context
-                                            .watch<TogglesProvider>()
-                                            .isHovered
-                                        ? AppUtils.$mainWhite
-                                        : AppUtils.$mainBlue),
-                              ),
-                            ),
-                            Text(
-                              "2",
-                              style: TextStyle(
-                                color: _isHovered
-                                    ? AppUtils.$mainWhite
-                                    : AppUtils.$mainBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentIcons.slide_content_24_regular,
-                              color: _isHovered
-                                  ? AppUtils.$mainWhite
-                                  : AppUtils.$mainBlue,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Text(
-                                "Slides",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: context
-                                            .watch<TogglesProvider>()
-                                            .isHovered
-                                        ? AppUtils.$mainWhite
-                                        : AppUtils.$mainBlue),
-                              ),
-                            ),
-                            Text(
-                              "4",
-                              style: TextStyle(
-                                color: _isHovered
-                                    ? AppUtils.$mainWhite
-                                    : AppUtils.$mainBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentIcons.video_24_regular,
-                              color: _isHovered
-                                  ? AppUtils.$mainWhite
-                                  : AppUtils.$mainBlue,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Text(
-                                "Recordings",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: context
-                                            .watch<TogglesProvider>()
-                                            .isHovered
-                                        ? AppUtils.$mainWhite
-                                        : AppUtils.$mainBlue),
-                              ),
-                            ),
-                            Text(
-                              "1",
-                              style: TextStyle(
-                                color: _isHovered
-                                    ? AppUtils.$mainWhite
-                                    : AppUtils.$mainBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentIcons.person_32_regular,
-                              color: _isHovered
-                                  ? AppUtils.$mainWhite
-                                  : AppUtils.$mainBlue,
-                            ),
-                            const Gap(5),
-                            Expanded(
-                              child: Text(
-                                "Student Contributions",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: context
-                                            .watch<TogglesProvider>()
-                                            .isHovered
-                                        ? AppUtils.$mainWhite
-                                        : AppUtils.$mainBlue),
-                              ),
-                            ),
-                            Text(
-                              "1",
-                              style: TextStyle(
-                                color: _isHovered
-                                    ? AppUtils.$mainWhite
-                                    : AppUtils.$mainBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                        children: unit['files'].entries.map<Widget>((file) {
+                      return _buildUnitHolderDetails(
+                          context,
+                          file.key == 'notes'
+                              ? FluentIcons.book_24_regular
+                              : file.key == 'slides'
+                                  ? FluentIcons.slide_content_24_regular
+                                  : file.key == 'recordings'
+                                      ? FluentIcons.video_24_regular
+                                      : FluentIcons.person_24_regular,
+                          file.key,
+                          file.value.length);
+                    }).toList()),
                   ],
                 ),
               ),
             ),
           ),
         ),
-        if (isSelectedUnit && isRightClicked)
+        if (user.isNotEmpty &&
+            user['role'] == 'admin' &&
+            isSelectedUnit &&
+            isRightClicked)
           Positioned(
               right: 0,
               child: Stack(
@@ -365,6 +252,36 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
     );
   }
 
+  Widget _buildUnitHolderDetails(
+      BuildContext context, IconData icon, String title, double value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,
+        ),
+        const Gap(5),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+                fontSize: 18,
+                color: context.watch<TogglesProvider>().isHovered
+                    ? AppUtils.$mainWhite
+                    : AppUtils.$mainBlue),
+          ),
+        ),
+        Text(
+          value.toString(),
+          style: TextStyle(
+            color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showDeleteDialog(BuildContext content) {
     showDialog(
         context: content,
@@ -405,7 +322,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    context.pop();
+                                    Navigator.pop(context);
                                   });
                                 },
                                 style: ButtonStyle(
@@ -439,6 +356,12 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                     : () {
                                         unitsProvider.deleteUnit(
                                             tokenRef, widget.unit['id']);
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          unitsProvider
+                                              .fetchUserUnits(tokenRef);
+                                          Navigator.pop(context);
+                                        });
                                       },
                                 style: ButtonStyle(
                                     padding: WidgetStatePropertyAll(
