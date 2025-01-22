@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/responsive/responsive_layout.dart';
 import 'package:note_viewer/views/study/desktop_study.dart';
 import 'package:note_viewer/views/study/mobile_study.dart';
 import 'package:note_viewer/views/study/tablet_study.dart';
+import 'package:provider/provider.dart';
 
 class StudyView extends StatefulWidget {
   final String lesson;
@@ -14,6 +18,26 @@ class StudyView extends StatefulWidget {
 }
 
 class _StudyViewState extends State<StudyView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Retrieve token and unitId from providers
+      final authProvider = context.read<AuthProvider>();
+      final lessonsProvider = context.read<LessonsProvider>();
+
+      final String token = authProvider.token ?? '';
+      final state = GoRouter.of(context).state;
+
+      final lessonId =
+          state!.extra != null ? (state.extra as Map)['lesson_id'] : null;
+
+      if (lessonId.isNotEmpty) {
+        lessonsProvider.getLesson(token, lessonId);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

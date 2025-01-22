@@ -10,6 +10,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -75,9 +76,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Retrieve token and unitId from providers
       final authProvider = context.read<AuthProvider>();
-      final lessonsProvider = context.read<LessonsProvider>();
 
       final String token = authProvider.token ?? '';
       final state = GoRouter.of(context).state;
@@ -95,7 +94,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
         lessonIdRef = lessonId;
         unitIdRef = unitId;
         lessonNameRef = lessonName;
-        lessonsProvider.getLesson(token, lessonId);
       }
 
       if (token.isNotEmpty) {
@@ -107,6 +105,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
   @override
   Widget build(BuildContext context) {
     final lesson = context.watch<LessonsProvider>().lesson;
+    final user = context.watch<UserProvider>().user;
 
     List notes = [];
     List slides = [];
@@ -153,39 +152,40 @@ class _DesktopStudyState extends State<DesktopStudy> {
                               ),
                             ),
                             const Spacer(),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                padding: WidgetStatePropertyAll(
-                                    const EdgeInsets.all(20)),
-                                backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.$mainBlue),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                _showDialog(context);
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Upload file",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppUtils.$mainWhite,
+                            if (user.isNotEmpty && user['role'] == 'admin')
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: WidgetStatePropertyAll(
+                                      const EdgeInsets.all(20)),
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      AppUtils.$mainBlue),
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                   ),
-                                  const Gap(5),
-                                  Icon(
-                                    FluentIcons.book_add_24_regular,
-                                    size: 16,
-                                    color: AppUtils.$mainWhite,
-                                  ),
-                                ],
-                              ),
-                            )
+                                ),
+                                onPressed: () {
+                                  _showDialog(context);
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Upload file",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: AppUtils.$mainWhite,
+                                      ),
+                                    ),
+                                    const Gap(5),
+                                    Icon(
+                                      FluentIcons.book_add_24_regular,
+                                      size: 16,
+                                      color: AppUtils.$mainWhite,
+                                    ),
+                                  ],
+                                ),
+                              )
                           ],
                         ),
                         const Gap(10),
