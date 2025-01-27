@@ -6,13 +6,19 @@ import 'package:note_viewer/utils/app_utils.dart';
 class DesktopRecording extends StatefulWidget {
   final String fileName;
   final String lesson;
+  final Map material;
   final IconData? icon;
+  final List recordings;
+  final List contributions;
 
   const DesktopRecording({
     super.key,
     required this.fileName,
     required this.lesson,
+    required this.material,
     this.icon,
+    required this.recordings,
+    required this.contributions,
   });
 
   @override
@@ -22,9 +28,22 @@ class DesktopRecording extends StatefulWidget {
 class _DesktopRecordingState extends State<DesktopRecording> {
   @override
   Widget build(BuildContext context) {
+    // final fileExtension = widget.lesson['file'].split('.')[1];
+
+    String uploadType = 'recordings';
+
+    final String url = AppUtils.$baseUrl;
+
     return GestureDetector(
       onTap: () {
-        context.go('/units/notes/${widget.lesson}/${widget.fileName}');
+        context.go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
+          "path":
+              "$url/${widget.material['path']}/$uploadType/${widget.fileName}",
+          "material": widget.material,
+          "featured_material": widget.recordings.isEmpty
+              ? widget.contributions
+              : widget.recordings,
+        });
       },
       child: Column(
         children: [

@@ -2,8 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
+import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
@@ -33,6 +35,24 @@ class _DesktopNotesState extends State<DesktopNotes> {
   Map selectedLesson = {};
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
+
+  String tokenRef = '';
+  String unitId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String? token = context.read<AuthProvider>().token;
+      if (token != null) {
+        tokenRef = token;
+        context.read<UserProvider>().fetchUserDetails(token);
+        setState(() {
+          unitId = context.read<UnitsProvider>().unitId;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -410,9 +430,9 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                       ? null
                                       : () {
                                           lessonProvider.createNewLesson(
-                                              widget.tokenRef,
+                                              tokenRef,
                                               nameController.text,
-                                              widget.unitId);
+                                              unitId);
                                           if (lessonProvider.success) {
                                             lessonProvider.getAllLesson(
                                                 widget.tokenRef, widget.unitId);

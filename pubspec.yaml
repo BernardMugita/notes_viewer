@@ -60,6 +60,7 @@ dependencies:
   flutter_cached_pdfview: ^0.4.3
   video_player_web: ^2.3.3
   chewie: ^1.9.2
+  video_js_themed: ^0.0.6+4
 
 dev_dependencies:
   flutter_test:

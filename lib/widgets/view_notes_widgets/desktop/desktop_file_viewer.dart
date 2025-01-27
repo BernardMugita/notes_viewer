@@ -4,10 +4,12 @@ import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_video_vie
 
 class DesktopFileViewer extends StatefulWidget {
   final String fileName;
+  final Function onPressed;
 
   const DesktopFileViewer({
     super.key,
     required this.fileName,
+    required this.onPressed,
   });
 
   @override
@@ -19,9 +21,14 @@ class _DesktopFileViewerState extends State<DesktopFileViewer> {
   Widget build(BuildContext context) {
     final fileExtension = widget.fileName.split('.')[1];
 
-    return fileExtension == 'mp4' || fileExtension == 'webm'
+    return fileExtension == 'mp4' ||
+            fileExtension == 'webm' ||
+            fileExtension == 'hls' ||
+            fileExtension == 'ts' ||
+            fileExtension == 'm3u8'
         ? DesktopVideoViewer(
             fileName: widget.fileName,
+            onPressed: widget.onPressed,
             uploadType: 'recordings',
           )
         : fileExtension == 'docx' ||

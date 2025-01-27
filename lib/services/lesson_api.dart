@@ -10,6 +10,10 @@ class LessonApi {
       {required String token,
       required String name,
       required String unitId}) async {
+    print(token);
+    print(name);
+    print(unitId);
+
     try {
       final createLessonRequest = await http.post(
           Uri.parse('$url/lessons/create'),
@@ -18,6 +22,8 @@ class LessonApi {
             'Authorization': 'Bearer $token'
           },
           body: jsonEncode(<String, String>{'name': name, 'unit_id': unitId}));
+
+      print(jsonDecode(createLessonRequest.body));
 
       return jsonDecode(createLessonRequest.body) as Map<String, dynamic>;
     } catch (e) {

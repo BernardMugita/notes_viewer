@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:provider/provider.dart';
 
 class DesktopFile extends StatefulWidget {
   final String fileName;
   final String lesson;
+  final Map material;
   final IconData? icon;
+  final List notes;
+  final List slides;
 
   const DesktopFile(
       {super.key,
       required this.fileName,
       required this.lesson,
-      required this.icon});
+      required this.material,
+      required this.icon,
+      required this.notes,
+      required this.slides});
 
   @override
   State<DesktopFile> createState() => _DesktopFileState();
@@ -23,17 +27,17 @@ class DesktopFile extends StatefulWidget {
 class _DesktopFileState extends State<DesktopFile> {
   @override
   Widget build(BuildContext context) {
-    final fileExtension = widget.fileName.split('.')[1];
-
-    String uploadType = fileExtension == 'pdf' ? 'notes' : 'slides';
+    final fileExtension = widget.material['file'].split('.')[1];
 
     final String url = AppUtils.$baseUrl;
-    final Map lesson = context.read<LessonsProvider>().lesson;
 
     return GestureDetector(
       onTap: () {
         context.go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
-          "path": "$url/${lesson['path']}/$uploadType/${widget.fileName}"
+          "path": "$url/${widget.material['file']}",
+          "material": widget.material,
+          "featured_material":
+              widget.notes.isEmpty ? widget.slides : widget.notes,
         });
       },
       child: Column(

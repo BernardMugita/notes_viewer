@@ -2,6 +2,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 // import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
@@ -10,8 +11,33 @@ import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_
 import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_videos.dart';
 import 'package:provider/provider.dart';
 
-class DesktopViewNotes extends StatelessWidget {
+class DesktopViewNotes extends StatefulWidget {
   const DesktopViewNotes({super.key});
+
+  @override
+  State<DesktopViewNotes> createState() => _DesktopViewNotesState();
+}
+
+class _DesktopViewNotesState extends State<DesktopViewNotes> {
+  Map material = {};
+  List featuredMaterial = [];
+  String duration = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = GoRouter.of(context).state;
+
+      setState(() {
+        material =
+            state!.extra != null ? (state.extra as Map)['material'] : null;
+        featuredMaterial = state.extra != null
+            ? (state.extra as Map)['featured_material']
+            : null;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +53,13 @@ class DesktopViewNotes extends StatelessWidget {
             builder: (BuildContext context, togglesProvider, _) {
           return Stack(
             children: [
-              DesktopFileViewer(fileName: fileName),
+              DesktopFileViewer(
+                  fileName: fileName,
+                  onPressed: (String videoDuration) {
+                    setState(() {
+                      duration = videoDuration;
+                    });
+                  }),
               Positioned(
                   top: 20,
                   right: 100,
@@ -72,7 +104,7 @@ class DesktopViewNotes extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(fileName.split('.')[0],
+                                Text(material['name'] ?? 'Material Name',
                                     style: const TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.bold,
@@ -82,13 +114,12 @@ class DesktopViewNotes extends StatelessWidget {
                                   padding: const EdgeInsets.only(
                                       left: 20, right: 20, top: 5, bottom: 5),
                                   decoration: BoxDecoration(
-                                    color: AppUtils.$mainBlueAccent,
-                                    borderRadius: BorderRadius.circular(30),
+                                    color: AppUtils.$mainGreen,
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Text(lessonName,
                                       style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                           color: AppUtils.$mainBlack)),
                                 ),
                                 Gap(10),
@@ -105,15 +136,8 @@ class DesktopViewNotes extends StatelessWidget {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
                                             color: AppUtils.$mainBlack)),
-                                    Text(
-                                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et"
-                                        " dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
-                                        " nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                                        " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occ"
-                                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et"
-                                        " dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
-                                        " nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                                        " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occ",
+                                    Gap(5),
+                                    Text(material['description'],
                                         style: TextStyle(fontSize: 18)),
                                   ],
                                 ),
@@ -129,7 +153,7 @@ class DesktopViewNotes extends StatelessWidget {
                                     ),
                                     Gap(5),
                                     Text(
-                                      "45 ${fileName.split('.')[1] == 'mp4' ? 'minutes' : 'seconds read'}",
+                                      duration,
                                       style: TextStyle(fontSize: 18),
                                     )
                                   ],
@@ -163,7 +187,8 @@ class DesktopViewNotes extends StatelessWidget {
                                     ),
                                     Gap(5),
                                     Text(
-                                      "2022-01-01",
+                                      AppUtils.formatDate(
+                                          material['created_at']),
                                       style: TextStyle(fontSize: 18),
                                     )
                                   ],
@@ -186,21 +211,69 @@ class DesktopViewNotes extends StatelessWidget {
                                         color: AppUtils.$mainBlue)),
                                 Gap(20),
                                 if (fileName.split('.')[1] == 'mp4')
-                                  Column(
-                                    children: [
-                                      DesktopRelevantVideos(),
-                                      DesktopRelevantVideos(),
-                                      DesktopRelevantVideos(),
-                                    ],
-                                  )
+                                  featuredMaterial
+                                          .where((mat) =>
+                                              mat['id'] != material['id'])
+                                          .isEmpty
+                                      ? Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Center(
+                                            child: Column(
+                                              children: [
+                                                Icon(
+                                                  FluentIcons
+                                                      .prohibited_24_filled,
+                                                  size: 100,
+                                                  color: AppUtils.$mainRed,
+                                                ),
+                                                Text(
+                                                    'No relevant videos found'),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : Column(
+                                          children: featuredMaterial
+                                              .where((mat) =>
+                                                  mat['id'] != material['id'])
+                                              .map((filteredMat) =>
+                                                  DesktopRelevantVideos(
+                                                    material: filteredMat,
+                                                  ))
+                                              .toList(),
+                                        )
                                 else
-                                  Column(
-                                    children: [
-                                      DesktopRelevantDocuments(),
-                                      DesktopRelevantDocuments(),
-                                      DesktopRelevantDocuments(),
-                                    ],
-                                  ),
+                                  featuredMaterial
+                                          .where((mat) =>
+                                              mat['id'] != material['id'])
+                                          .isEmpty
+                                      ? Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Center(
+                                            child: Column(
+                                              children: [
+                                                Icon(
+                                                  FluentIcons
+                                                      .prohibited_24_filled,
+                                                  size: 100,
+                                                  color: AppUtils.$mainRed,
+                                                ),
+                                                Text(
+                                                    'No relevant documents found'),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : Column(
+                                          children: featuredMaterial
+                                              .where((mat) =>
+                                                  mat['id'] != material['id'])
+                                              .map((filteredMat) =>
+                                                  DesktopRelevantDocuments(
+                                                    material: filteredMat,
+                                                  ))
+                                              .toList(),
+                                        ),
                               ],
                             )
                           ],

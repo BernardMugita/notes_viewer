@@ -3,9 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class DesktopRelevantDocuments extends StatelessWidget {
-  const DesktopRelevantDocuments({super.key});
+class DesktopRelevantDocuments extends StatefulWidget {
+  final Map material;
 
+  const DesktopRelevantDocuments({super.key, required this.material});
+
+  @override
+  State<DesktopRelevantDocuments> createState() =>
+      _DesktopRelevantDocumentsState();
+}
+
+class _DesktopRelevantDocumentsState extends State<DesktopRelevantDocuments> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,7 +41,7 @@ class DesktopRelevantDocuments extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "Philosophy of Anatomy",
+                    widget.material['name'],
                     style: TextStyle(
                         fontSize: 18,
                         color: AppUtils.$mainBlue,
@@ -70,7 +78,7 @@ class DesktopRelevantDocuments extends StatelessWidget {
                   ),
                   Gap(5),
                   Text(
-                    "2022-01-01",
+                    AppUtils.formatDate(widget.material['created_at']),
                     style: TextStyle(fontSize: 14),
                   )
                 ],

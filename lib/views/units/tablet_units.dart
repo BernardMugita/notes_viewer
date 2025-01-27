@@ -13,7 +13,7 @@ import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.d
 import 'package:note_viewer/widgets/units_widgets/tablet_semester_holder.dart';
 import 'package:provider/provider.dart';
 
-class TabletUnits extends StatefulWidget {
+class TabletUnits extends StatefulWidget {  
   const TabletUnits({super.key});
 
   @override

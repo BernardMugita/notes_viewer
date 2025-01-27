@@ -110,14 +110,14 @@ class _DesktopStudyState extends State<DesktopStudy> {
     List notes = [];
     List slides = [];
     List recordings = [];
-    List assignments = [];
+    List contributions = [];
 
-    if (lesson.isNotEmpty && lesson['files'] != null) {
+    if (lesson.isNotEmpty && lesson['materials'] != null) {
       setState(() {
-        notes = lesson['files']['notes'] ?? [];
-        slides = lesson['files']['slides'] ?? [];
-        recordings = lesson['files']['recordings'] ?? [];
-        assignments = lesson['files']['assignments'] ?? [];
+        notes = lesson['materials']['notes'] ?? [];
+        slides = lesson['materials']['slides'] ?? [];
+        recordings = lesson['materials']['recordings'] ?? [];
+        contributions = lesson['materials']['contributions'] ?? [];
       });
     } else {
       print('Lesson or files are null');
@@ -214,7 +214,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                   notes.isEmpty &&
                                   slides.isEmpty &&
                                   recordings.isEmpty &&
-                                  assignments.isEmpty)
+                                  contributions.isEmpty)
                                 Expanded(
                                     child: Center(
                                   child: Container(
@@ -257,8 +257,13 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     // Map notes to DesktopFile widgets and convert to list
                                     ...notes.map((note) {
                                       return DesktopFile(
-                                        fileName: note,
-                                        lesson: lessonNameRef,
+                                        notes: notes,
+                                        slides: [],
+                                        fileName: (note['file'] as String)
+                                            .split('/')
+                                            .last,
+                                        lesson: lesson['name'],
+                                        material: note,
                                         icon:
                                             FluentIcons.document_pdf_24_regular,
                                       );
@@ -267,8 +272,13 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     // Map slides to DesktopFile widgets and convert to list
                                     ...slides.map((slide) {
                                       return DesktopFile(
-                                        fileName: slide,
-                                        lesson: lessonNameRef,
+                                        slides: slides,
+                                        notes: [],
+                                        fileName: (slide['file'] as String)
+                                            .split('/')
+                                            .last,
+                                        lesson: lesson['name'],
+                                        material: slide,
                                         icon:
                                             FluentIcons.slide_layout_24_regular,
                                       );
@@ -277,17 +287,28 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                     // Map recordings to DesktopRecording widgets and convert to list
                                     ...recordings.map((recording) {
                                       return DesktopRecording(
-                                        fileName: recording,
-                                        lesson: lessonNameRef,
+                                        recordings: recordings,
+                                        contributions: [],
+                                        fileName: (recording['file'] as String)
+                                            .split('/')
+                                            .last,
+                                        lesson: lesson['name'],
+                                        material: recording,
                                         icon: FluentIcons.play_24_filled,
                                       );
                                     }).toList(), // Convert the iterable to a List<Widget>
 
-                                    // Map assignments to DesktopRecording widgets and convert to list
-                                    ...assignments.map((assignment) {
+                                    // Map contributions to DesktopRecording widgets and convert to list
+                                    ...contributions.map((contribution) {
                                       return DesktopRecording(
-                                        fileName: assignment,
-                                        lesson: lessonNameRef,
+                                        contributions: contributions,
+                                        recordings: [],
+                                        fileName:
+                                            (contribution['file'] as String)
+                                                .split('/')
+                                                .last,
+                                        lesson: lesson['name'],
+                                        material: contribution,
                                         icon: FluentIcons.play_24_filled,
                                       );
                                     }).toList(), // Convert the iterable to a List<Widget>

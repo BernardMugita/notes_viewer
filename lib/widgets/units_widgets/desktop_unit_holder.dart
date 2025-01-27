@@ -267,9 +267,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
             title,
             style: TextStyle(
                 fontSize: 18,
-                color: context.watch<TogglesProvider>().isHovered
-                    ? AppUtils.$mainWhite
-                    : AppUtils.$mainBlue),
+                color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue),
           ),
         ),
         Text(

@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class DesktopRelevantVideos extends StatelessWidget {
-  const DesktopRelevantVideos({super.key});
+class DesktopRelevantVideos extends StatefulWidget {
+  final Map material;
 
+  const DesktopRelevantVideos({super.key, required this.material});
+
+  @override
+  State<DesktopRelevantVideos> createState() => _DesktopRelevantVideosState();
+}
+
+class _DesktopRelevantVideosState extends State<DesktopRelevantVideos> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,7 +39,7 @@ class DesktopRelevantVideos extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "Introduction to Anatomy",
+                    widget.material['name'],
                     style: TextStyle(
                         fontSize: 18,
                         color: AppUtils.$mainBlue,
@@ -69,7 +76,7 @@ class DesktopRelevantVideos extends StatelessWidget {
                   ),
                   Gap(5),
                   Text(
-                    "2022-01-01",
+                    AppUtils.formatDate(widget.material['created_at']),
                     style: TextStyle(fontSize: 14),
                   )
                 ],
