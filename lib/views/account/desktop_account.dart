@@ -56,16 +56,22 @@ class _DesktopAccountState extends State<DesktopAccount> {
   @override
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
     return Scaffold(
         body: Flex(
             crossAxisAlignment: CrossAxisAlignment.start,
             direction: Axis.horizontal,
             children: [
-          Expanded(
-            flex: 1,
-            child: const SideNavigation(),
-          ),
+          isMinimized
+              ? Expanded(
+                  flex: 1,
+                  child: SideNavigation(),
+                )
+              : SizedBox(
+                  width: 80,
+                  child: SideNavigation(),
+                ),
           Expanded(
               flex: 6,
               child: Padding(

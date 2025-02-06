@@ -26,17 +26,32 @@ class DashboardProvider extends ChangeNotifier {
         dashData = dashDataRequest['data'];
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = "Failed to fetch data";
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       message = "Failed to fetch data $e";
       isLoading = false;
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

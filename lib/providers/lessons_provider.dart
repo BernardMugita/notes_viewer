@@ -34,17 +34,32 @@ class LessonsProvider extends ChangeNotifier {
         message = "Lesson added successfully!";
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = "Error adding lesson!";
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       message = "Error adding lesson! $e";
       isLoading = false;
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};
@@ -66,17 +81,32 @@ class LessonsProvider extends ChangeNotifier {
         lesson = getLessonRequest['lesson'];
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = "Error fetching lesson!";
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       message = "Error fetching lesson! $e";
       isLoading = false;
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};
@@ -99,17 +129,32 @@ class LessonsProvider extends ChangeNotifier {
         lessons = getAllLessonsRequest['lessons'];
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = "Error fetching lesson!";
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       message = "Error fetching lesson! $e";
       isLoading = false;
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

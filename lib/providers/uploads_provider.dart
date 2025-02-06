@@ -21,24 +21,37 @@ class UploadsProvider extends ChangeNotifier {
     try {
       final uploadRequest = await uploadApi.uploadFile(token, file, form);
 
-      print(uploadRequest);
-
       if (uploadRequest['status'] == 'success') {
         isLoading = false;
         success = true;
         message = "File uploaded successfully";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         isLoading = false;
         error = true;
         message = "Failed to upload file";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       isLoading = false;
       error = true;
       message = "Failed to upload file $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

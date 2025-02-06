@@ -59,14 +59,21 @@ class _DesktopNotesState extends State<DesktopNotes> {
     final lessons = context.watch<LessonsProvider>().lessons;
     final user = context.watch<UserProvider>().user;
 
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
     return Scaffold(
       body: Flex(
         direction: Axis.horizontal,
         children: [
-          Expanded(
-            flex: 1,
-            child: const SideNavigation(),
-          ),
+          isMinimized
+              ? Expanded(
+                  flex: 1,
+                  child: SideNavigation(),
+                )
+              : SizedBox(
+                  width: 80,
+                  child: SideNavigation(),
+                ),
           Expanded(
             flex: 6,
             child: Padding(

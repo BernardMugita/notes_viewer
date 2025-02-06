@@ -53,14 +53,21 @@ class _DesktopUnitsState extends State<DesktopUnits> {
 
     final user = context.watch<UserProvider>().user;
 
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
     return Scaffold(
       body: Flex(
         direction: Axis.horizontal,
         children: [
-          const Expanded(
-            flex: 1,
-            child: SideNavigation(),
-          ),
+          isMinimized
+              ? Expanded(
+                  flex: 1,
+                  child: SideNavigation(),
+                )
+              : SizedBox(
+                  width: 80,
+                  child: SideNavigation(),
+                ),
           Expanded(
             flex: 6,
             child: Padding(

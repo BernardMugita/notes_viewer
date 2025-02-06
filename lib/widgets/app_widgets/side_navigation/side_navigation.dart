@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
@@ -37,18 +38,35 @@ class _SideNavigationState extends State<SideNavigation> {
     final currentRoute = routeName != null ? routeName.split('/')[1] : '';
 
     user = context.read<UserProvider>().user;
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
     return Container(
       decoration: BoxDecoration(color: AppUtils.$mainBlue),
-      padding: const EdgeInsets.all(20),
+      padding: !isMinimized
+          ? const EdgeInsets.only(top: 20, left: 5, right: 5, bottom: 20)
+          : const EdgeInsets.all(20),
       child: Column(
         children: [
-          Image(
-              height: 200,
-              width: 200,
-              fit: BoxFit.cover,
-              image: AssetImage('assets/images/NV_logo.png')),
-          const Gap(40),
+          if (!isMinimized)
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 30,
+              child:
+                  Image(image: AssetImage('assets/images/alib-hd-shaddow.png')),
+            )
+          else
+            Image(
+                height: 250,
+                width: 250,
+                fit: BoxFit.contain,
+                image: AssetImage('assets/images/alib-hd-shaddow.png')),
+          !isMinimized
+              ? SizedBox()
+              : Text(
+                  "Note Viewer",
+                  style: TextStyle(color: AppUtils.$mainWhite),
+                ),
+          !isMinimized ? Spacer() : const Gap(40),
           Expanded(
             child: Column(
               children: [
@@ -92,92 +110,136 @@ class _SideNavigationState extends State<SideNavigation> {
           ),
           Container(
             decoration: BoxDecoration(
-                border: Border.all(color: AppUtils.$mainBlueAccent),
+                border: !isMinimized
+                    ? Border.all(width: 0, color: Colors.transparent)
+                    : Border.all(color: AppUtils.$mainBlueAccent),
                 borderRadius: BorderRadius.circular(5)),
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  child: Image(
-                      height: 25,
-                      width: 25,
-                      image:
-                          AssetImage('assets/images/placeholder-profile.png')),
-                ),
-                const Gap(10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (context.watch<UserProvider>().isLoading)
-                      SizedBox(
-                        width: 130,
-                        child: LinearProgressIndicator(
-                          minHeight: 1,
-                          color: AppUtils.$mainWhite,
-                        ),
-                      )
-                    else
-                      Text(user.isNotEmpty ? user['username'] : 'Guest',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: AppUtils.$mainWhite,
-                              fontWeight: FontWeight.bold)),
-                    if (context.watch<UserProvider>().isLoading)
-                      SizedBox(
-                        width: 130,
-                        child: LinearProgressIndicator(
-                          minHeight: 1,
-                          color: AppUtils.$mainWhite,
-                        ),
-                      )
-                    else
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                            user.isNotEmpty ? user['email'] : 'guest@email.com',
-                            style: TextStyle(
-                                overflow: TextOverflow.ellipsis,
-                                fontSize: 12,
-                                color: AppUtils.$mainWhite)),
+            padding: !isMinimized
+                ? const EdgeInsets.all(0)
+                : const EdgeInsets.all(10),
+            child: !isMinimized
+                ? SizedBox()
+                : Row(
+                    children: [
+                      CircleAvatar(
+                        child: Image(
+                            height: 20,
+                            width: 20,
+                            image: AssetImage(
+                                'assets/images/placeholder-profile.png')),
                       ),
-                  ],
-                ),
-                Spacer(),
-                Icon(
-                  FluentIcons.more_vertical_24_regular,
-                  color: AppUtils.$mainWhite,
-                )
-              ],
-            ),
+                      const Gap(10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (context.watch<UserProvider>().isLoading)
+                            SizedBox(
+                              width: 130,
+                              child: LinearProgressIndicator(
+                                minHeight: 1,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            )
+                          else
+                            Text(user.isNotEmpty ? user['username'] : 'Guest',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppUtils.$mainWhite,
+                                    fontWeight: FontWeight.bold)),
+                          if (context.watch<UserProvider>().isLoading)
+                            SizedBox(
+                              width: 130,
+                              child: LinearProgressIndicator(
+                                minHeight: 1,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            )
+                          else
+                            SizedBox(
+                              width: 100,
+                              child: Text(
+                                  user.isNotEmpty
+                                      ? user['email']
+                                      : 'guest@email.com',
+                                  style: TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 12,
+                                      color: AppUtils.$mainWhite)),
+                            ),
+                        ],
+                      ),
+                      if (isMinimized) Spacer(),
+                      if (isMinimized)
+                        Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, child) {
+                          return GestureDetector(
+                            onTap: () {
+                              toggleProvider.toggleSideNavMinimized();
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: AppUtils.$mainBlueAccent,
+                              child: Icon(
+                                  FluentIcons.panel_right_expand_20_regular,
+                                  color: AppUtils.$mainBlue),
+                            ),
+                          );
+                        }),
+                    ],
+                  ),
           ),
           Gap(5),
-          // Divider(),
+          if (!isMinimized)
+            Consumer<TogglesProvider>(
+                builder: (context, toggleProvider, child) {
+              return GestureDetector(
+                onTap: () {
+                  toggleProvider.toggleSideNavMinimized();
+                },
+                child: CircleAvatar(
+                  backgroundColor: AppUtils.$mainBlueAccent,
+                  child: Icon(FluentIcons.panel_left_expand_20_regular,
+                      color: AppUtils.$mainBlue),
+                ),
+              );
+            }),
           Gap(5),
           Consumer<AuthProvider>(builder: (context, authContext, child) {
-            return ElevatedButton(
-              onPressed: () {
-                authContext.logout(context);
-              },
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(FluentIcons.sign_out_24_regular,
-                      color: AppUtils.$mainBlack),
-                  const Gap(5),
-                  const Text(
-                    'Logout',
-                    style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
-                  ),
-                ],
-              ),
-            );
+            return isMinimized
+                ? ElevatedButton(
+                    onPressed: () {
+                      authContext.logout(context);
+                    },
+                    style: ButtonStyle(
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(FluentIcons.sign_out_24_regular,
+                            color: AppUtils.$mainBlack),
+                        const Gap(5),
+                        const Text(
+                          'Logout',
+                          style: TextStyle(
+                              fontSize: 16, color: AppUtils.$mainBlack),
+                        ),
+                      ],
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      authContext.logout(context);
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: AppUtils.$mainBlueAccent,
+                      child: Icon(FluentIcons.sign_out_24_regular,
+                          color: AppUtils.$mainBlue),
+                    ),
+                  );
           })
         ],
       ),
@@ -194,29 +256,33 @@ class _SideNavigationState extends State<SideNavigation> {
   }) {
     final isActive = currentRoute == route.replaceAll('/', '');
 
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
     return GestureDetector(
       onTap: () => context.go(route),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isActive ? AppUtils.$mainWhite : Colors.transparent,
-          borderRadius: BorderRadius.circular(5),
-          // border: Border.all(color: AppUtils.$mainGrey),
+          border: Border(
+              left: isActive
+                  ? BorderSide(width: 5, color: AppUtils.$mainWhite)
+                  : BorderSide.none),
         ),
-        child: Row(
-          children: [
-            Icon(icon,
-                color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite),
-            const Gap(5),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite,
+        child: !isMinimized
+            ? Icon(icon, color: AppUtils.$mainWhite)
+            : Row(
+                children: [
+                  Icon(icon, color: AppUtils.$mainWhite),
+                  const Gap(5),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppUtils.$mainWhite,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

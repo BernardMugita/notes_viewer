@@ -56,24 +56,38 @@ class UnitsProvider extends ChangeNotifier {
           assignments: assignments,
           semester: semester);
 
-      print(addRequest);
-
       if (addRequest['status'] == 'success') {
         success = true;
         isLoading = false;
         message = "Unit added successfully";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to add unit";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to add unit $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
+
       return {'status': 'error', 'message': e.toString()};
     }
 
@@ -94,17 +108,32 @@ class UnitsProvider extends ChangeNotifier {
         success = true;
         units = fetchRequest['units'];
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to fetch units";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to fetch units $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};
@@ -126,17 +155,32 @@ class UnitsProvider extends ChangeNotifier {
         units = editUnitRequest['units'];
         message = "Unit edited successfully";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to edit unit";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to edit unit $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};
@@ -158,17 +202,32 @@ class UnitsProvider extends ChangeNotifier {
         units = deleteRequest['units'];
         message = "Unit deleted successfully";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to delete unit";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to delete unit $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

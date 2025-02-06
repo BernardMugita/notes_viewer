@@ -23,18 +23,34 @@ class UserProvider extends ChangeNotifier {
         isLoading = false;
         success = true;
         user = fetchRequest['user'];
+        message = "User details fetched successfully";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to fetch user details";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to fetch user details $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};
@@ -59,18 +75,34 @@ class UserProvider extends ChangeNotifier {
         isLoading = false;
         success = true;
         user = editAccountRequest['user'];
+        message = 'User details updated successfully';
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to edit user details";
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to edit user details $e";
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

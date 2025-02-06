@@ -114,20 +114,43 @@ class AuthProvider extends ChangeNotifier {
           await authApi.signIN(email: email, password: password);
 
       if (loginRequest['status'] == "success") {
+        isLoading = false;
         token = loginRequest['token'];
         await _saveToken(token!); // Save token persistently
         isAuthenticated = true;
         message = 'Login successful';
         success = true;
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = 'Login failed';
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       message = 'Error: $e';
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     } finally {
       isLoading = false;
+      Future.delayed(const Duration(seconds: 3), () {
+        success = false;
+        error = false;
+        message = '';
+        notifyListeners();
+      });
       notifyListeners();
     }
     return {'success': success, 'message': message};
@@ -150,17 +173,32 @@ class AuthProvider extends ChangeNotifier {
         success = true;
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
       } else {
         error = true;
         message = 'Course update failed';
         isLoading = false;
         notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = 'Error: $e';
       notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
     }
 
     return {};

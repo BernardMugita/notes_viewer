@@ -107,6 +107,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
     final lesson = context.watch<LessonsProvider>().lesson;
     final user = context.watch<UserProvider>().user;
 
+    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
     List notes = [];
     List slides = [];
     List recordings = [];
@@ -127,10 +129,15 @@ class _DesktopStudyState extends State<DesktopStudy> {
       body: Flex(
         direction: Axis.horizontal,
         children: [
-          Expanded(
-            flex: 1,
-            child: const SideNavigation(),
-          ),
+          isMinimized
+              ? Expanded(
+                  flex: 1,
+                  child: SideNavigation(),
+                )
+              : SizedBox(
+                  width: 80,
+                  child: SideNavigation(),
+                ),
           Expanded(
             flex: 6,
             child: Padding(
@@ -531,7 +538,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
                           return SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: ElevatedButton(
-                              onPressed: uploadsProvider.isLoading
+                              onPressed: uploadsProvider.isLoading ||
+                                      isUploading
                                   ? null
                                   : () {
                                       form = [

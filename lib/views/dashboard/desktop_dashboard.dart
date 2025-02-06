@@ -20,13 +20,20 @@ class DesktopDashboard extends StatelessWidget {
           builder: (BuildContext context, dashBoardProvider, _) {
         final dashData = dashBoardProvider.dashData;
 
+        bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
         return Flex(
           direction: Axis.horizontal,
           children: [
-            Expanded(
-              flex: 1,
-              child: SideNavigation(),
-            ),
+            isMinimized
+                ? Expanded(
+                    flex: 1,
+                    child: SideNavigation(),
+                  )
+                : SizedBox(
+                    width: 80,
+                    child: SideNavigation(),
+                  ),
             Expanded(
               flex: 6,
               child: Padding(

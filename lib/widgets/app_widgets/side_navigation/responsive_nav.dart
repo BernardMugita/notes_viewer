@@ -50,8 +50,12 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
             Image(
                 height: 150,
                 width: 150,
-                fit: BoxFit.cover,
-                image: AssetImage('assets/images/NV_logo.png')),
+                fit: BoxFit.contain,
+                image: AssetImage('assets/images/alib-hd-shaddow.png')),
+            Text(
+              "Note Viewer",
+              style: TextStyle(color: AppUtils.$mainWhite),
+            ),
             const Gap(40),
             Expanded(
               child: Column(
