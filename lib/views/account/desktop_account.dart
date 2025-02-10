@@ -7,6 +7,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -75,308 +76,166 @@ class _DesktopAccountState extends State<DesktopAccount> {
           Expanded(
               flex: 6,
               child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          FluentIcons.person_28_regular,
-                          color: AppUtils.$mainBlue,
-                        ),
-                        const Gap(5),
-                        Text(
-                          "User Account",
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: AppUtils.$mainBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                                const EdgeInsets.all(20)),
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            _showDialog(context, user);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                "Edit Account",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppUtils.$mainWhite,
-                                ),
-                              ),
-                              const Gap(5),
-                              Icon(
-                                FluentIcons.person_edit_24_regular,
-                                size: 16,
-                                color: AppUtils.$mainWhite,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Gap(10),
-                    const Divider(
-                      color: Color(0xFFCECECE),
-                    ),
-                    const Gap(20),
-                    Flex(
-                      direction: Axis.horizontal,
+                  padding: const EdgeInsets.only(
+                      left: 40, right: 40, top: 20, bottom: 20),
+                  child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 100,
-                                backgroundColor: AppUtils.$mainWhite,
-                                child: Image(
-                                  height: 140,
-                                  width: 140,
-                                  fit: BoxFit.cover,
-                                  image: AssetImage(
-                                      'assets/images/placeholder-profile.png'),
+                        Row(
+                          children: [
+                            Text(
+                              "User Account",
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: AppUtils.$mainBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Gap(20),
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                  const EdgeInsets.all(20)),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                               ),
-                              Gap(40),
-                              Consumer<TogglesProvider>(
-                                  builder: (context, toggleProvider, child) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    toggleProvider.toggleAccountView();
-                                  },
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(FluentIcons
-                                                .person_accounts_24_regular),
-                                            Gap(5),
-                                            Text("Account Details")
-                                          ],
-                                        ),
-                                        Gap(5),
-                                        Divider(
-                                          thickness: 0.5,
-                                          color: AppUtils.$mainBlue,
-                                        ),
-                                        Gap(5),
-                                      ],
-                                    ),
+                            ),
+                            onPressed: () {
+                              _showDialog(context, user);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Edit Account",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppUtils.$mainWhite,
                                   ),
-                                );
-                              }),
-                              Consumer<TogglesProvider>(builder: (
-                                context,
-                                toggleProvider,
-                                child,
-                              ) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    toggleProvider.toggleMembershipView();
-                                  },
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(FluentIcons
-                                                .people_community_24_regular),
-                                            Gap(5),
-                                            Text("Account Memberships")
-                                          ],
-                                        ),
-                                        Gap(5),
-                                        Divider(
-                                          thickness: 0.5,
-                                          color: AppUtils.$mainBlue,
-                                        ),
-                                        Gap(5),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              })
-                            ],
-                          ),
-                        ),
-                        Gap(40),
-                        Expanded(
-                            flex: 2,
-                            child: Consumer<TogglesProvider>(builder: (
-                              context,
-                              toggleProvider,
-                              child,
-                            ) {
-                              return Container(
-                                padding: const EdgeInsets.all(20),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.85,
-                                decoration: BoxDecoration(
+                                ),
+                                const Gap(5),
+                                Icon(
+                                  FluentIcons.person_edit_24_regular,
+                                  size: 16,
                                   color: AppUtils.$mainWhite,
                                 ),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: toggleProvider.accountView
-                                        ? [
-                                            Text("Account Details",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: AppUtils.$mainBlue,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            Gap(30),
-                                            _buildAccountDetails(context,
-                                                title: 'Username',
-                                                value: isLoading
-                                                    ? 'username'
-                                                    : user.isNotEmpty
-                                                        ? user['username']
-                                                        : 'Details not found'),
-                                            _buildAccountDetails(context,
-                                                title: 'Email',
-                                                value: isLoading
-                                                    ? 'email'
-                                                    : user.isNotEmpty
-                                                        ? user['email']
-                                                        : 'Details not found'),
-                                            _buildAccountDetails(context,
-                                                title: 'Phone',
-                                                value: isLoading
-                                                    ? 'phone'
-                                                    : user.isNotEmpty
-                                                        ? user['phone']
-                                                        : 'Details not found'),
-                                            _buildAccountDetails(context,
-                                                title: 'Registration number',
-                                                value: isLoading
-                                                    ? 'reg_no'
-                                                    : user.isNotEmpty
-                                                        ? user['reg_no']
-                                                        : 'Details not found'),
-                                            _buildAccountDetails(context,
-                                                title: 'Course',
-                                                value:
-                                                    'Bachelors Degree in Computer Science'),
-                                            _buildAccountDetails(context,
-                                                title: 'Date Joined',
-                                                value: isLoading
-                                                    ? '0/0/2025'
-                                                    : user.isNotEmpty
-                                                        ? AppUtils.formatDate(
-                                                            user['created_at'])
-                                                        : 'Details not found'),
-                                            Spacer(),
-                                            Text("Account status:"),
-                                            Gap(5),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Gap(20),
+                        Flex(
+                          direction: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 100,
+                                    backgroundColor: AppUtils.$mainWhite,
+                                    child: Image(
+                                      height: 140,
+                                      width: 140,
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(
+                                          'assets/images/placeholder-profile.png'),
+                                    ),
+                                  ),
+                                  Gap(40),
+                                  Consumer<TogglesProvider>(builder:
+                                      (context, toggleProvider, child) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        toggleProvider.toggleAccountView();
+                                      },
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          children: [
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
                                               children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5,
-                                                          bottom: 5,
-                                                          left: 10,
-                                                          right: 10),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              87, 255, 25, 0)),
-                                                  child: Text(
-                                                    "Not verified",
-                                                    style: TextStyle(
-                                                        color:
-                                                            AppUtils.$mainRed),
-                                                  ),
-                                                ),
-                                                ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    padding:
-                                                        WidgetStatePropertyAll(
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10,
-                                                                right: 10,
-                                                                top: 5,
-                                                                bottom: 5)),
-                                                    backgroundColor:
-                                                        WidgetStatePropertyAll(
-                                                            AppUtils.$mainBlue),
-                                                    shape:
-                                                        WidgetStatePropertyAll(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onPressed: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        "Verify Account",
-                                                        style: TextStyle(
-                                                          color: AppUtils
-                                                              .$mainWhite,
-                                                        ),
-                                                      ),
-                                                      const Gap(5),
-                                                      Icon(
-                                                        FluentIcons
-                                                            .checkmark_circle_24_filled,
-                                                        size: 16,
-                                                        color:
-                                                            AppUtils.$mainWhite,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
+                                                Icon(FluentIcons
+                                                    .person_accounts_24_regular),
+                                                Gap(5),
+                                                Text("Account Details")
                                               ],
                                             ),
-                                            Gap(10),
-                                            Divider(),
                                             Gap(5),
-                                            Text(
-                                              "Acknowledgment",
-                                              style: TextStyle(
-                                                  color: AppUtils.$mainBlue),
+                                            Divider(
+                                              thickness: 0.5,
+                                              color: AppUtils.$mainBlue,
                                             ),
                                             Gap(5),
-                                            Text(
-                                              "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                              style: TextStyle(
-                                                  color: AppUtils.$mainGrey),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                  Consumer<TogglesProvider>(builder: (
+                                    context,
+                                    toggleProvider,
+                                    child,
+                                  ) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        toggleProvider.toggleMembershipView();
+                                      },
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(FluentIcons
+                                                    .people_community_24_regular),
+                                                Gap(5),
+                                                Text("Account Memberships")
+                                              ],
                                             ),
-                                            Text("Powered by Labs")
-                                          ]
-                                        : toggleProvider.membershipView
+                                            Gap(5),
+                                            Divider(
+                                              thickness: 0.5,
+                                              color: AppUtils.$mainBlue,
+                                            ),
+                                            Gap(5),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  })
+                                ],
+                              ),
+                            ),
+                            Gap(40),
+                            Expanded(
+                                flex: 3,
+                                child: Consumer<TogglesProvider>(builder: (
+                                  context,
+                                  toggleProvider,
+                                  child,
+                                ) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(20),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.8,
+                                    decoration: BoxDecoration(
+                                      color: AppUtils.$mainWhite,
+                                    ),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: toggleProvider.accountView
                                             ? [
-                                                Text("Account Membership",
+                                                Text("Account Details",
                                                     style: TextStyle(
                                                         fontSize: 18,
                                                         color:
@@ -384,7 +243,124 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                         fontWeight:
                                                             FontWeight.bold)),
                                                 Gap(30),
+                                                _buildAccountDetails(context,
+                                                    title: 'Username',
+                                                    value: isLoading
+                                                        ? 'username'
+                                                        : user.isNotEmpty
+                                                            ? user['username']
+                                                            : 'Details not found'),
+                                                _buildAccountDetails(context,
+                                                    title: 'Email',
+                                                    value: isLoading
+                                                        ? 'email'
+                                                        : user.isNotEmpty
+                                                            ? user['email']
+                                                            : 'Details not found'),
+                                                _buildAccountDetails(context,
+                                                    title: 'Phone',
+                                                    value: isLoading
+                                                        ? 'phone'
+                                                        : user.isNotEmpty
+                                                            ? user['phone']
+                                                            : 'Details not found'),
+                                                _buildAccountDetails(context,
+                                                    title:
+                                                        'Registration number',
+                                                    value: isLoading
+                                                        ? 'reg_no'
+                                                        : user.isNotEmpty
+                                                            ? user['reg_no']
+                                                            : 'Details not found'),
+                                                _buildAccountDetails(context,
+                                                    title: 'Course',
+                                                    value:
+                                                        'Bachelors Degree in Computer Science'),
+                                                _buildAccountDetails(context,
+                                                    title: 'Date Joined',
+                                                    value: isLoading
+                                                        ? '0/0/2025'
+                                                        : user.isNotEmpty
+                                                            ? AppUtils
+                                                                .formatDate(user[
+                                                                    'created_at'])
+                                                            : 'Details not found'),
                                                 Spacer(),
+                                                Text("Account status:"),
+                                                Gap(5),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5,
+                                                              bottom: 5,
+                                                              left: 10,
+                                                              right: 10),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              87, 255, 25, 0)),
+                                                      child: Text(
+                                                        "Not verified",
+                                                        style: TextStyle(
+                                                            color: AppUtils
+                                                                .$mainRed),
+                                                      ),
+                                                    ),
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        padding:
+                                                            WidgetStatePropertyAll(
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10,
+                                                                    right: 10,
+                                                                    top: 5,
+                                                                    bottom: 5)),
+                                                        backgroundColor:
+                                                            WidgetStatePropertyAll(
+                                                                AppUtils
+                                                                    .$mainBlue),
+                                                        shape:
+                                                            WidgetStatePropertyAll(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {},
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            "Verify Account",
+                                                            style: TextStyle(
+                                                              color: AppUtils
+                                                                  .$mainWhite,
+                                                            ),
+                                                          ),
+                                                          const Gap(5),
+                                                          Icon(
+                                                            FluentIcons
+                                                                .checkmark_circle_24_filled,
+                                                            size: 16,
+                                                            color: AppUtils
+                                                                .$mainWhite,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                                 Gap(10),
                                                 Divider(),
                                                 Gap(5),
@@ -403,13 +379,47 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                 ),
                                                 Text("Powered by Labs")
                                               ]
-                                            : []),
-                              );
-                            })),
-                        Expanded(flex: 2, child: SizedBox())
-                      ],
-                    )
-                  ])))
+                                            : toggleProvider.membershipView
+                                                ? [
+                                                    Text("Account Membership",
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: AppUtils
+                                                                .$mainBlue,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                    Gap(30),
+                                                    Spacer(),
+                                                    Gap(10),
+                                                    Divider(),
+                                                    Gap(5),
+                                                    Text(
+                                                      "Acknowledgment",
+                                                      style: TextStyle(
+                                                          color: AppUtils
+                                                              .$mainBlue),
+                                                    ),
+                                                    Gap(5),
+                                                    Text(
+                                                      "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
+                                                      style: TextStyle(
+                                                          color: AppUtils
+                                                              .$mainGrey),
+                                                    ),
+                                                    Text("Powered by Labs")
+                                                  ]
+                                                : []),
+                                  );
+                                })),
+                            Expanded(
+                              flex: 2,
+                              child: SizedBox(),
+                            ),
+                            Expanded(flex: 1, child: PlatformDetails())
+                          ],
+                        )
+                      ])))
         ]));
   }
 

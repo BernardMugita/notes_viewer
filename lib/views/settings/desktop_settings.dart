@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -36,15 +37,11 @@ class _DesktopSettingsState extends State<DesktopSettings> {
           Expanded(
               flex: 6,
               child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(
+                      left: 40, right: 40, top: 20, bottom: 20),
                   child: Column(children: [
                     Row(
                       children: [
-                        const Icon(
-                          FluentIcons.settings_24_regular,
-                          color: AppUtils.$mainBlue,
-                        ),
-                        const Gap(5),
                         Text(
                           "Settings",
                           style: TextStyle(
@@ -55,34 +52,14 @@ class _DesktopSettingsState extends State<DesktopSettings> {
                         ),
                       ],
                     ),
-                    const Gap(10),
-                    const Divider(
-                      color: Color(0xFFCECECE),
-                    ),
                     const Gap(20),
                     Flex(
                       direction: Axis.horizontal,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Expanded(flex: 2, child: SizedBox()),
                         Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 100,
-                                backgroundColor: AppUtils.$mainWhite,
-                                child: Icon(
-                                  FluentIcons.settings_24_regular,
-                                  size: 100,
-                                  color: AppUtils.$mainBlue,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Gap(40),
-                        Expanded(
-                            flex: 2,
+                            flex: 3,
                             child: Consumer<TogglesProvider>(builder: (
                               context,
                               toggleProvider,
@@ -105,7 +82,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
                                               color: AppUtils.$mainBlue,
                                               fontWeight: FontWeight.bold)),
                                       Gap(30),
-                                      _buildAccountDetails(context,
+                                      _buildSettingsDetails(context,
                                           title: 'Appearance',
                                           value: 'Light Mode / Dark Mode'),
                                       Spacer(),
@@ -126,14 +103,15 @@ class _DesktopSettingsState extends State<DesktopSettings> {
                                     ]),
                               );
                             })),
-                        Expanded(flex: 2, child: SizedBox())
+                        Expanded(flex: 4, child: SizedBox()),
+                        Expanded(flex: 1, child: PlatformDetails())
                       ],
                     )
                   ])))
         ]));
   }
 
-  Widget _buildAccountDetails(BuildContext context,
+  Widget _buildSettingsDetails(BuildContext context,
       {required String title, required String value}) {
     return Stack(
       clipBehavior: Clip.none,

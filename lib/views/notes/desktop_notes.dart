@@ -8,6 +8,7 @@ import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
@@ -79,62 +80,89 @@ class _DesktopNotesState extends State<DesktopNotes> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        FluentIcons.book_24_regular,
-                        color: AppUtils.$mainBlue,
+                      Text(
+                        "Units/Notes",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppUtils.$mainGrey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const Gap(5),
+                      Gap(10),
                       Text(
                         "Notes",
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           color: AppUtils.$mainBlue,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Spacer(),
-                      if (user.isNotEmpty && user['role'] == 'admin')
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                                const EdgeInsets.all(20)),
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            _showDialog(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                "Add Lesson",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppUtils.$mainWhite,
-                                ),
-                              ),
-                              const Gap(5),
-                              Icon(
-                                FluentIcons.book_add_24_regular,
-                                size: 16,
-                                color: AppUtils.$mainWhite,
-                              ),
-                            ],
-                          ),
-                        ),
                     ],
                   ),
                   const Gap(10),
-                  const Divider(
-                    color: Color(0xFFCECECE),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 5,
+                        child: TextField(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(12.5),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppUtils.$mainBlueAccent)),
+                            filled: true,
+                            fillColor: AppUtils.$mainWhite,
+                            prefixIcon: Icon(FluentIcons.search_24_regular),
+                            hintText: "Search",
+                            hintStyle: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                      Gap(20),
+                      if (user.isNotEmpty && user['role'] == 'admin')
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                  const EdgeInsets.all(20)),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              _showDialog(context);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Add Lesson",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppUtils.$mainWhite,
+                                  ),
+                                ),
+                                const Gap(5),
+                                Icon(
+                                  FluentIcons.book_add_24_regular,
+                                  size: 16,
+                                  color: AppUtils.$mainWhite,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const Gap(20),
                   Expanded(
@@ -153,21 +181,26 @@ class _DesktopNotesState extends State<DesktopNotes> {
                               child: context.watch<LessonsProvider>().isLoading
                                   ? LoadingAnimationWidget.newtonCradle(
                                       color: AppUtils.$mainBlue, size: 100)
-                                  : ListView.builder(
-                                      itemCount: lessons.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        final lesson = lessons[index];
+                                  : lessons.isEmpty
+                                      ? EmptyWidget(
+                                          errorHeading: "Empty List of Lessons!",
+                                          errorDescription:
+                                              "No lessons uploaded for this unit.",
+                                          image: 'assets/images/404.png')
+                                      : ListView.builder(
+                                          itemCount: lessons.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            final lesson = lessons[index];
 
-                                        return DesktopNotesItem(
-                                            lesson: lesson,
-                                            onPressed: (Map lesson) {
-                                              setState(() {
-                                                selectedLesson = lesson;
-                                              });
-                                              print(selectedLesson);
-                                            });
-                                      }),
+                                            return DesktopNotesItem(
+                                                lesson: lesson,
+                                                onPressed: (Map lesson) {
+                                                  setState(() {
+                                                    selectedLesson = lesson;
+                                                  });
+                                                });
+                                          }),
                             ),
                           ),
                           const Gap(20),

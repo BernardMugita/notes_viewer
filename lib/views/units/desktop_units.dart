@@ -71,7 +71,8 @@ class _DesktopUnitsState extends State<DesktopUnits> {
           Expanded(
             flex: 6,
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(
+                  left: 40, right: 40, top: 20, bottom: 20),
               child: context.watch<UnitsProvider>().isLoading
                   ? Center(
                       child: LoadingAnimationWidget.newtonCradle(
@@ -80,74 +81,88 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                       ),
                     )
                   : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              FluentIcons.class_24_regular,
-                              color: AppUtils.$mainBlue,
-                            ),
-                            const SizedBox(width: 8),
                             Text(
                               "Units",
                               style: TextStyle(
-                                fontSize: 30,
+                                fontSize: 24,
                                 color: AppUtils.$mainBlue,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
-                            if (user.isNotEmpty && user['role'] == 'admin')
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: const WidgetStatePropertyAll(
-                                      EdgeInsets.all(20)),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.$mainBlue),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
+                          ],
+                        ),
+                        const Gap(20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 5,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(12.5),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppUtils.$mainBlueAccent)),
+                                  filled: true,
+                                  fillColor: AppUtils.$mainWhite,
+                                  prefixIcon:
+                                      Icon(FluentIcons.search_24_regular),
+                                  hintText: "Search",
+                                  hintStyle: TextStyle(fontSize: 16),
                                 ),
-                                onPressed: () => _showDialog(context,
-                                    courses: courses, token: tokenRef),
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      "Add units",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
+                              ),
+                            ),
+                            Gap(20),
+                            if (user.isNotEmpty && user['role'] == 'admin')
+                              SizedBox(
+                                width: 150,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    padding: const WidgetStatePropertyAll(
+                                        EdgeInsets.all(20)),
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        AppUtils.$mainBlue),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
                                       ),
                                     ),
-                                    const Gap(5),
-                                    Icon(
-                                      FluentIcons.class_24_regular,
-                                      size: 16,
-                                      color: AppUtils.$mainWhite,
-                                    ),
-                                  ],
+                                  ),
+                                  onPressed: () => _showDialog(context,
+                                      courses: courses, token: tokenRef),
+                                  child: Row(
+                                    children: [
+                                      const Text(
+                                        "Add units",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const Gap(5),
+                                      Icon(
+                                        FluentIcons.class_24_regular,
+                                        size: 16,
+                                        color: AppUtils.$mainWhite,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                           ],
                         ),
-                        const Gap(10),
-                        const Divider(
-                          color: Color(0xFFCECECE),
-                        ),
                         const Gap(20),
                         Expanded(
                           child: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 30, right: 30, top: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  DesktopSemesterHolder(units: units),
-                                ],
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DesktopSemesterHolder(units: units),
+                              ],
                             ),
                           ),
                         ),

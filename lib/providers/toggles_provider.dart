@@ -20,6 +20,7 @@ class TogglesProvider extends ChangeNotifier {
   bool showUploadTypeDropdown = false;
   bool showDocumentMeta = false;
   bool isSideNavMinimized = false;
+  bool isActivityExpanded = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -66,6 +67,11 @@ class TogglesProvider extends ChangeNotifier {
 
   void toggleSideNavMinimized() async {
     isSideNavMinimized = !isSideNavMinimized;
+    notifyListeners();
+  }
+
+  void toggleIsActivityExpanded() async {
+    isActivityExpanded = !isActivityExpanded;
     notifyListeners();
   }
 

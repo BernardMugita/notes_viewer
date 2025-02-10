@@ -41,7 +41,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
     if (event.kind == PointerDeviceKind.mouse &&
         (event.buttons & kSecondaryMouseButton) != 0) {
       setState(() {
-        isRightClicked = true;
+        isRightClicked = !isRightClicked;
         selectedUnit = {};
         if (selectedUnit['id'] == widget.unit['id']) {
           selectedUnit = {};
@@ -100,59 +100,93 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
               onPointerDown: onPointerDown,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.all(20),
-                width: MediaQuery.of(context).size.width / 6,
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: _isHovered ? AppUtils.$mainBlue : AppUtils.$mainWhite,
                   borderRadius: BorderRadius.circular(5),
-                  boxShadow: _isHovered
-                      ? [
-                          BoxShadow(
-                            color: Colors.grey,
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : [],
+                  border: Border.all(color: AppUtils.$mainGrey),
+                  // boxShadow: _isHovered
+                  //     ? [
+                  //         BoxShadow(
+                  //           color: Colors.grey,
+                  //           spreadRadius: 2,
+                  //           blurRadius: 5,
+                  //           offset: const Offset(0, 3),
+                  //         ),
+                  //       ]
+                  //     : [],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      FluentIcons.doctor_24_regular,
-                      color:
-                          _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,
-                      size: 45,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${unit['code']}: ${unit['name']}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: _isHovered
+                                ? AppUtils.$mainWhite
+                                : AppUtils.$mainBlue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Consumer<TogglesProvider>(
+                            builder: (BuildContext context, toggleProvider, _) {
+                          return IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  selectedUnit = {};
+                                  if (selectedUnit['id'] == widget.unit['id'] ||
+                                      toggleProvider.isActivityExpanded) {
+                                    selectedUnit = {};
+                                  } else {
+                                    selectedUnit = widget.unit;
+                                    print(selectedUnit);
+                                  }
+                                });
+                                toggleProvider.toggleIsActivityExpanded();
+                              },
+                              icon: isSelectedUnit &&
+                                      toggleProvider.isActivityExpanded
+                                  ? Icon(
+                                      FluentIcons.chevron_up_24_regular,
+                                      color: _isHovered
+                                          ? AppUtils.$mainWhite
+                                          : AppUtils.$mainBlack,
+                                    )
+                                  : Icon(
+                                      FluentIcons.chevron_down_24_regular,
+                                      color: _isHovered
+                                          ? AppUtils.$mainWhite
+                                          : AppUtils.$mainBlack,
+                                    ));
+                        })
+                      ],
                     ),
-                    Text(
-                      unit['name'],
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: _isHovered
-                            ? AppUtils.$mainWhite
-                            : AppUtils.$mainBlue,
-                        fontWeight: FontWeight.bold,
+                    if (isSelectedUnit &&
+                        context.watch<TogglesProvider>().isActivityExpanded)
+                      Column(
+                        children: [
+                          const Gap(5),
+                          Divider(
+                            color: AppUtils.$mainBlueAccent,
+                            indent: 10,
+                          ),
+                          const Gap(5),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: Column(children: [
+                              _buildUnitHolderDetails(context, "Lessons", "0"),
+                              _buildUnitHolderDetails(
+                                  context, "Date Created", unit['created_at']),
+                            ]),
+                          ),
+                        ],
                       ),
-                    ),
-                    const Gap(5),
-                    Divider(
-                      color: AppUtils.$mainGrey,
-                    ),
-                    const Gap(5),
-                    Column(
-                        children: unit['files'].entries.map<Widget>((file) {
-                      return _buildUnitHolderDetails(
-                          context,
-                          file.key == 'notes'
-                              ? FluentIcons.book_24_regular
-                              : file.key == 'slides'
-                                  ? FluentIcons.slide_content_24_regular
-                                  : file.key == 'recordings'
-                                      ? FluentIcons.video_24_regular
-                                      : FluentIcons.person_24_regular,
-                          file.key,
-                          file.value.length);
-                    }).toList()),
                   ],
                 ),
               ),
@@ -164,17 +198,17 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
             isSelectedUnit &&
             isRightClicked)
           Positioned(
-              right: 0,
+              right: 50,
+              top: 5,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: 150,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(5)),
-                    child: Column(
+                    child: Row(
                       children: [
                         ElevatedButton(
                             onPressed: () {
@@ -186,7 +220,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             },
                             style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
-                                    const Color.fromARGB(121, 70, 131, 0)),
+                                    AppUtils.$mainGreen),
                                 shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                         borderRadius:
@@ -229,23 +263,6 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                       ],
                     ),
                   ),
-                  Positioned(
-                      top: -20,
-                      right: -20,
-                      child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              isRightClicked = false;
-                              selectedUnit = {};
-                            });
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.$mainBlack)),
-                          icon: Icon(
-                            FluentIcons.dismiss_24_regular,
-                            color: AppUtils.$mainRed,
-                          )))
                 ],
               ))
       ],
@@ -253,27 +270,24 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
   }
 
   Widget _buildUnitHolderDetails(
-      BuildContext context, IconData icon, String title, double value) {
+      BuildContext context, String title, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(
-          icon,
-          color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,
-        ),
-        const Gap(5),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-                fontSize: 18,
-                color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue),
-          ),
-        ),
         Text(
-          value.toString(),
+          "$title:",
           style: TextStyle(
-            color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlue,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlack),
+        ),
+        Gap(10),
+        Text(
+          title == "Date Created"
+              ? AppUtils.formatDate(value.toString())
+              : value.toString(),
+          style: TextStyle(
+            color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlack,
           ),
         ),
       ],

@@ -12,6 +12,7 @@ import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
@@ -39,6 +40,13 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
   List<String> form = [];
+
+  List notes = [];
+  List slides = [];
+  List recordings = [];
+  List contributions = [];
+
+  bool isMaterialsEmpty = false;
 
   FilePickerResult? result;
   String? selectedFileName;
@@ -109,11 +117,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
-    List notes = [];
-    List slides = [];
-    List recordings = [];
-    List contributions = [];
-
     if (lesson.isNotEmpty && lesson['materials'] != null) {
       setState(() {
         notes = lesson['materials']['notes'] ?? [];
@@ -125,212 +128,210 @@ class _DesktopStudyState extends State<DesktopStudy> {
       print('Lesson or files are null');
     }
 
-    return Scaffold(
-      body: Flex(
-        direction: Axis.horizontal,
-        children: [
-          isMinimized
-              ? Expanded(
-                  flex: 1,
-                  child: SideNavigation(),
-                )
-              : SizedBox(
-                  width: 80,
-                  child: SideNavigation(),
-                ),
-          Expanded(
-            flex: 6,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: context.watch<LessonsProvider>().isLoading
-                  ? LoadingAnimationWidget.newtonCradle(
-                      color: AppUtils.$mainBlue, size: 100)
-                  : Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Gap(5),
-                            Text(
-                              lesson['name'] ?? "Lesson name",
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: AppUtils.$mainBlue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            if (user.isNotEmpty && user['role'] == 'admin')
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: WidgetStatePropertyAll(
-                                      const EdgeInsets.all(20)),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.$mainBlue),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _showDialog(context);
-                                },
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Upload file",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppUtils.$mainWhite,
-                                      ),
-                                    ),
-                                    const Gap(5),
-                                    Icon(
-                                      FluentIcons.book_add_24_regular,
-                                      size: 16,
-                                      color: AppUtils.$mainWhite,
-                                    ),
-                                  ],
-                                ),
-                              )
-                          ],
-                        ),
-                        const Gap(10),
-                        const Divider(
-                          color: Color(0xFFCECECE),
-                        ),
-                        const Gap(20),
-                        Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height / 1.25,
-                          padding: const EdgeInsets.only(
-                              top: 40, bottom: 40, left: 80, right: 80),
-                          decoration: BoxDecoration(color: AppUtils.$mainWhite),
-                          child: Column(
+    if (notes.isEmpty &&
+        slides.isEmpty &&
+        recordings.isEmpty &&
+        contributions.isEmpty) {
+      setState(() {
+        isMaterialsEmpty = true;
+      });
+    }
+
+    print(isMaterialsEmpty);
+
+    return Consumer<LessonsProvider>(
+        builder: (BuildContext context, lessonsProvider, _) {
+      return Scaffold(
+        body: Flex(
+          direction: Axis.horizontal,
+          children: [
+            isMinimized
+                ? Expanded(
+                    flex: 1,
+                    child: SideNavigation(),
+                  )
+                : SizedBox(
+                    width: 80,
+                    child: SideNavigation(),
+                  ),
+            Expanded(
+              flex: 6,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 40, right: 40, top: 20, bottom: 20),
+                child: lessonsProvider.isLoading
+                    ? LoadingAnimationWidget.newtonCradle(
+                        color: AppUtils.$mainBlue, size: 100)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Study material",
-                                  style: TextStyle(
-                                      fontSize: 24, color: AppUtils.$mainGrey)),
-                              const Gap(5),
-                              Divider(
-                                color: AppUtils.$mainGrey,
+                              Text(
+                                "Units/Notes/${lesson['name']}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppUtils.$mainGrey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              const Gap(20),
-                              if (lesson.isEmpty &&
-                                  notes.isEmpty &&
-                                  slides.isEmpty &&
-                                  recordings.isEmpty &&
-                                  contributions.isEmpty)
-                                Expanded(
-                                    child: Center(
-                                  child: Container(
-                                    width: 400,
-                                    height: 400,
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                      color: AppUtils.$mainBlueAccent,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          FluentIcons.prohibited_24_regular,
-                                          size: 100,
-                                          color: Colors.orange,
+                              const Gap(5),
+                              Text(
+                                lesson['name'] ?? "Lesson name",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  color: AppUtils.$mainBlue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (user.isNotEmpty && user['role'] == 'admin')
+                                SizedBox(
+                                  width: 150,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      padding: WidgetStatePropertyAll(
+                                          const EdgeInsets.all(20)),
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          AppUtils.$mainBlue),
+                                      shape: WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
                                         ),
-                                        Gap(20),
-                                        Text("How Empty!",
-                                            style: TextStyle(fontSize: 20)),
-                                        Gap(10),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      _showDialog(context);
+                                    },
+                                    child: Row(
+                                      children: [
                                         Text(
-                                          "There's no study material for this lesson",
-                                          textAlign: TextAlign.center,
+                                          "Upload file",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        )
+                                            fontSize: 16,
+                                            color: AppUtils.$mainWhite,
+                                          ),
+                                        ),
+                                        const Gap(5),
+                                        Icon(
+                                          FluentIcons.book_add_24_regular,
+                                          size: 16,
+                                          color: AppUtils.$mainWhite,
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ))
-                              else
-                                Wrap(
-                                  spacing: 40,
-                                  runSpacing: 40,
-                                  children: [
-                                    // Map notes to DesktopFile widgets and convert to list
-                                    ...notes.map((note) {
-                                      return DesktopFile(
-                                        notes: notes,
-                                        slides: [],
-                                        fileName: (note['file'] as String)
-                                            .split('/')
-                                            .last,
-                                        lesson: lesson['name'],
-                                        material: note,
-                                        icon:
-                                            FluentIcons.document_pdf_24_regular,
-                                      );
-                                    }).toList(), // Convert the iterable to a List<Widget>
-
-                                    // Map slides to DesktopFile widgets and convert to list
-                                    ...slides.map((slide) {
-                                      return DesktopFile(
-                                        slides: slides,
-                                        notes: [],
-                                        fileName: (slide['file'] as String)
-                                            .split('/')
-                                            .last,
-                                        lesson: lesson['name'],
-                                        material: slide,
-                                        icon:
-                                            FluentIcons.slide_layout_24_regular,
-                                      );
-                                    }).toList(), // Convert the iterable to a List<Widget>
-
-                                    // Map recordings to DesktopRecording widgets and convert to list
-                                    ...recordings.map((recording) {
-                                      return DesktopRecording(
-                                        recordings: recordings,
-                                        contributions: [],
-                                        fileName: (recording['file'] as String)
-                                            .split('/')
-                                            .last,
-                                        lesson: lesson['name'],
-                                        material: recording,
-                                        icon: FluentIcons.play_24_filled,
-                                      );
-                                    }).toList(), // Convert the iterable to a List<Widget>
-
-                                    // Map contributions to DesktopRecording widgets and convert to list
-                                    ...contributions.map((contribution) {
-                                      return DesktopRecording(
-                                        contributions: contributions,
-                                        recordings: [],
-                                        fileName:
-                                            (contribution['file'] as String)
-                                                .split('/')
-                                                .last,
-                                        lesson: lesson['name'],
-                                        material: contribution,
-                                        icon: FluentIcons.play_24_filled,
-                                      );
-                                    }).toList(), // Convert the iterable to a List<Widget>
-                                  ],
-                                )
+                                ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+                          const Gap(20),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration:
+                                  BoxDecoration(color: AppUtils.$mainWhite),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Study material",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: AppUtils.$mainGrey)),
+                                  const Gap(20),
+                                  if (isMaterialsEmpty)
+                                    Expanded(
+                                        child: Center(
+                                      child: EmptyWidget(
+                                          errorHeading: "How Empty!",
+                                          errorDescription:
+                                              "There's no study material for this lesson",
+                                          image: 'assets/images/404.png'),
+                                    ))
+                                  else
+                                    Wrap(
+                                      spacing: 40,
+                                      runSpacing: 40,
+                                      children: [
+                                        // Map notes to DesktopFile widgets and convert to list
+                                        ...notes.map((note) {
+                                          return DesktopFile(
+                                            notes: notes,
+                                            slides: [],
+                                            fileName: (note['file'] as String)
+                                                .split('/')
+                                                .last,
+                                            lesson: lesson['name'],
+                                            material: note,
+                                            icon: FluentIcons
+                                                .document_pdf_24_regular,
+                                          );
+                                        }).toList(), // Convert the iterable to a List<Widget>
+
+                                        // Map slides to DesktopFile widgets and convert to list
+                                        ...slides.map((slide) {
+                                          return DesktopFile(
+                                            slides: slides,
+                                            notes: [],
+                                            fileName: (slide['file'] as String)
+                                                .split('/')
+                                                .last,
+                                            lesson: lesson['name'],
+                                            material: slide,
+                                            icon: FluentIcons
+                                                .slide_layout_24_regular,
+                                          );
+                                        }).toList(), // Convert the iterable to a List<Widget>
+
+                                        // Map recordings to DesktopRecording widgets and convert to list
+                                        ...recordings.map((recording) {
+                                          return DesktopRecording(
+                                            recordings: recordings,
+                                            contributions: [],
+                                            fileName:
+                                                (recording['file'] as String)
+                                                    .split('/')
+                                                    .last,
+                                            lesson: lesson['name'],
+                                            material: recording,
+                                            icon: FluentIcons.play_24_filled,
+                                          );
+                                        }).toList(), // Convert the iterable to a List<Widget>
+
+                                        // Map contributions to DesktopRecording widgets and convert to list
+                                        ...contributions.map((contribution) {
+                                          return DesktopRecording(
+                                            contributions: contributions,
+                                            recordings: [],
+                                            fileName:
+                                                (contribution['file'] as String)
+                                                    .split('/')
+                                                    .last,
+                                            lesson: lesson['name'],
+                                            material: contribution,
+                                            icon: FluentIcons.play_24_filled,
+                                          );
+                                        }).toList(), // Convert the iterable to a List<Widget>
+                                      ],
+                                    )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   void _showDialog(

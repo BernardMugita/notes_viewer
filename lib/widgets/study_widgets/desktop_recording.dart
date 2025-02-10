@@ -53,14 +53,7 @@ class _DesktopRecordingState extends State<DesktopRecording> {
             decoration: BoxDecoration(
                 color: const Color(0xFFf9f9ff),
                 borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 224, 224, 224),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(10, 5),
-                  )
-                ]),
+                ),
             padding: const EdgeInsets.all(20),
             child: Center(
                 child: CircleAvatar(

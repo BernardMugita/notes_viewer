@@ -63,8 +63,8 @@ class _SideNavigationState extends State<SideNavigation> {
           !isMinimized
               ? SizedBox()
               : Text(
-                  "Note Viewer",
-                  style: TextStyle(color: AppUtils.$mainWhite),
+                  "Maktaba",
+                  style: TextStyle(color: AppUtils.$mainWhite, fontSize: 20),
                 ),
           !isMinimized ? Spacer() : const Gap(40),
           Expanded(

@@ -10,7 +10,7 @@ class AppUtils {
   static const Color $mainBlack = Colors.black;
   static const Color $mainGrey = Color(0xFFBEBEBE);
   static const Color $mainRed = Color(0xFFFF1900);
-  static const Color $mainGreen = Color(0xFF88FF00);
+  static const Color $mainGreen = Color(0xFF00B327);
   static const Color $mainBlueAccent = Color(0xFFf9f9ff);
 
   static const String $baseUrl = 'http://127.0.0.1:8000';

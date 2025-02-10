@@ -69,12 +69,9 @@ class _DesktopSemesterHolderState extends State<DesktopSemesterHolder> {
                   style: TextStyle(color: AppUtils.$mainGrey, fontSize: 18),
                 ),
                 Gap(20),
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  clipBehavior: Clip.none,
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.start,
+                Column(
+                  spacing: 5,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: groupedUnits[semester]!.map<Widget>((unit) {
                     return DesktopUnitHolder(unit: unit);
                   }).toList(),

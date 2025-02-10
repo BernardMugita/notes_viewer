@@ -22,51 +22,113 @@ class _DesktopCardState extends State<DesktopCard> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 1,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        margin: widget.material != "student_contributions"
-            ? const EdgeInsets.only(right: 20)
-            : const EdgeInsets.all(0),
-        decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 224, 224, 224),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(10, 5),
-              )
-            ]),
-        child: Column(
-          children: [
-            CircleAvatar(
-              backgroundColor: AppUtils.$mainBlue,
-              radius: 30,
-              child: Icon(
-                  widget.material == 'notes'
-                      ? FluentIcons.book_24_regular
-                      : widget.material == 'slides'
-                          ? FluentIcons.slide_content_24_regular
-                          : widget.material == 'recordings'
-                              ? FluentIcons.video_24_regular
-                              : widget.material == "student_contributions"
-                                  ? FluentIcons.people_20_regular
-                                  : FluentIcons.person_24_regular,
-                  color: AppUtils.$mainWhite),
-            ),
-            Gap(10),
-            Text(widget.users > 0
-                ? "REGISTERED STUDENTS"
-                : widget.material
-                    .toString()
-                    .toUpperCase()
-                    .replaceAll('_', " ")),
-            Text("Total: ${widget.users > 0 ? widget.users : widget.count}"),
-          ],
-        ),
-      ),
-    );
+        flex: 1,
+        child: Container(
+          margin: widget.material != "student_contributions"
+              ? const EdgeInsets.only(right: 20)
+              : const EdgeInsets.all(0),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+          ),
+          child: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppUtils.$mainWhite,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(255, 224, 224, 224),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(10, 5),
+                      )
+                    ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.users > 0
+                              ? "REGISTERED STUDENTS"
+                              : widget.material
+                                  .toString()
+                                  .toUpperCase()
+                                  .replaceAll('_', " "),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: AppUtils.$mainBlack,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Total: ${widget.users > 0 ? widget.users : widget.count}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppUtils.$mainBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gap(10),
+                    CircleAvatar(
+                      backgroundColor: widget.material == 'notes'
+                          ? Colors.purpleAccent.withOpacity(0.2)
+                          : widget.material == 'slides'
+                              ? Colors.amber.withOpacity(0.2)
+                              : widget.material == 'recordings'
+                                  ? AppUtils.$mainBlue.withOpacity(0.2)
+                                  : widget.material == "student_contributions"
+                                      ? Colors.deepOrange.withOpacity(0.2)
+                                      : AppUtils.$mainGreen.withOpacity(0.2),
+                      radius: 30,
+                      child: Icon(
+                        widget.material == 'notes'
+                            ? FluentIcons.book_24_regular
+                            : widget.material == 'slides'
+                                ? FluentIcons.slide_content_24_regular
+                                : widget.material == 'recordings'
+                                    ? FluentIcons.video_24_regular
+                                    : widget.material == "student_contributions"
+                                        ? FluentIcons.people_20_regular
+                                        : FluentIcons.person_24_regular,
+                        color: widget.material == 'notes'
+                            ? Colors.purpleAccent
+                            : widget.material == 'slides'
+                                ? Colors.amber
+                                : widget.material == 'recordings'
+                                    ? AppUtils.$mainBlue
+                                    : widget.material == "student_contributions"
+                                        ? Colors.deepOrange
+                                        : const Color(0xFF008800),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                  top: 5,
+                  bottom: 5,
+                  left: 0,
+                  child: Container(
+                    width: 5,
+                    decoration: BoxDecoration(
+                        color: widget.material == 'notes'
+                            ? Colors.purpleAccent
+                            : widget.material == 'slides'
+                                ? Colors.amber
+                                : widget.material == 'recordings'
+                                    ? AppUtils.$mainBlue
+                                    : widget.material == "student_contributions"
+                                        ? Colors.deepOrange
+                                        : AppUtils.$mainGreen,
+                        borderRadius: BorderRadius.circular(10)),
+                  ))
+            ],
+          ),
+        ));
   }
 }
