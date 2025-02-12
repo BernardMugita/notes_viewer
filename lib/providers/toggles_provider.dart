@@ -21,6 +21,7 @@ class TogglesProvider extends ChangeNotifier {
   bool showDocumentMeta = false;
   bool isSideNavMinimized = false;
   bool isActivityExpanded = false;
+  bool isUnitExpanded = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -73,6 +74,10 @@ class TogglesProvider extends ChangeNotifier {
   void toggleIsActivityExpanded() async {
     isActivityExpanded = !isActivityExpanded;
     notifyListeners();
+  }
+
+  void toggleIsUnitExpanded() async {
+    isUnitExpanded = !isUnitExpanded;
   }
 
   Future<void> loadRememberSelection() async {

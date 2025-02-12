@@ -134,7 +134,7 @@ class _SideNavigationState extends State<SideNavigation> {
                         children: [
                           if (context.watch<UserProvider>().isLoading)
                             SizedBox(
-                              width: 130,
+                              width: 80,
                               child: LinearProgressIndicator(
                                 minHeight: 1,
                                 color: AppUtils.$mainWhite,
@@ -148,7 +148,7 @@ class _SideNavigationState extends State<SideNavigation> {
                                     fontWeight: FontWeight.bold)),
                           if (context.watch<UserProvider>().isLoading)
                             SizedBox(
-                              width: 130,
+                              width: 50,
                               child: LinearProgressIndicator(
                                 minHeight: 1,
                                 color: AppUtils.$mainWhite,

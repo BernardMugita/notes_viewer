@@ -107,16 +107,6 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                   color: _isHovered ? AppUtils.$mainBlue : AppUtils.$mainWhite,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: AppUtils.$mainGrey),
-                  // boxShadow: _isHovered
-                  //     ? [
-                  //         BoxShadow(
-                  //           color: Colors.grey,
-                  //           spreadRadius: 2,
-                  //           blurRadius: 5,
-                  //           offset: const Offset(0, 3),
-                  //         ),
-                  //       ]
-                  //     : [],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,17 +131,16 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                 setState(() {
                                   selectedUnit = {};
                                   if (selectedUnit['id'] == widget.unit['id'] ||
-                                      toggleProvider.isActivityExpanded) {
+                                      toggleProvider.isUnitExpanded) {
                                     selectedUnit = {};
                                   } else {
                                     selectedUnit = widget.unit;
-                                    print(selectedUnit);
                                   }
                                 });
-                                toggleProvider.toggleIsActivityExpanded();
+                                toggleProvider.toggleIsUnitExpanded();
                               },
                               icon: isSelectedUnit &&
-                                      toggleProvider.isActivityExpanded
+                                      toggleProvider.isUnitExpanded
                                   ? Icon(
                                       FluentIcons.chevron_up_24_regular,
                                       color: _isHovered
@@ -168,7 +157,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                       ],
                     ),
                     if (isSelectedUnit &&
-                        context.watch<TogglesProvider>().isActivityExpanded)
+                        context.watch<TogglesProvider>().isUnitExpanded)
                       Column(
                         children: [
                           const Gap(5),
@@ -180,7 +169,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, right: 10),
                             child: Column(children: [
-                              _buildUnitHolderDetails(context, "Lessons", "0"),
+                              _buildUnitHolderDetails(context, "Lessons",
+                                  unit['lessons'].length.toString()),
                               _buildUnitHolderDetails(
                                   context, "Date Created", unit['created_at']),
                             ]),
@@ -219,8 +209,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                               });
                             },
                             style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    AppUtils.$mainGreen),
+                                backgroundColor:
+                                    WidgetStatePropertyAll(AppUtils.$mainGreen),
                                 shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                         borderRadius:

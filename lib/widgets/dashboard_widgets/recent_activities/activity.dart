@@ -5,54 +5,76 @@ import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 
-class Activity extends StatelessWidget {
-  const Activity({super.key});
+class Activity extends StatefulWidget {
+  final Map activity;
+
+  const Activity({super.key, required this.activity});
+
+  @override
+  State<Activity> createState() => _ActivityState();
+}
+
+class _ActivityState extends State<Activity> {
+  // Define the variables as part of the state
+  Map toggledActivity = {};
+  bool isToggledActivity = false;
 
   @override
   Widget build(BuildContext context) {
-    final material = 'recordings';
+    final activity = widget.activity;
+    final material = activity['type'] ?? 'notes';
+
     return Consumer<TogglesProvider>(
-        builder: (BuildContext context, toggleProvider, _) {
-      return GestureDetector(
-        onTap: () {
-          toggleProvider.toggleIsActivityExpanded();
-        },
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.only(bottom: 5),
-          decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Bio-Chemistry notes uploaded",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  if (toggleProvider.isActivityExpanded)
-                    Icon(FluentIcons.chevron_up_24_filled)
-                  else
-                    Icon(FluentIcons.chevron_down_24_filled)
-                ],
-              ),
-              if (toggleProvider.isActivityExpanded)
-                Column(
+      builder: (BuildContext context, toggleProvider, _) {
+        return GestureDetector(
+          onTap: () {
+            toggleProvider.toggleIsActivityExpanded();
+            setState(() {
+              if (toggledActivity.isNotEmpty) {
+                toggledActivity = {};
+              } else {
+                toggledActivity = activity;
+              }
+              isToggledActivity =
+                  toggledActivity['id'] == widget.activity['id'];
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.only(bottom: 5),
+            decoration: BoxDecoration(
+              color: AppUtils.$mainWhite,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Divider(
-                      color: AppUtils.$mainBlueAccent,
-                      indent: 10,
+                    Text(
+                      activity['title'] ?? 'Loading . . .',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.only(left: 10, right: 10),
-                      title: Column(
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
+                    if (toggleProvider.isActivityExpanded && isToggledActivity)
+                      Icon(FluentIcons.chevron_up_24_filled)
+                    else
+                      Icon(FluentIcons.chevron_down_24_filled)
+                  ],
+                ),
+                if (toggleProvider.isActivityExpanded && isToggledActivity)
+                  Column(
+                    children: [
+                      Divider(
+                        color: AppUtils.$mainBlueAccent,
+                        indent: 10,
+                      ),
+                      ListTile(
+                        contentPadding:
+                            const EdgeInsets.only(left: 10, right: 10),
+                        title: Column(
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
                                   backgroundColor: material == 'notes'
                                       ? Colors.purpleAccent.withOpacity(0.2)
                                       : material == 'slides'
@@ -90,30 +112,22 @@ class Activity extends StatelessWidget {
                                                         "student_contributions"
                                                     ? Colors.deepOrange
                                                     : AppUtils.$mainGreen,
-                                  )),
-                              Gap(10),
-                              if (material == 'notes')
-                                Text("Human Eye Notes uploaded at 12:00"),
-                              if (material == 'slides')
-                                Text("Human Eye Slide uploaded at 12:00"),
-                              if (material == 'recordings')
-                                Text("Human Eye Recording uploaded at 12:00"),
-                              if (material == "student_contributions")
-                                Text(
-                                    "New Student Contribution uploaded at 12:00"),
-                              if (material == "user")
-                                Text("Username created a new account at 12:00"),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                )
-            ],
+                                  ),
+                                ),
+                                Gap(10),
+                                Text(activity['message']),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

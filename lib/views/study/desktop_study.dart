@@ -128,7 +128,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
       print('Lesson or files are null');
     }
 
-    if (notes.isEmpty &&
+    if (!context.watch<LessonsProvider>().isLoading &&
+        notes.isEmpty &&
         slides.isEmpty &&
         recordings.isEmpty &&
         contributions.isEmpty) {
@@ -136,8 +137,6 @@ class _DesktopStudyState extends State<DesktopStudy> {
         isMaterialsEmpty = true;
       });
     }
-
-    print(isMaterialsEmpty);
 
     return Consumer<LessonsProvider>(
         builder: (BuildContext context, lessonsProvider, _) {
@@ -235,6 +234,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(20),
+                              width: double.infinity,
                               decoration:
                                   BoxDecoration(color: AppUtils.$mainWhite),
                               child: Column(
