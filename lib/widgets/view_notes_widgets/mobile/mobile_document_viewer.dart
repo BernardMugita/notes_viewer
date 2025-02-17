@@ -50,12 +50,17 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
         children: [
           Row(
             children: [
-              Text(
-                widget.fileName,
-                style: TextStyle(
+              SizedBox(
+                width: 200,
+                child: Text(
+                  widget.fileName,
+                  style: TextStyle(
+                    overflow: TextOverflow.ellipsis,
                     color: AppUtils.$mainBlue,
                     fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               Spacer(),
               Row(

@@ -4,10 +4,12 @@ import 'package:note_viewer/widgets/view_notes_widgets/mobile/mobile_video_viewe
 
 class MobileFileViewer extends StatefulWidget {
   final String fileName;
+  final Function onPressed;
 
   const MobileFileViewer({
     super.key,
     required this.fileName,
+    required this.onPressed,
   });
 
   @override
@@ -22,6 +24,7 @@ class _MobileFileViewerState extends State<MobileFileViewer> {
     return fileExtension == 'mp4' || fileExtension == 'webm'
         ? MobileVideoViewer(
             fileName: widget.fileName,
+            onPressed: widget.onPressed,
             uploadType: 'recordings',
           )
         : fileExtension == 'docx' ||

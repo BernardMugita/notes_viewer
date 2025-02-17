@@ -30,16 +30,18 @@ class _MobileNotesItemState extends State<MobileNotesItem> {
         ),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           SizedBox(
-            width: 50,
+            width: 60,
             child: Text(lastSegment,
                 style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     overflow: TextOverflow.ellipsis,
                     color: AppUtils.$mainBlue,
                     fontWeight: FontWeight.bold)),
           ),
           Gap(10),
-          Expanded(child: Text(lesson['name'], style: TextStyle(fontSize: 14))),
+          Expanded(
+              child: Text(lesson['name'],
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
           // Spacer(),
           TextButton(
             onPressed: () {

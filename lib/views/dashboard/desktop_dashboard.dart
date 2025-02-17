@@ -5,7 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/banner/desktop_banner.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity_history.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
@@ -75,7 +75,7 @@ class DesktopDashboard extends StatelessWidget {
                                 ],
                               ),
                               Gap(20),
-                              DesktopBanner(data: dashData),
+                              DashboardBanner(data: dashData),
                               Gap(20),
                               DesktopCardRow(
                                 users: dashData['user_count'] ?? 0,

@@ -75,53 +75,80 @@ class _MobileUnitsState extends State<MobileUnits> {
                 ),
               )
             : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
                     children: [
-                      // Icon(
-                      //   FluentIcons.class_24_regular,
-                      //   color: AppUtils.$mainBlue,
-                      // ),
                       Text(
                         "Units",
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 18,
                           color: AppUtils.$mainBlue,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Spacer(),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
-                            shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)))),
-                        onPressed: () {
-                          _showDialog(context,
-                              courses: courses, token: tokenRef);
-                        },
-                        child: Row(
-                          children: [
-                            Text("Add units",
-                                style: TextStyle(
-                                    fontSize: 16, color: AppUtils.$mainWhite)),
-                            Gap(5),
-                            Icon(FluentIcons.class_24_regular,
-                                size: 16, color: AppUtils.$mainWhite),
-                          ],
+                      SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              padding:
+                                  WidgetStatePropertyAll(EdgeInsets.all(10)),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
+                              shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)))),
+                          onPressed: () {
+                            _showDialog(context,
+                                courses: courses, token: tokenRef);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Add units",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.$mainWhite)),
+                              Gap(5),
+                              Icon(FluentIcons.class_24_regular,
+                                  size: 16, color: AppUtils.$mainWhite),
+                            ],
+                          ),
                         ),
                       )
                     ],
                   ),
                   const Gap(10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(FluentIcons.search_24_regular),
+                              contentPadding: const EdgeInsets.all(5),
+                              filled: true,
+                              fillColor: AppUtils.$mainWhite,
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppUtils.$mainGrey),
+                                  borderRadius: BorderRadius.circular(5)),
+                              hintText: "Search",
+                              hintStyle: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(10),
                   const Divider(
                     color: Color(0xFFCECECE),
                   ),
-                  const Gap(20),
+                  const Gap(10),
                   // Make the scrollable content expand dynamically
                   Expanded(
                     child: SingleChildScrollView(
@@ -452,7 +479,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     : AppUtils.$mainBlue,
                               ),
                               padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                  top: 20, bottom: 20, left: 10, right: 10)),
+                                  top: 10, bottom: 10, left: 10, right: 10)),
                             ),
                             child: unitProvider.isLoading
                                 ? const SizedBox(

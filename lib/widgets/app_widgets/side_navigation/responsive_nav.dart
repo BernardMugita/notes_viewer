@@ -38,8 +38,6 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
 
     user = context.watch<UserProvider>().user;
 
-    print(user);
-
     return SafeArea(
       child: Container(
         width: MediaQuery.of(context).size.width / 1.5,
@@ -53,7 +51,7 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                 fit: BoxFit.contain,
                 image: AssetImage('assets/images/alib-hd-shaddow.png')),
             Text(
-              "Note Viewer",
+              "Maktaba",
               style: TextStyle(color: AppUtils.$mainWhite),
             ),
             const Gap(40),

@@ -54,59 +54,84 @@ class _MobileNotesState extends State<MobileNotes> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
                 children: [
                   Text(
                     "Notes",
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 18,
                       color: AppUtils.$mainBlue,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Spacer(),
                   if (user.isNotEmpty && user['role'] == 'admin')
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        padding:
-                            WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.$mainBlue),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        _showDialog(context);
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            "Add Lesson",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: AppUtils.$mainWhite,
+                    SizedBox(
+                      width: 150,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding:
+                              WidgetStatePropertyAll(const EdgeInsets.all(10)),
+                          backgroundColor:
+                              WidgetStatePropertyAll(AppUtils.$mainBlue),
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          const Gap(5),
-                          Icon(
-                            FluentIcons.book_add_24_regular,
-                            size: 16,
-                            color: AppUtils.$mainWhite,
-                          ),
-                        ],
+                        ),
+                        onPressed: () {
+                          _showDialog(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Add Lesson",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            ),
+                            const Gap(5),
+                            Icon(
+                              FluentIcons.book_add_24_regular,
+                              size: 16,
+                              color: AppUtils.$mainWhite,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
               ),
               const Gap(10),
-              const Divider(
-                color: Color(0xFFCECECE),
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(FluentIcons.search_24_regular),
+                          filled: true,
+                          fillColor: AppUtils.$mainWhite,
+                          contentPadding: const EdgeInsets.all(5),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: AppUtils.$mainGrey),
+                              borderRadius: BorderRadius.circular(5)),
+                          hintText: "Search",
+                          hintStyle: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Gap(20),
+              const Gap(10),
               SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height,
@@ -255,7 +280,7 @@ class _MobileNotesState extends State<MobileNotes> {
                                 .watch<TogglesProvider>()
                                 .showUploadTypeDropdown)
                               Container(
-                                padding: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(10),
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
@@ -380,8 +405,8 @@ class _MobileNotesState extends State<MobileNotes> {
                                     ),
                                     padding: WidgetStatePropertyAll(
                                         EdgeInsets.only(
-                                            top: 20,
-                                            bottom: 20,
+                                            top: 10,
+                                            bottom: 10,
                                             left: 10,
                                             right: 10)),
                                   ),

@@ -7,6 +7,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
@@ -74,46 +75,51 @@ class _MobileAccountState extends State<MobileAccount> {
           child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(children: [
-                Row(
-                  children: [
-                    Text(
-                      "User Account",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: AppUtils.$mainBlue,
-                        fontWeight: FontWeight.bold,
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      Text(
+                        "User Account",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: AppUtils.$mainBlue,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        padding: WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.$mainBlue),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                      SizedBox(
+                        width: 80,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            padding: WidgetStatePropertyAll(
+                                const EdgeInsets.all(20)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            _showDialog(context, user);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                FluentIcons.person_edit_24_regular,
+                                size: 16,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      onPressed: () {
-                        _showDialog(context, user);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            FluentIcons.person_edit_24_regular,
-                            size: 16,
-                            color: AppUtils.$mainWhite,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(10),
-                const Divider(
-                  color: Color(0xFFCECECE),
+                    ],
+                  ),
                 ),
                 const Gap(20),
                 Column(
@@ -121,18 +127,6 @@ class _MobileAccountState extends State<MobileAccount> {
                   children: [
                     Column(
                       children: [
-                        CircleAvatar(
-                          radius: 80,
-                          backgroundColor: AppUtils.$mainWhite,
-                          child: Image(
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                            image: AssetImage(
-                                'assets/images/placeholder-profile.png'),
-                          ),
-                        ),
-                        Gap(40),
                         Consumer<TogglesProvider>(
                             builder: (context, toggleProvider, child) {
                           return GestureDetector(
@@ -145,8 +139,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(
-                                          FluentIcons.person_accounts_24_regular),
+                                      Icon(FluentIcons
+                                          .person_accounts_24_regular),
                                       Gap(5),
                                       Text("Account Details")
                                     ],
@@ -225,12 +219,14 @@ class _MobileAccountState extends State<MobileAccount> {
                                             : user['username']),
                                     _buildAccountDetails(context,
                                         title: 'Email',
-                                        value:
-                                            isLoading ? 'email' : user['email']),
+                                        value: isLoading
+                                            ? 'email'
+                                            : user['email']),
                                     _buildAccountDetails(context,
                                         title: 'Phone',
-                                        value:
-                                            isLoading ? 'phone' : user['phone']),
+                                        value: isLoading
+                                            ? 'phone'
+                                            : user['phone']),
                                     _buildAccountDetails(context,
                                         title: 'Registration number',
                                         value: isLoading
@@ -314,12 +310,14 @@ class _MobileAccountState extends State<MobileAccount> {
                                     Gap(5),
                                     Text(
                                       "Acknowledgment",
-                                      style: TextStyle(color: AppUtils.$mainBlue),
+                                      style:
+                                          TextStyle(color: AppUtils.$mainBlue),
                                     ),
                                     Gap(5),
                                     Text(
                                       "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                      style: TextStyle(color: AppUtils.$mainGrey),
+                                      style:
+                                          TextStyle(color: AppUtils.$mainGrey),
                                     ),
                                     Text("Powered by Labs")
                                   ]
@@ -351,6 +349,13 @@ class _MobileAccountState extends State<MobileAccount> {
                                     : []),
                       );
                     }),
+                    Gap(40),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Center(
+                        child: PlatformDetails(),
+                      ),
+                    )
                   ],
                 )
               ])),

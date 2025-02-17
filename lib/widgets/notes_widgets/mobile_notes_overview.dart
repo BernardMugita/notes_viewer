@@ -50,7 +50,7 @@ class _MobileNotesOverviewState extends State<MobileNotesOverview> {
             Gap(20),
             ElevatedButton(
               style: ButtonStyle(
-                padding: WidgetStatePropertyAll(const EdgeInsets.all(20)),
+                padding: WidgetStatePropertyAll(const EdgeInsets.all(10)),
                 backgroundColor: WidgetStatePropertyAll(AppUtils.$mainBlue),
                 shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(

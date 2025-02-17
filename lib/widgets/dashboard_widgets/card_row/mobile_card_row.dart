@@ -36,7 +36,7 @@ class _MobileCardRowState extends State<MobileCardRow> {
             width: double.infinity,
             child: Wrap(
               spacing: 5,
-              runSpacing: 20,
+              runSpacing: 5,
               children: [
                 if (user.isNotEmpty && user['role'] == 'admin')
                   MobileCard(

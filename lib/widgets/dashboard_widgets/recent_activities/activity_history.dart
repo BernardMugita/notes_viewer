@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
+import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity.dart';
 import 'package:provider/provider.dart';
 
@@ -25,11 +26,18 @@ class ActivityHistory extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: readActivities.map((activity) {
-                    return Activity(activity: activity);
-                  }).toList(),
-                ),
+                if (readActivities.isNotEmpty)
+                  Column(
+                    children: readActivities.map((activity) {
+                      return Activity(activity: activity);
+                    }).toList(),
+                  )
+                else
+                  EmptyWidget(
+                    errorHeading: "No Activities Loaded",
+                    errorDescription: "Activity history may be empty",
+                    image: 'assets/images/404.png',
+                  )
               ],
             ),
           ),

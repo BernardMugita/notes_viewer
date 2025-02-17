@@ -71,12 +71,8 @@ class _MobileSemesterHolderState extends State<MobileSemesterHolder> {
                   ),
                 ),
                 Gap(20),
-                Wrap(
+                Column(
                   spacing: 10,
-                  runSpacing: 10,
-                  clipBehavior: Clip.none,
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.start,
                   children: groupedUnits[semester]!.map<Widget>((unit) {
                     return MobileUnitHolder(unit: unit);
                   }).toList(),

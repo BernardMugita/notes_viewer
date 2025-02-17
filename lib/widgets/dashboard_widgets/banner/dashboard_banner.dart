@@ -2,19 +2,21 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 
-class DesktopBanner extends StatefulWidget {
+class DashboardBanner extends StatefulWidget {
   final Map data;
 
-  const DesktopBanner({super.key, required this.data});
+  const DashboardBanner({super.key, required this.data});
 
   @override
-  State<DesktopBanner> createState() => _DesktopBannerState();
+  State<DashboardBanner> createState() => _DashboardBannerState();
 }
 
-class _DesktopBannerState extends State<DesktopBanner> {
+class _DashboardBannerState extends State<DashboardBanner> {
   @override
   Widget build(BuildContext context) {
     final dashData = widget.data;
+
+    bool isNewActivities = dashData['notifications']['unread'].isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -65,7 +67,9 @@ class _DesktopBannerState extends State<DesktopBanner> {
                           right: 0,
                           child: CircleAvatar(
                             radius: 5,
-                            backgroundColor: AppUtils.$mainRed,
+                            backgroundColor: isNewActivities
+                                ? AppUtils.$mainRed
+                                : AppUtils.$mainGrey,
                           ))
                     ],
                   ),

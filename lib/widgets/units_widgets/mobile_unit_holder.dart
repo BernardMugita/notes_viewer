@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
@@ -18,9 +18,12 @@ class MobileUnitHolder extends StatefulWidget {
 }
 
 class _MobileUnitHolderState extends State<MobileUnitHolder> {
+  Map selectedUnit = {};
+
   @override
   Widget build(BuildContext context) {
     final unit = widget.unit;
+    final isSelectedUnit = widget.unit['id'] == selectedUnit['id'];
 
     return GestureDetector(
       onTap: () {
@@ -34,110 +37,96 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
       },
       child: Container(
         padding: const EdgeInsets.all(10),
-        width: MediaQuery.of(context).size.width / 2.5,
+        width: double.infinity,
         decoration: BoxDecoration(
-          color: AppUtils.$mainWhite,
-          borderRadius: BorderRadius.circular(5),
-        ),
+            color: AppUtils.$mainWhite,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppUtils.$mainGrey)),
         child: Column(
           children: [
-            Icon(
-              FluentIcons.doctor_24_regular,
-              size: 35,
-            ),
-            Text(unit['name'],
-                style: TextStyle(
-                    fontSize: 20,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold)),
-            Gap(2.5),
-            Divider(
-              color: AppUtils.$mainGrey,
-            ),
-            Gap(2.5),
-            Column(
+            Row(
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      FluentIcons.book_24_regular,
-                      size: 14,
-                    ),
-                    Gap(5),
-                    SizedBox(
-                      width: 80,
-                      child: Text("Notes",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppUtils.$mainBlue,
-                              overflow: TextOverflow.ellipsis)),
-                    ),
-                    Spacer(),
-                    Text("2")
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      FluentIcons.slide_content_24_regular,
-                      size: 14,
-                    ),
-                    Gap(5),
-                    SizedBox(
-                      width: 80,
-                      child: Text("Slides",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppUtils.$mainBlue,
-                              overflow: TextOverflow.ellipsis)),
-                    ),
-                    Spacer(),
-                    Text("4")
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      FluentIcons.video_24_regular,
-                      size: 14,
-                    ),
-                    Gap(5),
-                    SizedBox(
-                      width: 80,
-                      child: Text("Recordings",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppUtils.$mainBlue,
-                              overflow: TextOverflow.ellipsis)),
-                    ),
-                    Spacer(),
-                    Text("1")
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      FluentIcons.person_32_regular,
-                      size: 14,
-                    ),
-                    Gap(5),
-                    SizedBox(
-                      width: 80,
-                      child: Text("Contributions",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppUtils.$mainBlue,
-                              overflow: TextOverflow.ellipsis)),
-                    ),
-                    Spacer(),
-                    Text("1")
-                  ],
-                )
+                Text("${unit['code']}: ${unit['name']}",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: AppUtils.$mainBlue,
+                        fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Consumer<TogglesProvider>(
+                    builder: (BuildContext context, toggleProvider, _) {
+                  return IconButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedUnit = {};
+                          if (selectedUnit['id'] == widget.unit['id'] ||
+                              toggleProvider.isUnitExpanded) {
+                            selectedUnit = {};
+                          } else {
+                            selectedUnit = widget.unit;
+                          }
+                        });
+                        toggleProvider.toggleIsUnitExpanded();
+                      },
+                      icon: isSelectedUnit && toggleProvider.isUnitExpanded
+                          ? Icon(
+                              FluentIcons.chevron_up_24_regular,
+                              color: AppUtils.$mainBlack,
+                            )
+                          : Icon(
+                              FluentIcons.chevron_down_24_regular,
+                              color: AppUtils.$mainBlack,
+                            ));
+                })
               ],
-            )
+            ),
+            if (isSelectedUnit &&
+                context.watch<TogglesProvider>().isUnitExpanded)
+              Column(
+                spacing: 5,
+                children: [
+                  Divider(
+                    color: AppUtils.$mainBlueAccent,
+                    indent: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Column(children: [
+                      _buildUnitHolderDetails(context, "Lessons",
+                          unit['lessons'].length.toString()),
+                      _buildUnitHolderDetails(
+                          context, "Date Created", unit['created_at']),
+                    ]),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildUnitHolderDetails(
+      BuildContext context, String title, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 10,
+      children: [
+        Text(
+          "$title:",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppUtils.$mainBlack),
+        ),
+        Text(
+          title == "Date Created"
+              ? AppUtils.formatDate(value.toString())
+              : value.toString(),
+          style: TextStyle(
+            color: AppUtils.$mainBlack,
+          ),
+        ),
+      ],
     );
   }
 }

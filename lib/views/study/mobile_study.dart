@@ -112,14 +112,14 @@ class _MobileStudyState extends State<MobileStudy> {
     List notes = [];
     List slides = [];
     List recordings = [];
-    List assignments = [];
+    List contributions = [];
 
-    if (lesson.isNotEmpty && lesson['files'] != null) {
+    if (lesson.isNotEmpty && lesson['materials'] != null) {
       setState(() {
-        notes = lesson['files']['notes'] ?? [];
-        slides = lesson['files']['slides'] ?? [];
-        recordings = lesson['files']['recordings'] ?? [];
-        assignments = lesson['files']['assignments'] ?? [];
+        notes = lesson['materials']['notes'] ?? [];
+        slides = lesson['materials']['slides'] ?? [];
+        recordings = lesson['materials']['recordings'] ?? [];
+        contributions = lesson['materials']['contributions'] ?? [];
       });
     } else {
       print('Lesson or files are null');
@@ -138,8 +138,11 @@ class _MobileStudyState extends State<MobileStudy> {
         drawer: const ResponsiveNav(),
         body: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              Row(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
                 children: [
                   const Gap(5),
                   Text(
@@ -150,7 +153,6 @@ class _MobileStudyState extends State<MobileStudy> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Spacer(),
                   if (user.isNotEmpty && user['role'] == 'admin')
                     ElevatedButton(
                       style: ButtonStyle(
@@ -175,15 +177,9 @@ class _MobileStudyState extends State<MobileStudy> {
                     ),
                 ],
               ),
-              const Gap(10),
-              const Divider(
-                color: Color(0xFFCECECE),
-              ),
               const Gap(20),
               Expanded(
                 child: Container(
-                  // width: double.infinity,
-                  // height: MediaQuery.of(context).size.height / 1.45,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(color: AppUtils.$mainWhite),
                   child: SingleChildScrollView(
@@ -193,16 +189,12 @@ class _MobileStudyState extends State<MobileStudy> {
                         Text("Study material",
                             style: TextStyle(
                                 fontSize: 18, color: AppUtils.$mainGrey)),
-                        const Gap(5),
-                        Divider(
-                          color: AppUtils.$mainGrey,
-                        ),
                         const Gap(20),
                         if (lesson.isEmpty &&
                             notes.isEmpty &&
                             slides.isEmpty &&
                             recordings.isEmpty &&
-                            assignments.isEmpty)
+                            contributions.isEmpty)
                           Expanded(
                               child: Center(
                             child: Container(
@@ -243,29 +235,47 @@ class _MobileStudyState extends State<MobileStudy> {
                             children: [
                               ...notes.map((note) {
                                 return MobileFile(
-                                  fileName: note,
-                                  lesson: lessonNameRef,
+                                  notes: notes,
+                                  slides: [],
+                                  fileName:
+                                      (note['file'] as String).split('/').last,
+                                  lesson: lesson['name'],
+                                  material: note,
                                   icon: FluentIcons.document_pdf_24_regular,
                                 );
                               }),
                               ...slides.map((slide) {
                                 return MobileFile(
-                                  fileName: slide,
-                                  lesson: lessonNameRef,
+                                  slides: slides,
+                                  notes: [],
+                                  fileName:
+                                      (slide['file'] as String).split('/').last,
+                                  lesson: lesson['name'],
+                                  material: slide,
                                   icon: FluentIcons.slide_layout_24_regular,
                                 );
                               }),
                               ...recordings.map((recording) {
                                 return MobileRecording(
-                                  fileName: recording,
-                                  lesson: lessonNameRef,
+                                  recordings: recordings,
+                                  contributions: [],
+                                  fileName: (recording['file'] as String)
+                                      .split('/')
+                                      .last,
+                                  lesson: lesson['name'],
+                                  material: recording,
                                   icon: FluentIcons.play_24_filled,
                                 );
                               }),
-                              ...assignments.map((assignment) {
+                              ...contributions.map((contribution) {
                                 return MobileRecording(
-                                  fileName: assignment,
-                                  lesson: lessonNameRef,
+                                  recordings: [],
+                                  contributions: contributions,
+                                  fileName: (contribution['file'] as String)
+                                      .split('/')
+                                      .last,
+                                  lesson: lesson['name'],
+                                  material: contribution,
                                   icon: FluentIcons.play_24_filled,
                                 );
                               }),
@@ -517,7 +527,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                       : AppUtils.$mainBlue,
                                 ),
                                 padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                    top: 20, bottom: 20, left: 10, right: 10)),
+                                    top: 10, bottom: 10, left: 10, right: 10)),
                               ),
                               child: uploadsProvider.isLoading
                                   ? const SizedBox(

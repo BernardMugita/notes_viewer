@@ -5,14 +5,20 @@ import 'package:note_viewer/utils/app_utils.dart';
 
 class MobileRecording extends StatefulWidget {
   final String fileName;
+  final String lesson;
+  final Map material;
   final IconData? icon;
-  final String? lesson;
+  final List recordings;
+  final List contributions;
 
   const MobileRecording({
     super.key,
     required this.fileName,
     required this.lesson,
+    required this.material,
     this.icon,
+    required this.recordings,
+    required this.contributions,
   });
 
   @override
@@ -20,11 +26,22 @@ class MobileRecording extends StatefulWidget {
 }
 
 class _MobileRecordingState extends State<MobileRecording> {
+  String uploadType = 'recordings';
+
+  final String url = AppUtils.$baseUrl;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.go('/units/notes/${widget.lesson}/${widget.fileName}');
+        context.go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
+          "path":
+              "$url/${widget.material['path']}/$uploadType/${widget.fileName}",
+          "material": widget.material,
+          "featured_material": widget.recordings.isEmpty
+              ? widget.contributions
+              : widget.recordings,
+        });
       },
       child: Column(
         children: [

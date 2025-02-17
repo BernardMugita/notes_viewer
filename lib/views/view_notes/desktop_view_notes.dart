@@ -62,7 +62,10 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                   Gap(10),
                   Text("Units/Notes/$lessonName/$fileName",
                       style: TextStyle(
-                          fontSize: 18, decoration: TextDecoration.underline)),
+                        fontSize: 16,
+                        color: AppUtils.$mainGrey,
+                        fontWeight: FontWeight.bold,
+                      )),
                 ],
               ),
               Gap(20),
@@ -148,23 +151,6 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                       ],
                                     ),
                                     Gap(20),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Duration:",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              color: AppUtils.$mainBlack),
-                                        ),
-                                        Gap(5),
-                                        Text(
-                                          duration,
-                                          style: TextStyle(fontSize: 14),
-                                        )
-                                      ],
-                                    ),
-                                    Gap(5),
                                     Row(
                                       children: [
                                         Text(

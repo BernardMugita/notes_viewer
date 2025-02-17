@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/mobile_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity_history.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -46,100 +47,65 @@ class MobileDashboard extends StatelessWidget {
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Hello, ${dashData.isNotEmpty ? dashData['user']['username'] : 'Username'}",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppUtils.$mainBlue)),
-                            Text(
-                                "Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
-                                style: const TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                        const Gap(10),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Row(
-                            children: [
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: WidgetStatePropertyAll(
-                                      const EdgeInsets.all(20)),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.$mainBlue),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {},
-                                child: const Icon(
-                                    FluentIcons.book_add_24_regular,
-                                    size: 16,
-                                    color: AppUtils.$mainWhite),
-                              ),
-                              const Gap(10),
-                              ElevatedButton(
-                                onPressed: () {
-                                  context
-                                      .read<TogglesProvider>()
-                                      .toggleSearchBar();
-                                },
-                                style: ButtonStyle(
-                                  padding: WidgetStatePropertyAll(
-                                      const EdgeInsets.all(20)),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      const Color(0xFFF1F1F1)),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                                child: const Icon(
-                                  FluentIcons.search_24_regular,
-                                  color: AppUtils.$mainBlue,
-                                ),
-                              ),
-                              const Gap(10),
-                              if (context
-                                  .watch<TogglesProvider>()
-                                  .showSearchBar)
-                                Expanded(
-                                  child: TextField(
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: "Search",
-                                      hintStyle: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    DashboardBanner(data: dashData),
                     const Gap(10),
-                    const Divider(
-                      color: Color(0xFFCECECE),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(5),
+                                filled: true,
+                                fillColor: AppUtils.$mainWhite,
+                                prefixIcon: Icon(FluentIcons.search_24_regular),
+                                border: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: AppUtils.$mainGrey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                hintText: "Search",
+                                hintStyle: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const Gap(20),
+                    // Container(
+                    //   height: 1,
+                    //   width: double.infinity,
+                    //   decoration: BoxDecoration(
+                    //     color: AppUtils.$mainGrey,
+                    //   ),
+                    // ),
+                    // const Gap(20),
                     MobileCardRow(
                       user: dashData['user'] ?? {},
                       users: dashData['user_count'] ?? 0,
                       materialCount: dashData['material_count'] ?? {},
                     ),
                     const Gap(20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text("Recent Activities",
+                          style: TextStyle(color: AppUtils.$mainGrey),
+                          textAlign: TextAlign.left),
+                    ),
+                    const Gap(10),
                     const DesktopActivities(),
+                    const Gap(20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text("Activity History",
+                          style: TextStyle(color: AppUtils.$mainGrey),
+                          textAlign: TextAlign.left),
+                    ),
+                    const Gap(10),
+                    const ActivityHistory()
                   ],
                 ),
               );
