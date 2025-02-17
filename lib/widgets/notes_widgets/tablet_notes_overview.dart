@@ -50,7 +50,7 @@ class _TabletNotesOverviewState extends State<TabletNotesOverview> {
             Gap(20),
             ElevatedButton(
               style: ButtonStyle(
-                padding: WidgetStatePropertyAll(const EdgeInsets.all(20)),
+                padding: WidgetStatePropertyAll(const EdgeInsets.all(5)),
                 backgroundColor: WidgetStatePropertyAll(AppUtils.$mainBlue),
                 shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(

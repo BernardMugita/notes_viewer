@@ -37,8 +37,11 @@ class DesktopDashboard extends StatelessWidget {
           Expanded(
               flex: 6,
               child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 40, right: 40, top: 20, bottom: 20),
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.15,
+                      right: MediaQuery.of(context).size.width * 0.15,
+                      top: 20,
+                      bottom: 20),
                   child: dashBoardProvider.isLoading
                       ? LoadingAnimationWidget.newtonCradle(
                           color: AppUtils.$mainBlue,

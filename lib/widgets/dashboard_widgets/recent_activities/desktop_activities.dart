@@ -13,10 +13,13 @@ class DesktopActivities extends StatelessWidget {
       builder: (BuildContext context, DashboardProvider dashboardProvider, _) {
         Map activities = dashboardProvider.dashData['notifications'] ?? {};
 
-        List unreadActivities = List.from(activities['unread'] as List);
-        
+        List unreadActivities =
+            activities.isNotEmpty && activities['unread'].isNotEmpty
+                ? List.from(activities['unread'] as List)
+                : [];
+
         unreadActivities.sort((a, b) {
-          return b['created_at'].compareTo(a['created_at']);
+          return b['created_at'].compareTo(a['created_at']) ?? 0;
         });
 
         return SizedBox(

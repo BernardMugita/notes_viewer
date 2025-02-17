@@ -49,12 +49,16 @@ class _TabletDocumentViewerState extends State<TabletDocumentViewer> {
         children: [
           Row(
             children: [
-              Text(
-                widget.fileName,
-                style: TextStyle(
-                    color: AppUtils.$mainBlue,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
+              SizedBox(
+                width: 250,
+                child: Text(
+                  widget.fileName,
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: AppUtils.$mainBlue,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
               Spacer(),
               Row(

@@ -13,7 +13,7 @@ import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.d
 import 'package:note_viewer/widgets/units_widgets/tablet_semester_holder.dart';
 import 'package:provider/provider.dart';
 
-class TabletUnits extends StatefulWidget {  
+class TabletUnits extends StatefulWidget {
   const TabletUnits({super.key});
 
   @override
@@ -75,26 +75,22 @@ class _TabletUnitsState extends State<TabletUnits> {
                 ),
               )
             : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
                 children: [
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(
-                        FluentIcons.class_24_regular,
-                        color: AppUtils.$mainBlue,
-                      ),
-                      Text(
-                        "Units",
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: AppUtils.$mainBlue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacer(),
-                      ElevatedButton(
+                  Text(
+                    "Units",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: AppUtils.$mainBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
                         style: ButtonStyle(
-                            padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+                            padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
                             backgroundColor:
                                 WidgetStatePropertyAll(AppUtils.$mainBlue),
                             shape: WidgetStatePropertyAll(
@@ -105,28 +101,36 @@ class _TabletUnitsState extends State<TabletUnits> {
                               courses: courses, token: tokenRef);
                         },
                         child: Row(
-                          children: [
-                            Text("Add units",
-                                style: TextStyle(
-                                    fontSize: 16, color: AppUtils.$mainWhite)),
-                            Gap(5),
-                            Icon(FluentIcons.class_24_regular,
-                                size: 16, color: AppUtils.$mainWhite),
-                          ],
-                        ),
-                      )
-                    ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 5,
+                            children: [
+                              Text("Add units",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.$mainWhite)),
+                              Icon(FluentIcons.class_24_regular,
+                                  size: 16, color: AppUtils.$mainWhite),
+                            ])),
                   ),
-                  const Gap(10),
-                  const Divider(
-                    color: Color(0xFFCECECE),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: AppUtils.$mainWhite,
+                        contentPadding: EdgeInsets.all(5),
+                        prefixIcon: Icon(FluentIcons.search_24_filled),
+                        border: OutlineInputBorder(),
+                        hintText: "Search",
+                        hintStyle: TextStyle(fontSize: 16),
+                      ),
+                    ),
                   ),
-                  const Gap(20),
-                  // Make the scrollable content expand dynamically
                   Expanded(
                     child: SingleChildScrollView(
                       // clipBehavior: Clip.none,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TabletSemesterHolder(units: units),
                         ],
@@ -156,10 +160,10 @@ class _TabletUnitsState extends State<TabletUnits> {
                   padding: const EdgeInsets.all(20),
                   width: MediaQuery.of(context).size.width,
                   height: togglesProvider.showCoursesDropDown
-                      ? MediaQuery.of(context).size.height * 0.55
+                      ? MediaQuery.of(context).size.height * 0.85
                       : togglesProvider.showSemesterDropDown
-                          ? MediaQuery.of(context).size.height * 0.55
-                          : MediaQuery.of(context).size.height * 0.45,
+                          ? MediaQuery.of(context).size.height + 40
+                          : MediaQuery.of(context).size.height * 0.65,
                   decoration: BoxDecoration(
                     color: AppUtils.$mainWhite,
                     borderRadius: BorderRadius.circular(5),
@@ -376,7 +380,6 @@ class _TabletUnitsState extends State<TabletUnits> {
                                           },
                                           child: Container(
                                             width: 120,
-                                            padding: const EdgeInsets.all(5),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5),

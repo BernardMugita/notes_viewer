@@ -54,57 +54,73 @@ class _TabletNotesState extends State<TabletNotes> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
                 children: [
                   Text(
                     "Notes",
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 24,
                       color: AppUtils.$mainBlue,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Spacer(),
                   if (user.isNotEmpty && user['role'] == 'admin')
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        padding:
-                            WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.$mainBlue),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        _showDialog(context);
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            "Add Lesson",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: AppUtils.$mainWhite,
+                    SizedBox(
+                      width: 150,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding:
+                              WidgetStatePropertyAll(const EdgeInsets.all(10)),
+                          backgroundColor:
+                              WidgetStatePropertyAll(AppUtils.$mainBlue),
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          const Gap(5),
-                          Icon(
-                            FluentIcons.book_add_24_regular,
-                            size: 16,
-                            color: AppUtils.$mainWhite,
-                          ),
-                        ],
+                        ),
+                        onPressed: () {
+                          _showDialog(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Add Lesson",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppUtils.$mainWhite,
+                              ),
+                            ),
+                            const Gap(5),
+                            Icon(
+                              FluentIcons.book_add_24_regular,
+                              size: 16,
+                              color: AppUtils.$mainWhite,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: AppUtils.$mainWhite,
+                        prefixIcon: Icon(FluentIcons.search_24_filled),
+                        contentPadding: EdgeInsets.all(5),
+                        border: OutlineInputBorder(),
+                        hintText: "Search",
+                        hintStyle: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-              const Gap(10),
-              const Divider(
-                color: Color(0xFFCECECE),
               ),
               const Gap(20),
               SizedBox(
@@ -380,8 +396,8 @@ class _TabletNotesState extends State<TabletNotes> {
                                     ),
                                     padding: WidgetStatePropertyAll(
                                         EdgeInsets.only(
-                                            top: 20,
-                                            bottom: 20,
+                                            top: 10,
+                                            bottom: 10,
                                             left: 10,
                                             right: 10)),
                                   ),

@@ -7,6 +7,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
@@ -73,270 +74,238 @@ class _TabletAccountState extends State<TabletAccount> {
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(children: [
-                Row(
-                  children: [
-                    Text(
-                      "User Account",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: AppUtils.$mainBlue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        padding:
-                            WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.$mainBlue),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        _showDialog(context, user);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            FluentIcons.person_edit_24_regular,
-                            size: 16,
-                            color: AppUtils.$mainWhite,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(10),
-                const Divider(
-                  color: Color(0xFFCECECE),
-                ),
-                const Gap(20),
-                Column(
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
                       children: [
-                        CircleAvatar(
-                          radius: 80,
-                          backgroundColor: AppUtils.$mainWhite,
-                          child: Image(
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                            image: AssetImage(
-                                'assets/images/placeholder-profile.png'),
+                        Text(
+                          "User Account",
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: AppUtils.$mainBlue,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Gap(40),
-                        Consumer<TogglesProvider>(
-                            builder: (context, toggleProvider, child) {
-                          return GestureDetector(
-                            onTap: () {
-                              toggleProvider.toggleAccountView();
-                            },
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(FluentIcons
-                                          .person_accounts_24_regular),
-                                      Gap(5),
-                                      Text("Account Details")
-                                    ],
-                                  ),
-                                  Gap(5),
-                                  Divider(
-                                    thickness: 0.5,
-                                    color: AppUtils.$mainBlue,
-                                  ),
-                                  Gap(5),
-                                ],
+                        SizedBox(
+                          width: 50,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                  const EdgeInsets.all(10)),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                               ),
                             ),
-                          );
-                        }),
+                            onPressed: () {
+                              _showDialog(context, user);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FluentIcons.person_edit_24_regular,
+                                  size: 16,
+                                  color: AppUtils.$mainWhite,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Gap(20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          children: [
+                            Consumer<TogglesProvider>(
+                                builder: (context, toggleProvider, child) {
+                              return GestureDetector(
+                                onTap: () {
+                                  toggleProvider.toggleAccountView();
+                                },
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(FluentIcons
+                                              .person_accounts_24_regular),
+                                          Gap(5),
+                                          Text("Account Details")
+                                        ],
+                                      ),
+                                      Gap(5),
+                                      Divider(
+                                        thickness: 0.5,
+                                        color: AppUtils.$mainBlue,
+                                      ),
+                                      Gap(5),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                            Consumer<TogglesProvider>(builder: (
+                              context,
+                              toggleProvider,
+                              child,
+                            ) {
+                              return GestureDetector(
+                                onTap: () {
+                                  toggleProvider.toggleMembershipView();
+                                },
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(FluentIcons
+                                              .people_community_24_regular),
+                                          Gap(5),
+                                          Text("Account Memberships")
+                                        ],
+                                      ),
+                                      Gap(5),
+                                      Divider(
+                                        thickness: 0.5,
+                                        color: AppUtils.$mainBlue,
+                                      ),
+                                      Gap(5),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            })
+                          ],
+                        ),
+                        Gap(20),
                         Consumer<TogglesProvider>(builder: (
                           context,
                           toggleProvider,
                           child,
                         ) {
-                          return GestureDetector(
-                            onTap: () {
-                              toggleProvider.toggleMembershipView();
-                            },
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(FluentIcons
-                                          .people_community_24_regular),
-                                      Gap(5),
-                                      Text("Account Memberships")
-                                    ],
-                                  ),
-                                  Gap(5),
-                                  Divider(
-                                    thickness: 0.5,
-                                    color: AppUtils.$mainBlue,
-                                  ),
-                                  Gap(5),
-                                ],
-                              ),
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            height: MediaQuery.of(context).size.height,
+                            decoration: BoxDecoration(
+                              color: AppUtils.$mainWhite,
                             ),
-                          );
-                        })
-                      ],
-                    ),
-                    Gap(20),
-                    Consumer<TogglesProvider>(builder: (
-                      context,
-                      toggleProvider,
-                      child,
-                    ) {
-                      return Container(
-                        padding: const EdgeInsets.all(20),
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        decoration: BoxDecoration(
-                          color: AppUtils.$mainWhite,
-                        ),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: toggleProvider.accountView
-                                ? [
-                                    Text("Account Details",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: AppUtils.$mainBlue,
-                                            fontWeight: FontWeight.bold)),
-                                    Gap(30),
-                                    _buildAccountDetails(context,
-                                        title: 'Username',
-                                        value: isLoading
-                                            ? 'username'
-                                            : user['username']),
-                                    _buildAccountDetails(context,
-                                        title: 'Email',
-                                        value: isLoading
-                                            ? 'email'
-                                            : user['email']),
-                                    _buildAccountDetails(context,
-                                        title: 'Phone',
-                                        value: isLoading
-                                            ? 'phone'
-                                            : user['phone']),
-                                    _buildAccountDetails(context,
-                                        title: 'Registration number',
-                                        value: isLoading
-                                            ? 'reg_no'
-                                            : user['reg_no']),
-                                    _buildAccountDetails(context,
-                                        title: 'Course',
-                                        value:
-                                            'Bachelors Degree in Computer Science'),
-                                    _buildAccountDetails(context,
-                                        title: 'Date Joined',
-                                        value: isLoading
-                                            ? '0/0/2025'
-                                            : AppUtils.formatDate(
-                                                user['created_at'])),
-                                    Spacer(),
-                                    Text("Account status:"),
-                                    Gap(5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.only(
-                                              top: 5,
-                                              bottom: 5,
-                                              left: 10,
-                                              right: 10),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: const Color.fromARGB(
-                                                  87, 255, 25, 0)),
-                                          child: Text(
-                                            "Not verified",
-                                            style: TextStyle(
-                                                color: AppUtils.$mainRed),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            padding: WidgetStatePropertyAll(
-                                                const EdgeInsets.only(
-                                                    left: 10,
-                                                    right: 10,
-                                                    top: 5,
-                                                    bottom: 5)),
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                    AppUtils.$mainBlue),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {},
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "Verify Account",
-                                                style: TextStyle(
-                                                  color: AppUtils.$mainWhite,
-                                                ),
-                                              ),
-                                              const Gap(5),
-                                              Icon(
-                                                FluentIcons
-                                                    .checkmark_circle_24_filled,
-                                                size: 16,
-                                                color: AppUtils.$mainWhite,
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Gap(10),
-                                    Divider(),
-                                    Gap(5),
-                                    Text(
-                                      "Acknowledgment",
-                                      style:
-                                          TextStyle(color: AppUtils.$mainBlue),
-                                    ),
-                                    Gap(5),
-                                    Text(
-                                      "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                      style:
-                                          TextStyle(color: AppUtils.$mainGrey),
-                                    ),
-                                    Text("Powered by Labs")
-                                  ]
-                                : toggleProvider.membershipView
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: toggleProvider.accountView
                                     ? [
-                                        Text("Account Membership",
+                                        Text("Account Details",
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 color: AppUtils.$mainBlue,
                                                 fontWeight: FontWeight.bold)),
                                         Gap(30),
+                                        _buildAccountDetails(context,
+                                            title: 'Username',
+                                            value: isLoading
+                                                ? 'username'
+                                                : user['username']),
+                                        _buildAccountDetails(context,
+                                            title: 'Email',
+                                            value: isLoading
+                                                ? 'email'
+                                                : user['email']),
+                                        _buildAccountDetails(context,
+                                            title: 'Phone',
+                                            value: isLoading
+                                                ? 'phone'
+                                                : user['phone']),
+                                        _buildAccountDetails(context,
+                                            title: 'Registration number',
+                                            value: isLoading
+                                                ? 'reg_no'
+                                                : user['reg_no']),
+                                        _buildAccountDetails(context,
+                                            title: 'Course',
+                                            value:
+                                                'Bachelors Degree in Computer Science'),
+                                        _buildAccountDetails(context,
+                                            title: 'Date Joined',
+                                            value: isLoading
+                                                ? '0/0/2025'
+                                                : AppUtils.formatDate(
+                                                    user['created_at'])),
                                         Spacer(),
+                                        Text("Account status:"),
+                                        Gap(5),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5,
+                                                  bottom: 5,
+                                                  left: 10,
+                                                  right: 10),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: const Color.fromARGB(
+                                                      87, 255, 25, 0)),
+                                              child: Text(
+                                                "Not verified",
+                                                style: TextStyle(
+                                                    color: AppUtils.$mainRed),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              style: ButtonStyle(
+                                                padding: WidgetStatePropertyAll(
+                                                    const EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                        bottom: 5)),
+                                                backgroundColor:
+                                                    WidgetStatePropertyAll(
+                                                        AppUtils.$mainBlue),
+                                                shape: WidgetStatePropertyAll(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: () {},
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "Verify Account",
+                                                    style: TextStyle(
+                                                      color:
+                                                          AppUtils.$mainWhite,
+                                                    ),
+                                                  ),
+                                                  const Gap(5),
+                                                  Icon(
+                                                    FluentIcons
+                                                        .checkmark_circle_24_filled,
+                                                    size: 16,
+                                                    color: AppUtils.$mainWhite,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                         Gap(10),
                                         Divider(),
                                         Gap(5),
@@ -353,12 +322,44 @@ class _TabletAccountState extends State<TabletAccount> {
                                         ),
                                         Text("Powered by Labs")
                                       ]
-                                    : []),
-                      );
-                    }),
-                  ],
-                )
-              ])),
+                                    : toggleProvider.membershipView
+                                        ? [
+                                            Text("Account Membership",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: AppUtils.$mainBlue,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Gap(30),
+                                            Spacer(),
+                                            Gap(10),
+                                            Divider(),
+                                            Gap(5),
+                                            Text(
+                                              "Acknowledgment",
+                                              style: TextStyle(
+                                                  color: AppUtils.$mainBlue),
+                                            ),
+                                            Gap(5),
+                                            Text(
+                                              "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
+                                              style: TextStyle(
+                                                  color: AppUtils.$mainGrey),
+                                            ),
+                                            Text("Powered by Labs")
+                                          ]
+                                        : []),
+                          );
+                        }),
+                        const Gap(40),
+                        SizedBox(
+                          child: Center(
+                            child: PlatformDetails(),
+                          ),
+                        )
+                      ],
+                    )
+                  ])),
         ));
   }
 
@@ -410,163 +411,170 @@ class _TabletAccountState extends State<TabletAccount> {
                 contentPadding: const EdgeInsets.all(0),
                 content: Container(
                   padding: const EdgeInsets.all(20),
-                  height: MediaQuery.of(context).size.height * 0.75,
+                  height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width / 1.5,
                   decoration: BoxDecoration(
                     color: AppUtils.$mainWhite,
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Edit your account details",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppUtils.$mainBlue)),
-                          IconButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            icon: const Icon(FluentIcons.dismiss_24_regular),
-                          ),
-                        ],
-                      ),
-                      Gap(30),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                  child: SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CircleAvatar(
-                              radius: 80,
-                              backgroundColor: AppUtils.$mainBlueAccent,
-                              child: Image(
-                                height: 70,
-                                width: 70,
-                                fit: BoxFit.cover,
-                                image: AssetImage(
-                                    'assets/images/placeholder-profile.png'),
-                              ),
+                            Expanded(
+                                child: Text("Edit your account details",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppUtils.$mainBlue))),
+                            IconButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              icon: const Icon(FluentIcons.dismiss_24_regular),
                             ),
-                            Gap(20),
-                            SizedBox(
-                              width: 200,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    padding: WidgetStatePropertyAll(
-                                        const EdgeInsets.all(5)),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.$mainBlue),
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: () {},
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FluentIcons.image_24_regular,
-                                        color: AppUtils.$mainWhite,
-                                      ),
-                                      Gap(10),
-                                      Text("Browse",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: AppUtils.$mainWhite)),
-                                    ],
-                                  )),
-                            )
                           ],
                         ),
-                      ),
-                      Gap(20),
-                      TextField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(FluentIcons.mail_24_regular),
-                          labelText: 'Email',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
-                        ),
-                      ),
-                      Gap(10),
-                      TextField(
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(FluentIcons.person_24_regular),
-                          labelText: 'Username',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
-                        ),
-                      ),
-                      Gap(10),
-                      TextField(
-                        controller: phoneController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(FluentIcons.call_24_regular),
-                          labelText: 'Phone',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
-                        ),
-                      ),
-                      Spacer(),
-                      Consumer<UserProvider>(
-                          builder: (context, userProvider, child) {
-                        return ElevatedButton(
-                            style: ButtonStyle(
-                              padding: WidgetStatePropertyAll(
-                                  const EdgeInsets.all(5)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                        Gap(30),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 80,
+                                backgroundColor: AppUtils.$mainBlueAccent,
+                                child: Image(
+                                  height: 70,
+                                  width: 70,
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                      'assets/images/placeholder-profile.png'),
                                 ),
                               ),
-                            ),
-                            onPressed: userProvider.isLoading
-                                ? null
-                                : () {
-                                    userProvider.editUserDetails(
-                                        tokenRef,
-                                        emailController.text,
-                                        usernameController.text,
-                                        phoneController.text,
-                                        'user.png');
-                                    if (userProvider.success) {
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    }
-                                  },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  FluentIcons.save_24_regular,
-                                  color: AppUtils.$mainWhite,
+                              Gap(20),
+                              SizedBox(
+                                width: 200,
+                                child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      padding: WidgetStatePropertyAll(
+                                          const EdgeInsets.all(5)),
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          AppUtils.$mainBlue),
+                                      shape: WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {},
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          FluentIcons.image_24_regular,
+                                          color: AppUtils.$mainWhite,
+                                        ),
+                                        Gap(10),
+                                        Text("Browse",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: AppUtils.$mainWhite)),
+                                      ],
+                                    )),
+                              )
+                            ],
+                          ),
+                        ),
+                        Gap(20),
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(FluentIcons.mail_24_regular),
+                            labelText: 'Email',
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212))),
+                            focusColor: AppUtils.$mainBlue,
+                          ),
+                        ),
+                        Gap(10),
+                        TextField(
+                          controller: usernameController,
+                          decoration: InputDecoration(
+                            prefixIcon:
+                                const Icon(FluentIcons.person_24_regular),
+                            labelText: 'Username',
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212))),
+                            focusColor: AppUtils.$mainBlue,
+                          ),
+                        ),
+                        Gap(10),
+                        TextField(
+                          controller: phoneController,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(FluentIcons.call_24_regular),
+                            labelText: 'Phone',
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212))),
+                            focusColor: AppUtils.$mainBlue,
+                          ),
+                        ),
+                        Spacer(),
+                        Consumer<UserProvider>(
+                            builder: (context, userProvider, child) {
+                          return ElevatedButton(
+                              style: ButtonStyle(
+                                padding: WidgetStatePropertyAll(
+                                    const EdgeInsets.all(5)),
+                                backgroundColor:
+                                    WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
                                 ),
-                                Gap(10),
-                                Text("Save Changes",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
-                              ],
-                            ));
-                      })
-                    ],
+                              ),
+                              onPressed: userProvider.isLoading
+                                  ? null
+                                  : () {
+                                      userProvider.editUserDetails(
+                                          tokenRef,
+                                          emailController.text,
+                                          usernameController.text,
+                                          phoneController.text,
+                                          'user.png');
+                                      if (userProvider.success) {
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          Navigator.of(context).pop();
+                                        });
+                                      }
+                                    },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FluentIcons.save_24_regular,
+                                    color: AppUtils.$mainWhite,
+                                  ),
+                                  Gap(10),
+                                  Text("Save Changes",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppUtils.$mainWhite)),
+                                ],
+                              ));
+                        })
+                      ],
+                    ),
                   ),
                 ),
               ),

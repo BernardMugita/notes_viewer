@@ -23,7 +23,7 @@ class _EmptyWidgetState extends State<EmptyWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.5,
       decoration: BoxDecoration(
           color: AppUtils.$mainWhite, borderRadius: BorderRadius.circular(5)),
       child: Center(

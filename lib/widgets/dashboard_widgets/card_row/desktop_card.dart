@@ -52,17 +52,21 @@ class _DesktopCardState extends State<DesktopCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.users > 0
-                              ? "REGISTERED STUDENTS"
-                              : widget.material
-                                  .toString()
-                                  .toUpperCase()
-                                  .replaceAll('_', " "),
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: AppUtils.$mainBlack,
-                              fontWeight: FontWeight.bold),
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            widget.users > 0
+                                ? "REGISTERED STUDENTS"
+                                : widget.material
+                                    .toString()
+                                    .toUpperCase()
+                                    .replaceAll('_', " "),
+                            style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 12,
+                                color: AppUtils.$mainBlack,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Text(
                           "Total: ${widget.users > 0 ? widget.users : widget.count}",

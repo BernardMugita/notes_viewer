@@ -7,11 +7,20 @@ import 'package:provider/provider.dart';
 
 class TabletFile extends StatefulWidget {
   final String fileName;
-  final IconData? icon;
   final String lesson;
+  final Map material;
+  final IconData? icon;
+  final List notes;
+  final List slides;
 
   const TabletFile(
-      {super.key, required this.fileName, required this.lesson, this.icon});
+      {super.key,
+      required this.fileName,
+      required this.lesson,
+      required this.material,
+      required this.icon,
+      required this.notes,
+      required this.slides});
 
   @override
   State<TabletFile> createState() => _TabletFileState();

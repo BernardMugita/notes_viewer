@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/tablet_card_row.dart';
+import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity_history.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -48,99 +49,31 @@ class TabletDashboard extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
                           width: double.infinity,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Hello, ${dashData.isNotEmpty ? dashData['user']['username'] : 'Username'}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppUtils.$mainBlue,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
+                              DashboardBanner(data: dashData),
                               const Gap(10),
                               SizedBox(
                                 width: double.infinity,
-                                child: Row(
-                                  children: [
-                                    ElevatedButton(
-                                      style: ButtonStyle(
-                                        padding: WidgetStatePropertyAll(
-                                            const EdgeInsets.all(20)),
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            AppUtils.$mainBlue),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Icon(
-                                          FluentIcons.book_add_24_regular,
-                                          size: 16,
-                                          color: AppUtils.$mainWhite),
-                                    ),
-                                    const Gap(10),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        context
-                                            .read<TogglesProvider>()
-                                            .toggleSearchBar();
-                                      },
-                                      style: ButtonStyle(
-                                        padding: WidgetStatePropertyAll(
-                                            const EdgeInsets.all(20)),
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            const Color(0xFFF1F1F1)),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        FluentIcons.search_24_regular,
-                                        color: AppUtils.$mainBlue,
-                                      ),
-                                    ),
-                                    const Gap(10),
-                                    if (context
-                                        .watch<TogglesProvider>()
-                                        .showSearchBar)
-                                      Expanded(
-                                        child: TextField(
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            hintText: "Search",
-                                            hintStyle: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    filled: true,
+                                    fillColor: AppUtils.$mainWhite,
+                                    prefixIcon:
+                                        Icon(FluentIcons.search_24_filled),
+                                    border: OutlineInputBorder(),
+                                    hintText: "Search",
+                                    hintStyle: TextStyle(fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const Gap(10),
-                        const Divider(
-                          color: Color(0xFFCECECE),
                         ),
                         const Gap(20),
                         TabletCardRow(
@@ -149,7 +82,23 @@ class TabletDashboard extends StatelessWidget {
                           materialCount: dashData['material_count'] ?? {},
                         ),
                         const Gap(20),
+                        Text(
+                          "Recent Activities",
+                          style: TextStyle(
+                              color: AppUtils.$mainGrey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const Gap(10),
                         const DesktopActivities(),
+                        const Gap(20),
+                        Text(
+                          "Activity History",
+                          style: TextStyle(
+                              color: AppUtils.$mainGrey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const Gap(10),
+                        const ActivityHistory()
                       ],
                     ),
                   ),

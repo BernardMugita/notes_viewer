@@ -4,10 +4,12 @@ import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_video_viewe
 
 class TabletFileViewer extends StatefulWidget {
   final String fileName;
+  final Function onPressed;
 
   const TabletFileViewer({
     super.key,
     required this.fileName,
+    required this.onPressed,
   });
 
   @override
@@ -22,6 +24,7 @@ class _TabletFileViewerState extends State<TabletFileViewer> {
     return fileExtension == 'mp4' || fileExtension == 'webm'
         ? TabletVideoViewer(
             fileName: widget.fileName,
+            onPressed: widget.onPressed,
             uploadType: 'recordings',
           )
         : fileExtension == 'docx' ||

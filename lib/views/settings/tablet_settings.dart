@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
@@ -32,46 +33,21 @@ class _TabletSettingsState extends State<TabletSettings> {
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(children: [
-                Row(
-                  children: [
-                    const Icon(
-                      FluentIcons.settings_24_regular,
-                      color: AppUtils.$mainBlue,
-                    ),
-                    const Gap(5),
-                    Text(
-                      "Settings",
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: AppUtils.$mainBlue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(10),
-                const Divider(
-                  color: Color(0xFFCECECE),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text(
+                  "Settings",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: AppUtils.$mainBlue,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Gap(20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 100,
-                          backgroundColor: AppUtils.$mainWhite,
-                          child: Icon(
-                            FluentIcons.settings_24_regular,
-                            size: 100,
-                            color: AppUtils.$mainBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gap(40),
                     Container(
                       padding: const EdgeInsets.all(20),
                       height: MediaQuery.of(context).size.height * 0.55,
@@ -87,7 +63,7 @@ class _TabletSettingsState extends State<TabletSettings> {
                                     color: AppUtils.$mainBlue,
                                     fontWeight: FontWeight.bold)),
                             Gap(30),
-                            _buildAccountDetails(context,
+                            _buildSettingsDetails(context,
                                 title: 'Appearance',
                                 value: 'Light Mode / Dark Mode'),
                             Spacer(),
@@ -105,13 +81,15 @@ class _TabletSettingsState extends State<TabletSettings> {
                             Text("Powered by Labs")
                           ]),
                     ),
+                    Gap(40),
+                    PlatformDetails(),
                   ],
                 )
               ])),
         ));
   }
 
-  Widget _buildAccountDetails(BuildContext context,
+  Widget _buildSettingsDetails(BuildContext context,
       {required String title, required String value}) {
     return Stack(
       clipBehavior: Clip.none,

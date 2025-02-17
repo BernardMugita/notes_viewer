@@ -60,18 +60,15 @@ class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
             return Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Semester $semester",
                       style: TextStyle(color: AppUtils.$mainGrey, fontSize: 18),
                     ),
                     Gap(20),
-                    Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      clipBehavior: Clip.none,
-                      alignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.start,
+                    Column(
+                      spacing: 5,
                       children: groupedUnits[semester]!.map<Widget>((unit) {
                         return TabletUnitHolder(unit: unit);
                       }).toList(),

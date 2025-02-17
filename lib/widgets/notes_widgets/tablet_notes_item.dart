@@ -23,24 +23,22 @@ class _TabletNotesItemState extends State<TabletNotesItem> {
     final lastSegment = segments.last;
 
     return Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
         margin: const EdgeInsets.only(bottom: 5),
         decoration: BoxDecoration(
           color: AppUtils.$mainWhite,
         ),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          SizedBox(
-            width: 50,
-            child: Text(lastSegment,
-                style: TextStyle(
-                    fontSize: 14,
-                    overflow: TextOverflow.ellipsis,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold)),
-          ),
-          Gap(10),
-          Expanded(child: Text(lesson['name'], style: TextStyle(fontSize: 14))),
-          // Spacer(),
+          Text("$lastSegment:",
+              style: TextStyle(
+                  fontSize: 14,
+                  overflow: TextOverflow.ellipsis,
+                  color: AppUtils.$mainBlue,
+                  fontWeight: FontWeight.bold)),
+          Gap(5),
+          Expanded(
+              child: Text(lesson['name'],
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
           TextButton(
             onPressed: () {
               _showDialog(context);
@@ -50,7 +48,7 @@ class _TabletNotesItemState extends State<TabletNotesItem> {
                 shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5)))),
             child: Text("View more"),
-          )
+          ),
         ]));
   }
 
@@ -62,7 +60,7 @@ class _TabletNotesItemState extends State<TabletNotesItem> {
             contentPadding: const EdgeInsets.all(0),
             content: SizedBox(
               width: MediaQuery.of(context).size.height * 0.75,
-              height: MediaQuery.of(context).size.height * 0.35,
+              height: MediaQuery.of(context).size.height * 0.55,
               child: TabletNotesOverview(
                 lesson: widget.lesson,
               ),

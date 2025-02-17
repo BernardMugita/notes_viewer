@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
@@ -18,9 +18,12 @@ class TabletUnitHolder extends StatefulWidget {
 }
 
 class _TabletUnitHolderState extends State<TabletUnitHolder> {
+  Map selectedUnit = {};
+
   @override
   Widget build(BuildContext context) {
     final unit = widget.unit;
+    final isSelectedUnit = widget.unit['id'] == selectedUnit['id'];
 
     return GestureDetector(
       onTap: () {
@@ -33,83 +36,98 @@ class _TabletUnitHolderState extends State<TabletUnitHolder> {
         context.go('/units/notes');
       },
       child: Container(
-        padding: const EdgeInsets.all(20),
-        width: MediaQuery.of(context).size.width / 2.5,
+        padding: const EdgeInsets.only(left: 10),
+        width: double.infinity,
         decoration: BoxDecoration(
-          color: AppUtils.$mainWhite,
-          borderRadius: BorderRadius.circular(5),
-        ),
+            color: AppUtils.$mainWhite,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppUtils.$mainGrey)),
         child: Column(
           children: [
-            Icon(
-              FluentIcons.doctor_24_regular,
-              size: 45,
-            ),
-            Text(unit['name'],
-                style: TextStyle(
-                    fontSize: 24,
-                    color: AppUtils.$mainBlue,
-                    fontWeight: FontWeight.bold)),
-            Gap(5),
-            Divider(
-              color: AppUtils.$mainGrey,
-            ),
-            Gap(5),
-            Column(
+            Row(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(FluentIcons.book_24_regular),
-                    Gap(5),
-                    Expanded(
-                        child: Text("Notes",
-                            style: TextStyle(
-                                fontSize: 18, color: AppUtils.$mainBlue))),
-                    Text("2")
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(FluentIcons.slide_content_24_regular),
-                    Gap(5),
-                    Expanded(
-                        child: Text("Slides",
-                            style: TextStyle(
-                                fontSize: 18, color: AppUtils.$mainBlue))),
-                    Text("4")
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(FluentIcons.video_24_regular),
-                    Gap(5),
-                    Expanded(
-                        child: Text("Recordings",
-                            style: TextStyle(
-                                fontSize: 18, color: AppUtils.$mainBlue))),
-                    Text("1")
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(FluentIcons.person_32_regular),
-                    Gap(5),
-                    Expanded(
-                        child: Text("Student Contributions",
-                            style: TextStyle(
-                                fontSize: 18, color: AppUtils.$mainBlue))),
-                    Text("1")
-                  ],
-                )
+                Text("${unit['code']}: ${unit['name']}",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: AppUtils.$mainBlue,
+                        fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Consumer<TogglesProvider>(
+                    builder: (BuildContext context, toggleProvider, _) {
+                  return IconButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedUnit = {};
+                          if (selectedUnit['id'] == widget.unit['id'] ||
+                              toggleProvider.isUnitExpanded) {
+                            selectedUnit = {};
+                          } else {
+                            selectedUnit = widget.unit;
+                          }
+                        });
+                        toggleProvider.toggleIsUnitExpanded();
+                      },
+                      icon: isSelectedUnit && toggleProvider.isUnitExpanded
+                          ? Icon(
+                              FluentIcons.chevron_up_24_regular,
+                              color: AppUtils.$mainBlack,
+                            )
+                          : Icon(
+                              FluentIcons.chevron_down_24_regular,
+                              color: AppUtils.$mainBlack,
+                            ));
+                })
               ],
-            )
+            ),
+            if (isSelectedUnit &&
+                context.watch<TogglesProvider>().isUnitExpanded)
+              Column(
+                spacing: 5,
+                children: [
+                  Divider(
+                    color: AppUtils.$mainBlueAccent,
+                    indent: 10,
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+                    child: Column(children: [
+                      _buildUnitHolderDetails(context, "Lessons",
+                          unit['lessons'].length.toString()),
+                      _buildUnitHolderDetails(
+                          context, "Date Created", unit['created_at']),
+                    ]),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildUnitHolderDetails(
+      BuildContext context, String title, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 10,
+      children: [
+        Text(
+          "$title:",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppUtils.$mainBlack),
+        ),
+        Text(
+          title == "Date Created"
+              ? AppUtils.formatDate(value.toString())
+              : value.toString(),
+          style: TextStyle(
+            color: AppUtils.$mainBlack,
+          ),
+        ),
+      ],
     );
   }
 }

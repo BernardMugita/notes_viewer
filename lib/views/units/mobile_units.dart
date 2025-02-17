@@ -6,6 +6,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
+import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -50,6 +51,7 @@ class _MobileUnitsState extends State<MobileUnits> {
   Widget build(BuildContext context) {
     final courses = context.watch<CoursesProvider>().courses;
     final unitsProvider = context.watch<UnitsProvider>();
+    final user = context.watch<UserProvider>().user;
     final units = unitsProvider.units;
 
     return Scaffold(
@@ -89,35 +91,37 @@ class _MobileUnitsState extends State<MobileUnits> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
-                        width: 120,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              padding:
-                                  WidgetStatePropertyAll(EdgeInsets.all(10)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
-                              shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)))),
-                          onPressed: () {
-                            _showDialog(context,
-                                courses: courses, token: tokenRef);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Add units",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppUtils.$mainWhite)),
-                              Gap(5),
-                              Icon(FluentIcons.class_24_regular,
-                                  size: 16, color: AppUtils.$mainWhite),
-                            ],
+                      if (user.isNotEmpty && user['role'] == 'admin')
+                        SizedBox(
+                          width: 120,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                padding:
+                                    WidgetStatePropertyAll(EdgeInsets.all(10)),
+                                backgroundColor:
+                                    WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5)))),
+                            onPressed: () {
+                              _showDialog(context,
+                                  courses: courses, token: tokenRef);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Add units",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: AppUtils.$mainWhite)),
+                                Gap(5),
+                                Icon(FluentIcons.class_24_regular,
+                                    size: 16, color: AppUtils.$mainWhite),
+                              ],
+                            ),
                           ),
-                        ),
-                      )
+                        )
                     ],
                   ),
                   const Gap(10),
