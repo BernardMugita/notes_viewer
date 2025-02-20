@@ -4,13 +4,15 @@ import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
+import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:note_viewer/widgets/units_widgets/desktop_semester_holder.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
   TextEditingController codeController = TextEditingController();
   TextEditingController courseIdController = TextEditingController();
   TextEditingController semesterController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String selectedCourseId = '';
   String selectedSemester = '';
@@ -53,7 +56,9 @@ class _DesktopUnitsState extends State<DesktopUnits> {
 
     final user = context.watch<UserProvider>().user;
 
-    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+    final toggleProvider = context.watch<TogglesProvider>();
+
+    bool isMinimized = toggleProvider.isSideNavMinimized;
 
     return Scaffold(
       body: Flex(
@@ -72,14 +77,14 @@ class _DesktopUnitsState extends State<DesktopUnits> {
             flex: 6,
             child: Padding(
               padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.15,
-                  right: MediaQuery.of(context).size.width * 0.15,
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  right: MediaQuery.of(context).size.width * 0.05,
                   top: 20,
                   bottom: 20),
               child: context.watch<UnitsProvider>().isLoading
                   ? Center(
                       child: LoadingAnimationWidget.newtonCradle(
-                        color: AppUtils.$mainBlue,
+                        color: AppUtils.mainBlue(context),
                         size: 100,
                       ),
                     )
@@ -92,10 +97,15 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                               "Units",
                               style: TextStyle(
                                 fontSize: 24,
-                                color: AppUtils.$mainBlue,
+                                color: AppUtils.mainBlue(context),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            Spacer(),
+                            TopNavigation(
+                                isRecentActivities: context
+                                    .watch<DashboardProvider>()
+                                    .isNewActivities)
                           ],
                         ),
                         const Gap(20),
@@ -105,13 +115,20 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width / 5,
                               child: TextField(
+                                controller: searchController,
+                                onChanged: (value) {
+                                  toggleProvider.searchAction(
+                                      searchController.text, units, 'name');
+
+                                  print(toggleProvider.searchResults);
+                                },
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(12.5),
                                   border: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                          color: AppUtils.$mainBlueAccent)),
+                                          color: AppUtils.mainBlueAccent(context))),
                                   filled: true,
-                                  fillColor: AppUtils.$mainWhite,
+                                  fillColor: AppUtils.mainWhite(context),
                                   prefixIcon:
                                       Icon(FluentIcons.search_24_regular),
                                   hintText: "Search",
@@ -119,7 +136,15 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                 ),
                               ),
                             ),
-                            Gap(20),
+                            Gap(10),
+                            if (toggleProvider.searchMode)
+                              SizedBox(
+                                width: double.infinity,
+                                child: Text(toggleProvider.searchResults.isEmpty
+                                    ? "No results found for '${searchController.text}'"
+                                    : "Search results for '${searchController.text}'"),
+                              ),
+                            Gap(10),
                             if (user.isNotEmpty && user['role'] == 'admin')
                               SizedBox(
                                 width: 150,
@@ -128,7 +153,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                     padding: const WidgetStatePropertyAll(
                                         EdgeInsets.all(20)),
                                     backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.$mainBlue),
+                                        AppUtils.mainBlue(context)),
                                     shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5),
@@ -150,7 +175,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                       Icon(
                                         FluentIcons.class_24_regular,
                                         size: 16,
-                                        color: AppUtils.$mainWhite,
+                                        color: AppUtils.mainWhite(context),
                                       ),
                                     ],
                                   ),
@@ -164,7 +189,11 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                DesktopSemesterHolder(units: units),
+                                DesktopSemesterHolder(
+                                    units:
+                                        toggleProvider.searchResults.isNotEmpty
+                                            ? toggleProvider.searchResults
+                                            : units),
                               ],
                             ),
                           ),
@@ -200,7 +229,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                           ? MediaQuery.of(context).size.height * 0.7
                           : MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -213,7 +242,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                             "Add Unit",
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppUtils.$mainBlue,
+                              color: AppUtils.mainBlue(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -242,7 +271,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -259,7 +288,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -291,7 +320,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -302,7 +331,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                         MediaQuery.of(context).size.width / 3.5,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -377,7 +406,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -388,7 +417,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                         MediaQuery.of(context).size.width / 3.5,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -424,8 +453,8 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                               border: Border.all(
                                                 color:
                                                     selectedSemester == semester
-                                                        ? AppUtils.$mainBlue
-                                                        : AppUtils.$mainGrey,
+                                                        ? AppUtils.mainBlue(context)
+                                                        : AppUtils.mainGrey(context),
                                               ),
                                             ),
                                             child: Row(
@@ -491,7 +520,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                               backgroundColor: WidgetStatePropertyAll(
                                 unitProvider.isLoading
                                     ? Colors.grey
-                                    : AppUtils.$mainBlue,
+                                    : AppUtils.mainBlue(context),
                               ),
                               padding: WidgetStatePropertyAll(EdgeInsets.only(
                                   top: 20, bottom: 20, left: 10, right: 10)),
@@ -505,10 +534,10 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                       strokeWidth: 2.5,
                                     ),
                                   )
-                                : const Text('Add Unit',
+                                :  Text('Add Unit',
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                           ),
                         );
                       })

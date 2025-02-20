@@ -95,6 +95,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
               final unitId = unit['id'];
               context.read<UnitsProvider>().setUnitId(unitId);
               context.go('/units/notes');
+              context.read<TogglesProvider>().deActivateSearchMode();
             },
             child: Listener(
               onPointerDown: onPointerDown,
@@ -104,9 +105,9 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                     left: 20, right: 20, top: 10, bottom: 10),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: _isHovered ? AppUtils.$mainBlue : AppUtils.$mainWhite,
+                  color: _isHovered ? AppUtils.mainBlue(context) : AppUtils.mainWhite(context),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: AppUtils.$mainGrey),
+                  border: Border.all(color: AppUtils.mainGrey(context)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,8 +120,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                           style: TextStyle(
                             fontSize: 18,
                             color: _isHovered
-                                ? AppUtils.$mainWhite
-                                : AppUtils.$mainBlue,
+                                ? AppUtils.mainWhite(context)
+                                : AppUtils.mainBlue(context),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -144,14 +145,14 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   ? Icon(
                                       FluentIcons.chevron_up_24_regular,
                                       color: _isHovered
-                                          ? AppUtils.$mainWhite
-                                          : AppUtils.$mainBlack,
+                                          ? AppUtils.mainWhite(context)
+                                          : AppUtils.mainBlack(context),
                                     )
                                   : Icon(
                                       FluentIcons.chevron_down_24_regular,
                                       color: _isHovered
-                                          ? AppUtils.$mainWhite
-                                          : AppUtils.$mainBlack,
+                                          ? AppUtils.mainWhite(context)
+                                          : AppUtils.mainBlack(context),
                                     ));
                         })
                       ],
@@ -162,7 +163,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                         children: [
                           const Gap(5),
                           Divider(
-                            color: AppUtils.$mainBlueAccent,
+                            color: AppUtils.mainBlueAccent(context),
                             indent: 10,
                           ),
                           const Gap(5),
@@ -210,7 +211,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             },
                             style: ButtonStyle(
                                 backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.$mainGreen),
+                                    WidgetStatePropertyAll(AppUtils.mainGreen(context)),
                                 shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                         borderRadius:
@@ -218,11 +219,11 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             child: Row(
                               children: [
                                 Icon(FluentIcons.edit_24_regular,
-                                    color: AppUtils.$mainWhite),
+                                    color: AppUtils.mainWhite(context)),
                                 const Gap(5),
                                 Text("Edit",
                                     style:
-                                        TextStyle(color: AppUtils.$mainWhite)),
+                                        TextStyle(color: AppUtils.mainWhite(context))),
                               ],
                             )),
                         Gap(5),
@@ -235,7 +236,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             },
                             style: ButtonStyle(
                                 backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.$mainRed),
+                                    WidgetStatePropertyAll(AppUtils.mainRed(context)),
                                 shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                         borderRadius:
@@ -243,11 +244,11 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             child: Row(
                               children: [
                                 Icon(FluentIcons.delete_24_regular,
-                                    color: AppUtils.$mainWhite),
+                                    color: AppUtils.mainWhite(context)),
                                 const Gap(5),
                                 Text("Delete",
                                     style:
-                                        TextStyle(color: AppUtils.$mainWhite)),
+                                        TextStyle(color: AppUtils.mainWhite(context))),
                               ],
                             ))
                       ],
@@ -269,7 +270,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
           style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlack),
+              color: _isHovered ? AppUtils.mainWhite(context) : AppUtils.mainBlack(context)),
         ),
         Gap(10),
         Text(
@@ -277,7 +278,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
               ? AppUtils.formatDate(value.toString())
               : value.toString(),
           style: TextStyle(
-            color: _isHovered ? AppUtils.$mainWhite : AppUtils.$mainBlack,
+            color: _isHovered ? AppUtils.mainWhite(context) : AppUtils.mainBlack(context),
           ),
         ),
       ],
@@ -293,7 +294,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
             content: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppUtils.$mainWhite,
+                  color: AppUtils.mainWhite(context),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 width: 300,
@@ -303,13 +304,13 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                   children: [
                     Icon(
                       FluentIcons.delete_24_regular,
-                      color: AppUtils.$mainRed,
+                      color: AppUtils.mainRed(context),
                       size: 80,
                     ),
                     Gap(20),
                     Text(
                       "Confirm Delete",
-                      style: TextStyle(fontSize: 18, color: AppUtils.$mainRed),
+                      style: TextStyle(fontSize: 18, color: AppUtils.mainRed(context)),
                     ),
                     Text(
                       "Are you sure you want to delete this unit? Note that this action is irreversible.",
@@ -331,7 +332,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                     padding: WidgetStatePropertyAll(
                                         EdgeInsets.all(10)),
                                     backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.$mainBlueAccent),
+                                        AppUtils.mainBlueAccent(context)),
                                     shape: WidgetStatePropertyAll(
                                         RoundedRectangleBorder(
                                             borderRadius:
@@ -340,12 +341,12 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(FluentIcons.dismiss_24_filled,
-                                        color: AppUtils.$mainRed),
+                                        color: AppUtils.mainRed(context)),
                                     const Gap(5),
                                     Text("Cancel",
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: AppUtils.$mainRed)),
+                                            color: AppUtils.mainRed(context))),
                                   ],
                                 ))),
                         Gap(10),
@@ -369,7 +370,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                     padding: WidgetStatePropertyAll(
                                         EdgeInsets.all(10)),
                                     backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.$mainRed),
+                                        AppUtils.mainRed(context)),
                                     shape: WidgetStatePropertyAll(
                                         RoundedRectangleBorder(
                                             borderRadius:
@@ -388,12 +389,12 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Icon(FluentIcons.delete_24_regular,
-                                              color: AppUtils.$mainWhite),
+                                              color: AppUtils.mainWhite(context)),
                                           const Gap(5),
                                           Text("Delete",
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  color: AppUtils.$mainWhite)),
+                                                  color: AppUtils.mainWhite(context))),
                                         ],
                                       ));
                           }),
@@ -439,7 +440,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                           ? MediaQuery.of(context).size.height * 0.7
                           : MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -452,7 +453,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                             "Edit Unit",
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppUtils.$mainBlue,
+                              color: AppUtils.mainBlue(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -481,7 +482,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -498,7 +499,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -530,7 +531,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -541,7 +542,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                         MediaQuery.of(context).size.width / 3.5,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -616,7 +617,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -627,7 +628,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                         MediaQuery.of(context).size.width / 3.5,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -663,8 +664,8 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                               border: Border.all(
                                                 color:
                                                     selectedSemester == semester
-                                                        ? AppUtils.$mainBlue
-                                                        : AppUtils.$mainGrey,
+                                                        ? AppUtils.mainBlue(context)
+                                                        : AppUtils.mainGrey(context),
                                               ),
                                             ),
                                             child: Row(
@@ -721,7 +722,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                               backgroundColor: WidgetStatePropertyAll(
                                 unitProvider.isLoading
                                     ? Colors.grey
-                                    : AppUtils.$mainBlue,
+                                    : AppUtils.mainBlue(context),
                               ),
                               padding: WidgetStatePropertyAll(EdgeInsets.only(
                                   top: 20, bottom: 20, left: 10, right: 10)),
@@ -735,10 +736,10 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                                       strokeWidth: 2.5,
                                     ),
                                   )
-                                : const Text('Save changes',
+                                :  Text('Save changes',
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                           ),
                         );
                       })

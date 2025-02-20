@@ -8,7 +8,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/notes_widgets/tablet_notes_item.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +29,7 @@ class _TabletNotesState extends State<TabletNotes> {
   TextEditingController fileNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController uploadTypeController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   Map selectedLesson = {};
 
@@ -38,6 +39,7 @@ class _TabletNotesState extends State<TabletNotes> {
   Widget build(BuildContext context) {
     final lessons = context.watch<LessonsProvider>().lessons;
     final user = context.watch<UserProvider>().user;
+    final toggleProvider = context.watch<TogglesProvider>();
 
     return Scaffold(
       key: _scaffoldKey, // Attach the global key to the Scaffold
@@ -64,7 +66,7 @@ class _TabletNotesState extends State<TabletNotes> {
                     "Notes",
                     style: TextStyle(
                       fontSize: 24,
-                      color: AppUtils.$mainBlue,
+                      color: AppUtils.mainBlue(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -76,7 +78,7 @@ class _TabletNotesState extends State<TabletNotes> {
                           padding:
                               WidgetStatePropertyAll(const EdgeInsets.all(10)),
                           backgroundColor:
-                              WidgetStatePropertyAll(AppUtils.$mainBlue),
+                              WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -93,14 +95,14 @@ class _TabletNotesState extends State<TabletNotes> {
                               "Add Lesson",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                             ),
                             const Gap(5),
                             Icon(
                               FluentIcons.book_add_24_regular,
                               size: 16,
-                              color: AppUtils.$mainWhite,
+                              color: AppUtils.mainWhite(context),
                             ),
                           ],
                         ),
@@ -109,9 +111,14 @@ class _TabletNotesState extends State<TabletNotes> {
                   SizedBox(
                     width: double.infinity,
                     child: TextField(
-                      decoration: const InputDecoration(
+                      controller: searchController,
+                      onChanged: (value) {
+                        toggleProvider.searchAction(
+                            searchController.text, lessons, 'name');
+                      },
+                      decoration:  InputDecoration(
                         filled: true,
-                        fillColor: AppUtils.$mainWhite,
+                        fillColor: AppUtils.mainWhite(context),
                         prefixIcon: Icon(FluentIcons.search_24_filled),
                         contentPadding: EdgeInsets.all(5),
                         border: OutlineInputBorder(),
@@ -122,20 +129,33 @@ class _TabletNotesState extends State<TabletNotes> {
                   ),
                 ],
               ),
-              const Gap(20),
+              Gap(10),
+              if (toggleProvider.searchMode)
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(toggleProvider.searchResults.isEmpty
+                      ? "No results found for '${searchController.text}'"
+                      : "Search results for '${searchController.text}'"),
+                ),
+              Gap(10),
               SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height,
                 child: context.watch<LessonsProvider>().isLoading
                     ? LoadingAnimationWidget.newtonCradle(
-                        color: AppUtils.$mainBlue, size: 100)
+                        color: AppUtils.mainBlue(context), size: 100)
                     : ListView.builder(
-                        itemCount: lessons.length,
+                        itemCount: toggleProvider.searchResults.isNotEmpty
+                            ? toggleProvider.searchResults.length
+                            : lessons.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final lesson = lessons[index];
+                          final lesson = toggleProvider.searchResults.isNotEmpty
+                              ? toggleProvider.searchResults[index]
+                              : lessons[index];
 
                           return TabletNotesItem(
                               lesson: lesson,
+                              selectedLesson: selectedLesson,
                               onPressed: (Map lesson) {
                                 setState(() {
                                   selectedLesson = lesson;
@@ -170,7 +190,7 @@ class _TabletNotesState extends State<TabletNotes> {
                           ? MediaQuery.of(context).size.height * 0.6
                           : MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -186,7 +206,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                   "Add New Lesson",
                                   style: TextStyle(
                                     fontSize: 18,
-                                    color: AppUtils.$mainBlue,
+                                    color: AppUtils.mainBlue(context),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -212,7 +232,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                       color: Color.fromARGB(255, 212, 212, 212),
                                     ),
                                   ),
-                                  focusColor: AppUtils.$mainBlue,
+                                  focusColor: AppUtils.mainBlue(context),
                                 ),
                               ),
                             ),
@@ -231,7 +251,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                       color: Color.fromARGB(255, 212, 212, 212),
                                     ),
                                   ),
-                                  focusColor: AppUtils.$mainBlue,
+                                  focusColor: AppUtils.mainBlue(context),
                                 ),
                               ),
                             ),
@@ -263,7 +283,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                       color: Color.fromARGB(255, 212, 212, 212),
                                     ),
                                   ),
-                                  focusColor: AppUtils.$mainBlue,
+                                  focusColor: AppUtils.mainBlue(context),
                                 ),
                               ),
                             ),
@@ -275,7 +295,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: AppUtils.$mainWhite,
+                                  color: AppUtils.mainWhite(context),
                                   boxShadow: [
                                     BoxShadow(
                                       color: const Color.fromARGB(
@@ -328,7 +348,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                   "Add New Lesson",
                                   style: TextStyle(
                                     fontSize: 18,
-                                    color: AppUtils.$mainBlue,
+                                    color: AppUtils.mainBlue(context),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -359,7 +379,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                               255, 212, 212, 212),
                                         ),
                                       ),
-                                      focusColor: AppUtils.$mainBlue,
+                                      focusColor: AppUtils.mainBlue(context),
                                     ),
                                   ),
                                 ),
@@ -392,7 +412,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                     backgroundColor: WidgetStatePropertyAll(
                                       lessonProvider.isLoading
                                           ? Colors.grey
-                                          : AppUtils.$mainBlue,
+                                          : AppUtils.mainBlue(context),
                                     ),
                                     padding: WidgetStatePropertyAll(
                                         EdgeInsets.only(
@@ -410,10 +430,10 @@ class _TabletNotesState extends State<TabletNotes> {
                                             strokeWidth: 2.5,
                                           ),
                                         )
-                                      : const Text('Add Lesson',
+                                      :  Text('Add Lesson',
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.$mainWhite)),
+                                              color: AppUtils.mainWhite(context))),
                                 ),
                               );
                             })

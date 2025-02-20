@@ -13,6 +13,7 @@ import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
@@ -30,6 +31,7 @@ void main() {
     final uploadsProvider = UploadsProvider();
     final dashboardProvider = DashboardProvider();
     final activityProvider = ActivityProvider();
+    final themeProvider = ThemeProvider();
 
     // Initialize providers with default values if necessary
     await authProvider.checkLogin();
@@ -46,6 +48,7 @@ void main() {
       uploadsProvider: uploadsProvider,
       dashboardProvider: dashboardProvider,
       activityProvider: activityProvider,
+      themeProvider: themeProvider,
     ));
 
     // Verify that our counter starts at 0

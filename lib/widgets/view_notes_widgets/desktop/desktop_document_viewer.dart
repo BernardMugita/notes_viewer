@@ -49,7 +49,7 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
             Text(
               widget.fileName,
               style: TextStyle(
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
             ),
@@ -60,13 +60,13 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
                     onPressed: () {},
                     icon: Icon(
                       FluentIcons.thumb_like_24_regular,
-                      color: AppUtils.$mainBlack,
+                      color: AppUtils.mainBlack(context),
                     )),
                 IconButton(
                     onPressed: () {},
                     icon: Icon(
                       FluentIcons.thumb_dislike_24_regular,
-                      color: AppUtils.$mainBlack,
+                      color: AppUtils.mainBlack(context),
                     )),
               ],
             )
@@ -76,8 +76,8 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-              color: AppUtils.$mainWhite,
-              border: Border.all(color: AppUtils.$mainGrey),
+              color: AppUtils.mainWhite(context),
+              border: Border.all(color: AppUtils.mainGrey(context)),
               borderRadius: BorderRadius.circular(5)),
           height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
@@ -86,7 +86,7 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
                 child: isLoading
                     ? Center(
                         child: LoadingAnimationWidget.newtonCradle(
-                          color: AppUtils.$mainBlue,
+                          color: AppUtils.mainBlue(context),
                           size: 100,
                         ),
                       )

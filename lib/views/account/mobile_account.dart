@@ -8,7 +8,7 @@ import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
 class MobileAccount extends StatefulWidget {
@@ -85,7 +85,7 @@ class _MobileAccountState extends State<MobileAccount> {
                         "User Account",
                         style: TextStyle(
                           fontSize: 24,
-                          color: AppUtils.$mainBlue,
+                          color: AppUtils.mainBlue(context),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -96,7 +96,7 @@ class _MobileAccountState extends State<MobileAccount> {
                             padding: WidgetStatePropertyAll(
                                 const EdgeInsets.all(20)),
                             backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
@@ -112,7 +112,7 @@ class _MobileAccountState extends State<MobileAccount> {
                               Icon(
                                 FluentIcons.person_edit_24_regular,
                                 size: 16,
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                             ],
                           ),
@@ -148,7 +148,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                   Gap(5),
                                   Divider(
                                     thickness: 0.5,
-                                    color: AppUtils.$mainBlue,
+                                    color: AppUtils.mainBlue(context),
                                   ),
                                   Gap(5),
                                 ],
@@ -180,7 +180,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                   Gap(5),
                                   Divider(
                                     thickness: 0.5,
-                                    color: AppUtils.$mainBlue,
+                                    color: AppUtils.mainBlue(context),
                                   ),
                                   Gap(5),
                                 ],
@@ -200,7 +200,7 @@ class _MobileAccountState extends State<MobileAccount> {
                         padding: const EdgeInsets.all(20),
                         height: MediaQuery.of(context).size.height * 0.75,
                         decoration: BoxDecoration(
-                          color: AppUtils.$mainWhite,
+                          color: AppUtils.mainWhite(context),
                         ),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +209,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                     Text("Account Details",
                                         style: TextStyle(
                                             fontSize: 18,
-                                            color: AppUtils.$mainBlue,
+                                            color: AppUtils.mainBlue(context),
                                             fontWeight: FontWeight.bold)),
                                     Gap(30),
                                     _buildAccountDetails(context,
@@ -263,7 +263,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                           child: Text(
                                             "Not verified",
                                             style: TextStyle(
-                                                color: AppUtils.$mainRed),
+                                                color: AppUtils.mainRed(context)),
                                           ),
                                         ),
                                         ElevatedButton(
@@ -276,7 +276,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                                     bottom: 5)),
                                             backgroundColor:
                                                 WidgetStatePropertyAll(
-                                                    AppUtils.$mainBlue),
+                                                    AppUtils.mainBlue(context)),
                                             shape: WidgetStatePropertyAll(
                                               RoundedRectangleBorder(
                                                 borderRadius:
@@ -290,7 +290,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                               Text(
                                                 "Verify Account",
                                                 style: TextStyle(
-                                                  color: AppUtils.$mainWhite,
+                                                  color: AppUtils.mainWhite(context),
                                                 ),
                                               ),
                                               const Gap(5),
@@ -298,7 +298,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                                 FluentIcons
                                                     .checkmark_circle_24_filled,
                                                 size: 16,
-                                                color: AppUtils.$mainWhite,
+                                                color: AppUtils.mainWhite(context),
                                               ),
                                             ],
                                           ),
@@ -311,13 +311,13 @@ class _MobileAccountState extends State<MobileAccount> {
                                     Text(
                                       "Acknowledgment",
                                       style:
-                                          TextStyle(color: AppUtils.$mainBlue),
+                                          TextStyle(color: AppUtils.mainBlue(context)),
                                     ),
                                     Gap(5),
                                     Text(
                                       "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                       style:
-                                          TextStyle(color: AppUtils.$mainGrey),
+                                          TextStyle(color: AppUtils.mainGrey(context)),
                                     ),
                                     Text("Powered by Labs")
                                   ]
@@ -326,7 +326,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                         Text("Account Membership",
                                             style: TextStyle(
                                                 fontSize: 18,
-                                                color: AppUtils.$mainBlue,
+                                                color: AppUtils.mainBlue(context),
                                                 fontWeight: FontWeight.bold)),
                                         Gap(30),
                                         Spacer(),
@@ -336,13 +336,13 @@ class _MobileAccountState extends State<MobileAccount> {
                                         Text(
                                           "Acknowledgment",
                                           style: TextStyle(
-                                              color: AppUtils.$mainBlue),
+                                              color: AppUtils.mainBlue(context)),
                                         ),
                                         Gap(5),
                                         Text(
                                           "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                           style: TextStyle(
-                                              color: AppUtils.$mainGrey),
+                                              color: AppUtils.mainGrey(context)),
                                         ),
                                         Text("Powered by Labs")
                                       ]
@@ -372,7 +372,7 @@ class _MobileAccountState extends State<MobileAccount> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppUtils.$mainGrey)),
+                border: Border(bottom: BorderSide(color: AppUtils.mainGrey(context))),
                 borderRadius: BorderRadius.circular(5)),
             child: context.watch<UserProvider>().isLoading
                 ? SizedBox(
@@ -385,7 +385,7 @@ class _MobileAccountState extends State<MobileAccount> {
             left: 5,
             child: Container(
               padding: const EdgeInsets.only(left: 5, right: 5),
-              color: AppUtils.$mainWhite,
+              color: AppUtils.mainWhite(context),
               child: context.watch<UserProvider>().isLoading
                   ? SizedBox(
                       width: double.infinity,
@@ -393,7 +393,7 @@ class _MobileAccountState extends State<MobileAccount> {
                     )
                   : Text(
                       title,
-                      style: TextStyle(color: AppUtils.$mainGrey, fontSize: 12),
+                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 12),
                     ),
             ))
       ],
@@ -413,7 +413,7 @@ class _MobileAccountState extends State<MobileAccount> {
                   height: MediaQuery.of(context).size.height * 0.85,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -426,7 +426,7 @@ class _MobileAccountState extends State<MobileAccount> {
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppUtils.$mainBlue)),
+                                  color: AppUtils.mainBlue(context))),
                           IconButton(
                             onPressed: () => Navigator.of(context).pop(),
                             icon: const Icon(FluentIcons.dismiss_24_regular),
@@ -441,7 +441,7 @@ class _MobileAccountState extends State<MobileAccount> {
                           children: [
                             CircleAvatar(
                               radius: 80,
-                              backgroundColor: AppUtils.$mainBlueAccent,
+                              backgroundColor: AppUtils.mainBlueAccent(context),
                               child: Image(
                                 height: 70,
                                 width: 70,
@@ -458,7 +458,7 @@ class _MobileAccountState extends State<MobileAccount> {
                                     padding: WidgetStatePropertyAll(
                                         const EdgeInsets.all(5)),
                                     backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.$mainBlue),
+                                        AppUtils.mainBlue(context)),
                                     shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5),
@@ -471,13 +471,13 @@ class _MobileAccountState extends State<MobileAccount> {
                                     children: [
                                       Icon(
                                         FluentIcons.image_24_regular,
-                                        color: AppUtils.$mainWhite,
+                                        color: AppUtils.mainWhite(context),
                                       ),
                                       Gap(10),
                                       Text("Browse",
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.$mainWhite)),
+                                              color: AppUtils.mainWhite(context))),
                                     ],
                                   )),
                             )
@@ -493,7 +493,7 @@ class _MobileAccountState extends State<MobileAccount> {
                           border: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
+                          focusColor: AppUtils.mainBlue(context),
                         ),
                       ),
                       Gap(10),
@@ -505,7 +505,7 @@ class _MobileAccountState extends State<MobileAccount> {
                           border: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
+                          focusColor: AppUtils.mainBlue(context),
                         ),
                       ),
                       Gap(10),
@@ -517,7 +517,7 @@ class _MobileAccountState extends State<MobileAccount> {
                           border: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.$mainBlue,
+                          focusColor: AppUtils.mainBlue(context),
                         ),
                       ),
                       Spacer(),
@@ -528,7 +528,7 @@ class _MobileAccountState extends State<MobileAccount> {
                               padding: WidgetStatePropertyAll(
                                   const EdgeInsets.all(5)),
                               backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                  WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
@@ -556,13 +556,13 @@ class _MobileAccountState extends State<MobileAccount> {
                               children: [
                                 Icon(
                                   FluentIcons.save_24_regular,
-                                  color: AppUtils.$mainWhite,
+                                  color: AppUtils.mainWhite(context),
                                 ),
                                 Gap(10),
                                 Text("Save Changes",
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                               ],
                             ));
                       })

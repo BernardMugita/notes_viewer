@@ -71,7 +71,7 @@ class _ActivityState extends State<Activity> {
           padding: const EdgeInsets.all(20),
           margin: const EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
+            color: AppUtils.mainWhite(context),
           ),
           child: Column(
             children: [
@@ -113,7 +113,7 @@ class _ActivityState extends State<Activity> {
                 Column(
                   children: [
                     Divider(
-                      color: AppUtils.$mainBlueAccent,
+                      color: AppUtils.mainBlueAccent(context),
                       indent: 10,
                     ),
                     ListTile(
@@ -146,13 +146,13 @@ class _ActivityState extends State<Activity> {
                                     : uploadType == 'slides'
                                         ? Colors.amber.withOpacity(0.2)
                                         : uploadType == 'recordings'
-                                            ? AppUtils.$mainBlue
+                                            ? AppUtils.mainBlue(context)
                                                 .withOpacity(0.2)
                                             : uploadType ==
                                                     "student_contributions"
                                                 ? Colors.deepOrange
                                                     .withOpacity(0.2)
-                                                : AppUtils.$mainGreen
+                                                : AppUtils.mainGreen(context)
                                                     .withOpacity(0.2),
                                 child: Icon(
                                   uploadType == 'notes'
@@ -172,11 +172,11 @@ class _ActivityState extends State<Activity> {
                                       : uploadType == 'slides'
                                           ? Colors.amber
                                           : uploadType == 'recordings'
-                                              ? AppUtils.$mainBlue
+                                              ? AppUtils.mainBlue(context)
                                               : uploadType ==
                                                       "student_contributions"
                                                   ? Colors.deepOrange
-                                                  : AppUtils.$mainGreen,
+                                                  : AppUtils.mainGreen(context),
                                 ),
                               ),
                               Gap(10),

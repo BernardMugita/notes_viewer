@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,7 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
     return SafeArea(
       child: Container(
         width: MediaQuery.of(context).size.width / 1.5,
-        decoration: BoxDecoration(color: AppUtils.$mainBlue),
+        decoration: BoxDecoration(color: AppUtils.mainBlue(context)),
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -52,7 +53,7 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                 image: AssetImage('assets/images/alib-hd-shaddow.png')),
             Text(
               "Maktaba",
-              style: TextStyle(color: AppUtils.$mainWhite),
+              style: TextStyle(color: AppUtils.mainWhite(context)),
             ),
             const Gap(40),
             Expanded(
@@ -96,17 +97,13 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                   Spacer(),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: AppUtils.$mainBlueAccent),
+                        border: Border.all(color: AppUtils.mainBlueAccent(context)),
                         borderRadius: BorderRadius.circular(5)),
                     padding: const EdgeInsets.all(10),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          child: Image(
-                              height: 25,
-                              width: 25,
-                              image: AssetImage(
-                                  'assets/images/placeholder-profile.png')),
+                          child: Icon(FluentIcons.person_24_regular),
                         ),
                         const Gap(10),
                         Column(
@@ -114,17 +111,17 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                           children: [
                             if (context.watch<UserProvider>().isLoading)
                               LinearProgressIndicator(
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               )
                             else
                               Text(user.isNotEmpty ? user['username'] : 'Guest',
                                   style: TextStyle(
                                       fontSize: 16,
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       fontWeight: FontWeight.bold)),
                             if (context.watch<UserProvider>().isLoading)
                               LinearProgressIndicator(
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               )
                             else
                               SizedBox(
@@ -136,14 +133,14 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                                     style: TextStyle(
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 12,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                               ),
                           ],
                         ),
                         Spacer(),
                         Icon(
                           FluentIcons.more_vertical_24_regular,
-                          color: AppUtils.$mainWhite,
+                          color: AppUtils.mainWhite(context),
                         )
                       ],
                     ),
@@ -168,12 +165,12 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(FluentIcons.sign_out_24_regular,
-                        color: AppUtils.$mainBlack),
+                        color: AppUtils.mainBlack(context)),
                     const Gap(5),
-                    const Text(
+                     Text(
                       'Logout',
                       style:
-                          TextStyle(fontSize: 16, color: AppUtils.$mainBlack),
+                          TextStyle(fontSize: 16, color: AppUtils.mainBlack(context)),
                     ),
                   ],
                 ),
@@ -195,24 +192,26 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
   }) {
     final isActive = currentRoute == route.replaceAll('/', '');
 
+    final toggleProvider = context.read<TogglesProvider>();
+
     return GestureDetector(
-      onTap: () => context.go(route),
+      onTap: () => {context.go(route), toggleProvider.deActivateSearchMode()},
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isActive ? AppUtils.$mainWhite : Colors.transparent,
+          color: isActive ? AppUtils.mainWhite(context) : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Row(
           children: [
             Icon(icon,
-                color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite),
+                color: isActive ? AppUtils.mainBlue(context) : AppUtils.mainWhite(context)),
             const Gap(5),
             Text(
               label,
               style: TextStyle(
                 fontSize: 16,
-                color: isActive ? AppUtils.$mainBlue : AppUtils.$mainWhite,
+                color: isActive ? AppUtils.mainBlue(context) : AppUtils.mainWhite(context),
               ),
             ),
           ],

@@ -22,28 +22,27 @@ class DesktopActivities extends StatelessWidget {
           return b['created_at'].compareTo(a['created_at']) ?? 0;
         });
 
-        return SizedBox(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (unreadActivities.isNotEmpty)
-                  Column(
-                      children: unreadActivities.map((activity) {
-                    return Activity(activity: activity);
-                  }).toList())
-                else
-                  EmptyWidget(
-                    errorHeading: "No recent activities",
-                    errorDescription: "There are no new activities today",
-                    image: 'assets/images/empty_act.png',
+        return unreadActivities.isEmpty
+            ? EmptyWidget(
+                errorHeading: "No recent activities",
+                errorDescription: "There are no new activities today",
+                image: 'assets/images/empty_act.png',
+              )
+            : SizedBox(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                          children: unreadActivities.map((activity) {
+                        return Activity(activity: activity);
+                      }).toList())
+                    ],
                   ),
-              ],
-            ),
-          ),
-        );
+                ),
+              );
       },
     );
   }

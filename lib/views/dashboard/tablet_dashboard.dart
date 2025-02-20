@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/search/search_results.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/tablet_card_row.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity_history.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
 class TabletDashboard extends StatelessWidget {
@@ -18,7 +20,7 @@ class TabletDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(context.read<AuthProvider>().user);
+    TextEditingController searchController = TextEditingController();
 
     return Scaffold(
         key: _scaffoldKey, // Attach the GlobalKey to the Scaffold
@@ -31,16 +33,18 @@ class TabletDashboard extends StatelessWidget {
           ),
         ),
         drawer: const ResponsiveNav(),
-        body: Consumer<DashboardProvider>(
-            builder: (BuildContext context, dashBoardProvider, _) {
+        body: Consumer2<DashboardProvider, TogglesProvider>(builder:
+            (BuildContext context, dashBoardProvider, togglesProvider, _) {
           final dashData = dashBoardProvider.dashData;
+
+          final searchResults = togglesProvider.searchResults;
 
           return dashBoardProvider.isLoading
               ? SizedBox(
                   width: double.infinity,
                   height: double.infinity,
                   child: LoadingAnimationWidget.newtonCradle(
-                    color: AppUtils.$mainBlue,
+                    color: AppUtils.mainBlue(context),
                     size: 100,
                   ),
                 )
@@ -56,14 +60,22 @@ class TabletDashboard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              DashboardBanner(data: dashData),
+                              if (!togglesProvider.searchMode)
+                                DashboardBanner(data: dashData),
                               const Gap(10),
                               SizedBox(
                                 width: double.infinity,
                                 child: TextField(
-                                  decoration: const InputDecoration(
+                                  controller: searchController,
+                                  onChanged: (value) {
+                                    togglesProvider.searchAction(
+                                        searchController.text,
+                                        dashData['notifications']['read'],
+                                        'title');
+                                  },
+                                  decoration:  InputDecoration(
                                     filled: true,
-                                    fillColor: AppUtils.$mainWhite,
+                                    fillColor: AppUtils.mainWhite(context),
                                     prefixIcon:
                                         Icon(FluentIcons.search_24_filled),
                                     border: OutlineInputBorder(),
@@ -75,7 +87,20 @@ class TabletDashboard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const Gap(20),
+                        Gap(10),
+                        if (togglesProvider.searchMode)
+                          SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                                "Search results for '${searchController.text}'"),
+                          ),
+                        Gap(10),
+                        if (togglesProvider.searchMode)
+                          SearchResults(
+                              searchResults: searchResults,
+                              query: searchController.text,
+                              target: "title"),
+                        const Gap(10),
                         TabletCardRow(
                           user: dashData['user'] ?? {},
                           users: dashData['user_count'] ?? 0,
@@ -85,7 +110,7 @@ class TabletDashboard extends StatelessWidget {
                         Text(
                           "Recent Activities",
                           style: TextStyle(
-                              color: AppUtils.$mainGrey,
+                              color: AppUtils.mainGrey(context),
                               fontWeight: FontWeight.bold),
                         ),
                         const Gap(10),
@@ -94,7 +119,7 @@ class TabletDashboard extends StatelessWidget {
                         Text(
                           "Activity History",
                           style: TextStyle(
-                              color: AppUtils.$mainGrey,
+                              color: AppUtils.mainGrey(context),
                               fontWeight: FontWeight.bold),
                         ),
                         const Gap(10),

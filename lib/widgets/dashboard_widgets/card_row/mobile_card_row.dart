@@ -30,7 +30,7 @@ class _MobileCardRowState extends State<MobileCardRow> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Summary",
-              style: TextStyle(fontSize: 16, color: AppUtils.$mainGrey)),
+              style: TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
           Gap(20),
           SizedBox(
             width: double.infinity,

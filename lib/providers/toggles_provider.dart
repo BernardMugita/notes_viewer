@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TogglesProvider extends ChangeNotifier {
+  List searchResults = [];
+
   bool showPassword = false;
   bool showCoursesDropDown = false;
   bool rememberSelection = false;
@@ -22,6 +24,8 @@ class TogglesProvider extends ChangeNotifier {
   bool isSideNavMinimized = false;
   bool isActivityExpanded = false;
   bool isUnitExpanded = false;
+  bool searchMode = false;
+  bool isSearchItemExpanded = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -76,8 +80,25 @@ class TogglesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleIsSearchItemExpanded() async {
+    isSearchItemExpanded = !isSearchItemExpanded;
+    notifyListeners();
+  }
+
   void toggleIsUnitExpanded() async {
     isUnitExpanded = !isUnitExpanded;
+    notifyListeners();
+  }
+
+  void activateSearchMode() async {
+    searchMode = true;
+    notifyListeners();
+  }
+
+  void deActivateSearchMode() async {
+    searchMode = false;
+    searchResults = [];
+    notifyListeners();
   }
 
   Future<void> loadRememberSelection() async {
@@ -104,6 +125,21 @@ class TogglesProvider extends ChangeNotifier {
   Future<void> toggleIsRightClicked() async {
     isRightClicked = !isRightClicked;
     notifyListeners();
+  }
+
+  void searchAction(String query, List originalList, String target) {
+    if (query.isEmpty) {
+      searchResults = originalList;
+      deActivateSearchMode();
+    } else {
+      activateSearchMode();
+      searchResults = originalList
+          .where((result) => result[target]
+              .toString()
+              .toUpperCase()
+              .contains(query.toUpperCase()))
+          .toList();
+    }
   }
 
   void toggleSearchBar() {

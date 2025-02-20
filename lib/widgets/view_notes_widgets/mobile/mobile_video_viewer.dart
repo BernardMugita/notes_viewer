@@ -93,7 +93,7 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                 widget.fileName,
                 style: TextStyle(
                   overflow: TextOverflow.ellipsis,
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -106,14 +106,14 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                   onPressed: () {},
                   icon: Icon(
                     FluentIcons.thumb_like_24_regular,
-                    color: AppUtils.$mainBlack,
+                    color: AppUtils.mainBlack(context),
                   ),
                 ),
                 IconButton(
                   onPressed: () {},
                   icon: Icon(
                     FluentIcons.thumb_dislike_24_regular,
-                    color: AppUtils.$mainBlack,
+                    color: AppUtils.mainBlack(context),
                   ),
                 ),
               ],
@@ -121,7 +121,7 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
           ],
         ),
         const Gap(5),
-        Divider(color: AppUtils.$mainGrey),
+        Divider(color: AppUtils.mainGrey(context)),
         const Gap(5),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
@@ -152,7 +152,7 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                           ConnectionState.waiting) {
                         return Center(
                           child: LoadingAnimationWidget.newtonCradle(
-                            color: AppUtils.$mainBlue,
+                            color: AppUtils.mainBlue(context),
                             size: 100,
                           ),
                         );
@@ -160,7 +160,7 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                         return Center(
                           child: Text(
                             "Playback Error",
-                            style: TextStyle(color: AppUtils.$mainWhite),
+                            style: TextStyle(color: AppUtils.mainWhite(context)),
                           ),
                         );
                       }
@@ -190,8 +190,8 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                                       videoPlayerController.seekTo(
                                           Duration(seconds: value.toInt()));
                                     },
-                                    activeColor: AppUtils.$mainBlue,
-                                    inactiveColor: AppUtils.$mainGrey,
+                                    activeColor: AppUtils.mainBlue(context),
+                                    inactiveColor: AppUtils.mainGrey(context),
                                   )
                                 : const SizedBox(),
                             const Gap(10),

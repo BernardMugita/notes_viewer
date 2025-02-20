@@ -84,7 +84,7 @@ class _DesktopCourseState extends State<DesktopCourse> {
                   controller: courseController,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: AppUtils.$mainWhite,
+                    fillColor: AppUtils.mainWhite(context),
                     prefixIcon: const Icon(FluentIcons.book_24_regular),
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -98,7 +98,7 @@ class _DesktopCourseState extends State<DesktopCourse> {
                     border: const OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Color.fromARGB(255, 212, 212, 212))),
-                    focusColor: AppUtils.$mainBlue,
+                    focusColor: AppUtils.mainBlue(context),
                   ),
                 ),
               ),
@@ -109,10 +109,10 @@ class _DesktopCourseState extends State<DesktopCourse> {
                   width: MediaQuery.of(context).size.width / 3.5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 229, 229, 229),
+                        color: AppUtils.mainShaddow(context),
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset: const Offset(0, 3),
@@ -172,8 +172,8 @@ class _DesktopCourseState extends State<DesktopCourse> {
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(
                       authProvider.isLoading
-                          ? AppUtils.$mainGrey
-                          : AppUtils.$mainBlue,
+                          ? AppUtils.mainGrey(context)
+                          : AppUtils.mainBlue(context),
                     ),
                     padding: WidgetStatePropertyAll(const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 10)),
@@ -187,10 +187,10 @@ class _DesktopCourseState extends State<DesktopCourse> {
                             strokeWidth: 2.5,
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'Continue',
                           style: TextStyle(
-                              fontSize: 16, color: AppUtils.$mainWhite),
+                              fontSize: 16, color: AppUtils.mainWhite(context)),
                         ),
                 ),
               ),

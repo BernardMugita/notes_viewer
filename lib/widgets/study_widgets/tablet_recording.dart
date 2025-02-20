@@ -43,41 +43,31 @@ class _TabletRecordingState extends State<TabletRecording> {
               : widget.recordings,
         });
       },
-      child: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.height / 3.5,
-            height: MediaQuery.of(context).size.height / 5,
-            decoration: BoxDecoration(
-                color: const Color(0xFFf9f9ff),
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 224, 224, 224),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(10, 5),
-                  )
-                ]),
-            padding: const EdgeInsets.all(20),
-            child: Center(
-                child: CircleAvatar(
-              radius: 40,
-              child: Icon(
-                widget.icon,
-                size: 50,
-                color: AppUtils.$mainBlue,
+      child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context),
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: AppUtils.mainGrey(context))),
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppUtils.mainBlueAccent(context),
+                child: Icon(
+                  widget.icon,
+                  size: 20,
+                  color: AppUtils.mainBlue(context),
+                ),
               ),
-            )),
-          ),
-          Gap(20),
-          SizedBox(
-              width: 150,
-              child: Text(widget.fileName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18))),
-        ],
-      ),
+              Gap(10),
+              SizedBox(
+                  child: Text(widget.fileName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 18))),
+            ],
+          )),
     );
   }
 }

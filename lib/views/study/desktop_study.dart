@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
@@ -15,7 +16,8 @@ import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/side_navigation.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:note_viewer/widgets/study_widgets/desktop_file.dart';
 import 'package:note_viewer/widgets/study_widgets/desktop_recording.dart';
 import 'package:provider/provider.dart';
@@ -41,12 +43,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
   List uploadTypes = ['notes', 'slides', 'recordings'];
   List<String> form = [];
 
-  List notes = [];
-  List slides = [];
-  List recordings = [];
-  List contributions = [];
-
-  bool isMaterialsEmpty = false;
+  // Removed notes, slides, recordings, contributions, and isMaterialsEmpty from state.
+  // They will be computed directly in build.
 
   FilePickerResult? result;
   String? selectedFileName;
@@ -77,6 +75,9 @@ class _DesktopStudyState extends State<DesktopStudy> {
       });
     } catch (e) {
       print(e);
+      setState(() {
+        isUploading = false;
+      });
     }
   }
 
@@ -91,14 +92,12 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
       final lessonId =
           state!.extra != null ? (state.extra as Map)['lesson_id'] : null;
-
       final unitId =
           state.extra != null ? (state.extra as Map)['unit_id'] : null;
-
       final lessonName =
           state.extra != null ? (state.extra as Map)['lesson_name'] : null;
 
-      if (lessonId.isNotEmpty) {
+      if (lessonId != null && lessonId.isNotEmpty) {
         lessonIdRef = lessonId;
         unitIdRef = unitId;
         lessonNameRef = lessonName;
@@ -112,154 +111,165 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
   @override
   Widget build(BuildContext context) {
-    final lesson = context.watch<LessonsProvider>().lesson;
+    final lessonsProvider = context.watch<LessonsProvider>();
+    final lesson = lessonsProvider.lesson;
     final user = context.watch<UserProvider>().user;
-
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
-    if (lesson.isNotEmpty && lesson['materials'] != null) {
-      setState(() {
-        notes = lesson['materials']['notes'] ?? [];
-        slides = lesson['materials']['slides'] ?? [];
-        recordings = lesson['materials']['recordings'] ?? [];
-        contributions = lesson['materials']['contributions'] ?? [];
-      });
-    } else {
-      print('Lesson or files are null');
-    }
+    // Compute the materials lists directly from the lesson data.
+    final List notes = (lesson.isNotEmpty && lesson['materials'] != null)
+        ? (lesson['materials']['notes'] ?? [])
+        : [];
+    final List slides = (lesson.isNotEmpty && lesson['materials'] != null)
+        ? (lesson['materials']['slides'] ?? [])
+        : [];
+    final List recordings = (lesson.isNotEmpty && lesson['materials'] != null)
+        ? (lesson['materials']['recordings'] ?? [])
+        : [];
+    final List contributions =
+        (lesson.isNotEmpty && lesson['materials'] != null)
+            ? (lesson['materials']['contributions'] ?? [])
+            : [];
 
-    if (!context.watch<LessonsProvider>().isLoading &&
+    // Compute the emptiness condition directly.
+    bool isMaterialsEmpty = !lessonsProvider.isLoading &&
         notes.isEmpty &&
         slides.isEmpty &&
         recordings.isEmpty &&
-        contributions.isEmpty) {
-      setState(() {
-        isMaterialsEmpty = true;
-      });
-    }
+        contributions.isEmpty;
 
     return Consumer<LessonsProvider>(
-        builder: (BuildContext context, lessonsProvider, _) {
-      return Scaffold(
-        body: Flex(
-          direction: Axis.horizontal,
-          children: [
-            isMinimized
-                ? Expanded(
-                    flex: 1,
-                    child: SideNavigation(),
-                  )
-                : SizedBox(
-                    width: 80,
-                    child: SideNavigation(),
-                  ),
-            Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 40, right: 40, top: 20, bottom: 20),
-                child: lessonsProvider.isLoading
-                    ? LoadingAnimationWidget.newtonCradle(
-                        color: AppUtils.$mainBlue, size: 100)
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Units/Notes/${lesson['name']}",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppUtils.$mainGrey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Gap(5),
-                              Text(
-                                lesson['name'] ?? "Lesson name",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  color: AppUtils.$mainBlue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Gap(10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (user.isNotEmpty && user['role'] == 'admin')
-                                SizedBox(
-                                  width: 150,
-                                  child: ElevatedButton(
-                                    style: ButtonStyle(
-                                      padding: WidgetStatePropertyAll(
-                                          const EdgeInsets.all(20)),
-                                      backgroundColor: WidgetStatePropertyAll(
-                                          AppUtils.$mainBlue),
-                                      shape: WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
+      builder: (BuildContext context, lessonsProvider, _) {
+        return Scaffold(
+          body: Flex(
+            direction: Axis.horizontal,
+            children: [
+              isMinimized
+                  ? Expanded(
+                      flex: 1,
+                      child: SideNavigation(),
+                    )
+                  : SizedBox(
+                      width: 80,
+                      child: SideNavigation(),
+                    ),
+              Expanded(
+                flex: 6,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.05,
+                      right: MediaQuery.of(context).size.width * 0.05,
+                      top: 20,
+                      bottom: 20),
+                  child: lessonsProvider.isLoading
+                      ? LoadingAnimationWidget.newtonCradle(
+                          color: AppUtils.mainBlue(context), size: 100)
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Units/Notes/${lesson['name']}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: AppUtils.mainGrey(context),
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    onPressed: () {
-                                      _showDialog(context);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Upload file",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: AppUtils.$mainWhite,
+                                    const Gap(5),
+                                    Text(
+                                      lesson['name'] ?? "Lesson name",
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        color: AppUtils.mainBlue(context),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                TopNavigation(
+                                    isRecentActivities: context
+                                        .watch<DashboardProvider>()
+                                        .isNewActivities)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (user.isNotEmpty && user['role'] == 'admin')
+                                  SizedBox(
+                                    width: 150,
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        padding: WidgetStatePropertyAll(
+                                            const EdgeInsets.all(20)),
+                                        backgroundColor: WidgetStatePropertyAll(
+                                            AppUtils.mainBlue(context)),
+                                        shape: WidgetStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
                                           ),
                                         ),
-                                        const Gap(5),
-                                        Icon(
-                                          FluentIcons.book_add_24_regular,
-                                          size: 16,
-                                          color: AppUtils.$mainWhite,
-                                        ),
-                                      ],
+                                      ),
+                                      onPressed: () {
+                                        _showDialog(context);
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Upload file",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color:
+                                                  AppUtils.mainWhite(context),
+                                            ),
+                                          ),
+                                          const Gap(5),
+                                          Icon(
+                                            FluentIcons.book_add_24_regular,
+                                            size: 16,
+                                            color: AppUtils.mainWhite(context),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                          const Gap(20),
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              width: double.infinity,
-                              decoration:
-                                  BoxDecoration(color: AppUtils.$mainWhite),
+                              ],
+                            ),
+                            const Gap(20),
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text("Study material",
                                       style: TextStyle(
-                                          fontSize: 24,
-                                          color: AppUtils.$mainGrey)),
+                                          fontSize: 16,
+                                          color: AppUtils.mainGrey(context),
+                                          fontWeight: FontWeight.bold)),
                                   const Gap(20),
                                   if (isMaterialsEmpty)
                                     Expanded(
-                                        child: Center(
-                                      child: EmptyWidget(
-                                          errorHeading: "How Empty!",
-                                          errorDescription:
-                                              "There's no study material for this lesson",
-                                          image: 'assets/images/404.png'),
-                                    ))
+                                      child: Center(
+                                        child: EmptyWidget(
+                                            errorHeading: "How Empty!",
+                                            errorDescription:
+                                                "There's no study material for this lesson",
+                                            image: 'assets/images/404.png'),
+                                      ),
+                                    )
                                   else
-                                    Wrap(
-                                      spacing: 40,
-                                      runSpacing: 40,
+                                    Column(
+                                      spacing: 5,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        // Map notes to DesktopFile widgets and convert to list
                                         ...notes.map((note) {
                                           return DesktopFile(
                                             notes: notes,
@@ -272,9 +282,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             icon: FluentIcons
                                                 .document_pdf_24_regular,
                                           );
-                                        }).toList(), // Convert the iterable to a List<Widget>
-
-                                        // Map slides to DesktopFile widgets and convert to list
+                                        }).toList(),
                                         ...slides.map((slide) {
                                           return DesktopFile(
                                             slides: slides,
@@ -287,9 +295,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             icon: FluentIcons
                                                 .slide_layout_24_regular,
                                           );
-                                        }).toList(), // Convert the iterable to a List<Widget>
-
-                                        // Map recordings to DesktopRecording widgets and convert to list
+                                        }).toList(),
                                         ...recordings.map((recording) {
                                           return DesktopRecording(
                                             recordings: recordings,
@@ -302,9 +308,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             material: recording,
                                             icon: FluentIcons.play_24_filled,
                                           );
-                                        }).toList(), // Convert the iterable to a List<Widget>
-
-                                        // Map contributions to DesktopRecording widgets and convert to list
+                                        }).toList(),
                                         ...contributions.map((contribution) {
                                           return DesktopRecording(
                                             contributions: contributions,
@@ -317,69 +321,68 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             material: contribution,
                                             icon: FluentIcons.play_24_filled,
                                           );
-                                        }).toList(), // Convert the iterable to a List<Widget>
+                                        }).toList(),
                                       ],
-                                    )
+                                    ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 
-  void _showDialog(
-    BuildContext context,
-  ) {
+  void _showDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return Consumer<LessonsProvider>(
-            builder: (context, lessonsProvider, _) {
-          return Stack(
-            children: [
-              AlertDialog(
-                contentPadding: const EdgeInsets.all(0),
-                content: Container(
-                  padding: const EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  height:
-                      context.watch<TogglesProvider>().showUploadTypeDropdown
-                          ? MediaQuery.of(context).size.height * 0.7
-                          : MediaQuery.of(context).size.height * 0.6,
-                  decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Upload file",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: AppUtils.$mainBlue,
-                                fontWeight: FontWeight.bold,
+          builder: (context, lessonsProvider, _) {
+            return Stack(
+              children: [
+                AlertDialog(
+                  contentPadding: const EdgeInsets.all(0),
+                  content: Container(
+                    padding: const EdgeInsets.all(20),
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height:
+                        context.watch<TogglesProvider>().showUploadTypeDropdown
+                            ? MediaQuery.of(context).size.height * 0.7
+                            : MediaQuery.of(context).size.height * 0.6,
+                    decoration: BoxDecoration(
+                      color: AppUtils.mainWhite(context),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Upload file",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: AppUtils.mainBlue(context),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                              icon: const Icon(FluentIcons.dismiss_24_regular),
-                            ),
-                          ],
-                        ),
-                        Gap(20),
-                        GestureDetector(
+                              IconButton(
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                icon:
+                                    const Icon(FluentIcons.dismiss_24_regular),
+                              ),
+                            ],
+                          ),
+                          const Gap(20),
+                          GestureDetector(
                             onTap: pickFile,
                             child: Container(
                               padding: const EdgeInsets.only(
@@ -387,234 +390,243 @@ class _DesktopStudyState extends State<DesktopStudy> {
                               width: MediaQuery.of(context).size.width * 0.25,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppUtils.$mainBlack,
+                                  color: AppUtils.mainBlack(context),
                                 ),
                                 borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                               child: isUploading
                                   ? LoadingAnimationWidget.staggeredDotsWave(
-                                      color: AppUtils.$mainBlue,
+                                      color: AppUtils.mainBlue(context),
                                       size: 40,
                                     )
                                   : Row(
                                       children: [
                                         Icon(Icons.upload_file_outlined),
-                                        Gap(5),
+                                        const Gap(5),
                                         Text(selectedFileName ?? "Select file",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 16,
                                             )),
                                       ],
                                     ),
-                            )),
-                        Gap(10),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          child: TextField(
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.notes),
-                              labelText: 'File name',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212),
-                                ),
-                              ),
-                              focusColor: AppUtils.$mainBlue,
                             ),
                           ),
-                        ),
-                        Gap(10),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          child: TextField(
-                            controller: descriptionController,
-                            maxLines: 3,
-                            decoration: InputDecoration(
-                              alignLabelWithHint: true,
-                              labelText: 'Description',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212),
-                                ),
-                              ),
-                              focusColor: AppUtils.$mainBlue,
-                            ),
-                          ),
-                        ),
-                        Gap(10),
-                        Consumer<TogglesProvider>(builder:
-                            (BuildContext context, togglesProvider, _) {
-                          return Column(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                child: TextField(
-                                  controller: uploadTypeController,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                        FluentIcons.collections_24_regular),
-                                    labelText: 'Select Upload type',
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        togglesProvider
-                                            .toggleUploadTypeDropDown();
-                                      },
-                                      icon: togglesProvider
-                                              .showUploadTypeDropdown
-                                          ? const Icon(
-                                              FluentIcons.chevron_up_24_regular)
-                                          : const Icon(FluentIcons
-                                              .chevron_down_24_regular),
-                                    ),
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 212, 212, 212),
-                                      ),
-                                    ),
-                                    focusColor: AppUtils.$mainBlue,
+                          const Gap(10),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: TextField(
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.notes),
+                                labelText: 'File name',
+                                border: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
+                                focusColor: AppUtils.mainBlue(context),
                               ),
-                              Gap(10),
-                              if (togglesProvider.showUploadTypeDropdown)
-                                Container(
-                                  padding: const EdgeInsets.all(20),
+                            ),
+                          ),
+                          const Gap(10),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: TextField(
+                              controller: descriptionController,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                alignLabelWithHint: true,
+                                labelText: 'Description',
+                                border: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212),
+                                  ),
+                                ),
+                                focusColor: AppUtils.mainBlue(context),
+                              ),
+                            ),
+                          ),
+                          const Gap(10),
+                          Consumer<TogglesProvider>(builder:
+                              (BuildContext context, togglesProvider, _) {
+                            return Column(
+                              children: [
+                                SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppUtils.$mainWhite,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color.fromARGB(
-                                            255, 229, 229, 229),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        uploadTypes.map<Widget>((uploadType) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            uploadTypeController.text =
-                                                uploadType;
-                                          });
+                                  child: TextField(
+                                    controller: uploadTypeController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                          FluentIcons.collections_24_regular),
+                                      labelText: 'Select Upload type',
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
                                           togglesProvider
                                               .toggleUploadTypeDropDown();
                                         },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              uploadType,
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const Divider(
-                                              color: Color.fromARGB(
-                                                  255, 209, 209, 209),
-                                            ),
-                                          ],
+                                        icon: togglesProvider
+                                                .showUploadTypeDropdown
+                                            ? const Icon(FluentIcons
+                                                .chevron_up_24_regular)
+                                            : const Icon(FluentIcons
+                                                .chevron_down_24_regular),
+                                      ),
+                                      border: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 212, 212, 212),
                                         ),
-                                      );
-                                    }).toList(),
+                                      ),
+                                      focusColor: AppUtils.mainBlue(context),
+                                    ),
                                   ),
                                 ),
-                            ],
-                          );
-                        }),
-                        Spacer(),
-                        Consumer<UploadsProvider>(
-                            builder: (context, uploadsProvider, child) {
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: ElevatedButton(
-                              onPressed: uploadsProvider.isLoading ||
-                                      isUploading
-                                  ? null
-                                  : () {
-                                      form = [
-                                        nameController.text,
-                                        unitIdRef,
-                                        lessonIdRef,
-                                        descriptionController.text,
-                                        '7.30',
-                                        uploadTypeController.text
-                                      ];
+                                const Gap(10),
+                                if (togglesProvider.showUploadTypeDropdown)
+                                  Container(
+                                    padding: const EdgeInsets.all(20),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: AppUtils.mainWhite(context),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color.fromARGB(
+                                              255, 229, 229, 229),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children:
+                                          uploadTypes.map<Widget>((uploadType) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              uploadTypeController.text =
+                                                  uploadType;
+                                            });
+                                            togglesProvider
+                                                .toggleUploadTypeDropDown();
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                uploadType,
+                                                style: const TextStyle(
+                                                    fontSize: 16),
+                                              ),
+                                              const Divider(
+                                                color: Color.fromARGB(
+                                                    255, 209, 209, 209),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
+                          const Spacer(),
+                          Consumer<UploadsProvider>(
+                              builder: (context, uploadsProvider, child) {
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              child: ElevatedButton(
+                                onPressed: uploadsProvider.isLoading ||
+                                        isUploading
+                                    ? null
+                                    : () {
+                                        form = [
+                                          nameController.text,
+                                          unitIdRef,
+                                          lessonIdRef,
+                                          descriptionController.text,
+                                          '7.30',
+                                          uploadTypeController.text
+                                        ];
 
-                                      uploadsProvider.uploadNewFile(
-                                          tokenRef,
-                                          selectedFile!,
-                                          form
-                                              .toString()
-                                              .replaceAll(']', '')
-                                              .replaceAll('[', ''));
+                                        uploadsProvider.uploadNewFile(
+                                            tokenRef,
+                                            selectedFile!,
+                                            form
+                                                .toString()
+                                                .replaceAll(']', '')
+                                                .replaceAll('[', ''));
 
-                                      if (uploadsProvider.success) {
-                                        context
-                                            .read<LessonsProvider>()
-                                            .getLesson(tokenRef, lessonIdRef);
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                              style: ButtonStyle(
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5))),
-                                backgroundColor: WidgetStatePropertyAll(
-                                  uploadsProvider.isLoading
-                                      ? Colors.grey
-                                      : AppUtils.$mainBlue,
+                                        if (uploadsProvider.success) {
+                                          context
+                                              .read<LessonsProvider>()
+                                              .getLesson(tokenRef, lessonIdRef);
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                style: ButtonStyle(
+                                  shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5))),
+                                  backgroundColor: WidgetStatePropertyAll(
+                                    uploadsProvider.isLoading
+                                        ? Colors.grey
+                                        : AppUtils.mainBlue(context),
+                                  ),
+                                  padding: WidgetStatePropertyAll(
+                                    const EdgeInsets.only(
+                                        top: 20,
+                                        bottom: 20,
+                                        left: 10,
+                                        right: 10),
+                                  ),
                                 ),
-                                padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                    top: 20, bottom: 20, left: 10, right: 10)),
+                                child: uploadsProvider.isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
+                                        ),
+                                      )
+                                    : Text('Upload',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color:
+                                                AppUtils.mainWhite(context))),
                               ),
-                              child: uploadsProvider.isLoading
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.5,
-                                      ),
-                                    )
-                                  : const Text('Upload',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppUtils.$mainWhite)),
-                            ),
-                          );
-                        })
-                      ]),
+                            );
+                          })
+                        ]),
+                  ),
                 ),
-              ),
-              if (context.watch<UploadsProvider>().success)
-                Positioned(
+                if (context.watch<UploadsProvider>().success)
+                  Positioned(
+                      top: 20,
+                      right: 20,
+                      child: SuccessWidget(
+                          message: context.watch<UploadsProvider>().message))
+                else if (context.watch<UploadsProvider>().error)
+                  Positioned(
                     top: 20,
                     right: 20,
-                    child: SuccessWidget(
-                        message: context.watch<UploadsProvider>().message))
-              else if (context.watch<UploadsProvider>().error)
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: FailedWidget(
-                      message: context.watch<UploadsProvider>().message),
-                )
-            ],
-          );
-        });
+                    child: FailedWidget(
+                        message: context.watch<UploadsProvider>().message),
+                  )
+              ],
+            );
+          },
+        );
       },
     );
   }

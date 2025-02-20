@@ -64,8 +64,8 @@ class MobileLogin extends StatelessWidget {
                       children: [
                         // Gap(MediaQuery.of(context).size.height / 4),
                         TabBar(
-                          labelColor: AppUtils.$mainBlue,
-                          unselectedLabelColor: AppUtils.$mainBlack,
+                          labelColor: AppUtils.mainBlue(context),
+                          unselectedLabelColor: AppUtils.mainBlack(context),
                           indicatorColor: Colors.blue,
                           labelStyle: TextStyle(fontSize: 18),
                           tabs: const [
@@ -129,13 +129,14 @@ class SignInTab extends StatelessWidget {
             controller: emailController,
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.mail_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               labelText: 'Email',
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(20),
@@ -144,8 +145,9 @@ class SignInTab extends StatelessWidget {
             obscureText: !context.watch<TogglesProvider>().showPassword,
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               suffixIcon: GestureDetector(
                 onTap: () {
                   context.read<TogglesProvider>().togglePassword();
@@ -158,7 +160,7 @@ class SignInTab extends StatelessWidget {
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(20),
@@ -175,7 +177,7 @@ class SignInTab extends StatelessWidget {
                       },
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(
-                    authProvider.isLoading ? Colors.grey : AppUtils.$mainBlue,
+                    authProvider.isLoading ? Colors.grey : AppUtils.mainBlue(context),
                   ),
                   padding: WidgetStatePropertyAll(
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -190,10 +192,10 @@ class SignInTab extends StatelessWidget {
                           strokeWidth: 2.5,
                         ),
                       )
-                    : const Text(
+                    :  Text(
                         'Sign In',
                         style:
-                            TextStyle(fontSize: 16, color: AppUtils.$mainWhite),
+                            TextStyle(fontSize: 16, color: AppUtils.mainWhite(context)),
                       ),
               );
             },
@@ -226,60 +228,65 @@ class SignUpTab extends StatelessWidget {
           TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.person_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               labelText: 'Full Name',
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(10),
           TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.book_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               labelText: 'Course',
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(10),
           TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.clipboard_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               labelText: 'Registration Number',
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(20),
           TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.mail_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               labelText: 'Email',
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(20),
           TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
+              floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
-              fillColor: AppUtils.$mainWhite,
+              fillColor: AppUtils.mainWhite(context),
               suffixIcon: GestureDetector(
                 child: Icon(FluentIcons.eye_24_regular),
               ),
@@ -287,7 +294,7 @@ class SignUpTab extends StatelessWidget {
               border: const OutlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 212, 212, 212))),
-              focusColor: AppUtils.$mainBlue,
+              focusColor: AppUtils.mainBlue(context),
             ),
           ),
           const Gap(20),
@@ -306,7 +313,7 @@ class SignUpTab extends StatelessWidget {
                     },
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(
-                  authProvider.isLoading ? Colors.grey : AppUtils.$mainBlue,
+                  authProvider.isLoading ? Colors.grey : AppUtils.mainBlue(context),
                 ),
                 padding: WidgetStatePropertyAll(
                     EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10)),
@@ -320,9 +327,9 @@ class SignUpTab extends StatelessWidget {
                         strokeWidth: 2.5,
                       ),
                     )
-                  : const Text('Sign Up',
+                  :  Text('Sign Up',
                       style:
-                          TextStyle(fontSize: 16, color: AppUtils.$mainWhite)),
+                          TextStyle(fontSize: 16, color: AppUtils.mainWhite(context))),
             );
           })
         ],

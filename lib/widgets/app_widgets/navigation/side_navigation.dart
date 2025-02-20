@@ -38,10 +38,12 @@ class _SideNavigationState extends State<SideNavigation> {
     final currentRoute = routeName != null ? routeName.split('/')[1] : '';
 
     user = context.read<UserProvider>().user;
-    bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+    final toggleProvider = context.watch<TogglesProvider>();
+
+    bool isMinimized = toggleProvider.isSideNavMinimized;
 
     return Container(
-      decoration: BoxDecoration(color: AppUtils.$mainBlue),
+      decoration: BoxDecoration(color: AppUtils.mainBlue(context)),
       padding: !isMinimized
           ? const EdgeInsets.only(top: 20, left: 5, right: 5, bottom: 20)
           : const EdgeInsets.all(20),
@@ -64,7 +66,7 @@ class _SideNavigationState extends State<SideNavigation> {
               ? SizedBox()
               : Text(
                   "Maktaba",
-                  style: TextStyle(color: AppUtils.$mainWhite, fontSize: 20),
+                  style: TextStyle(color: AppUtils.mainWhite(context), fontSize: 20),
                 ),
           !isMinimized ? Spacer() : const Gap(40),
           Expanded(
@@ -112,7 +114,7 @@ class _SideNavigationState extends State<SideNavigation> {
             decoration: BoxDecoration(
                 border: !isMinimized
                     ? Border.all(width: 0, color: Colors.transparent)
-                    : Border.all(color: AppUtils.$mainBlueAccent),
+                    : Border.all(color: AppUtils.mainBlueAccent(context)),
                 borderRadius: BorderRadius.circular(5)),
             padding: !isMinimized
                 ? const EdgeInsets.all(0)
@@ -122,11 +124,7 @@ class _SideNavigationState extends State<SideNavigation> {
                 : Row(
                     children: [
                       CircleAvatar(
-                        child: Image(
-                            height: 20,
-                            width: 20,
-                            image: AssetImage(
-                                'assets/images/placeholder-profile.png')),
+                        child: Icon(FluentIcons.person_24_regular),
                       ),
                       const Gap(10),
                       Column(
@@ -137,21 +135,21 @@ class _SideNavigationState extends State<SideNavigation> {
                               width: 80,
                               child: LinearProgressIndicator(
                                 minHeight: 1,
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                             )
                           else
                             Text(user.isNotEmpty ? user['username'] : 'Guest',
                                 style: TextStyle(
                                     fontSize: 16,
-                                    color: AppUtils.$mainWhite,
+                                    color: AppUtils.mainWhite(context),
                                     fontWeight: FontWeight.bold)),
                           if (context.watch<UserProvider>().isLoading)
                             SizedBox(
                               width: 50,
                               child: LinearProgressIndicator(
                                 minHeight: 1,
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                             )
                           else
@@ -164,7 +162,7 @@ class _SideNavigationState extends State<SideNavigation> {
                                   style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       fontSize: 12,
-                                      color: AppUtils.$mainWhite)),
+                                      color: AppUtils.mainWhite(context))),
                             ),
                         ],
                       ),
@@ -177,10 +175,10 @@ class _SideNavigationState extends State<SideNavigation> {
                               toggleProvider.toggleSideNavMinimized();
                             },
                             child: CircleAvatar(
-                              backgroundColor: AppUtils.$mainBlueAccent,
+                              backgroundColor: AppUtils.mainBlueAccent(context),
                               child: Icon(
                                   FluentIcons.panel_right_expand_20_regular,
-                                  color: AppUtils.$mainBlue),
+                                  color: AppUtils.mainBlue(context)),
                             ),
                           );
                         }),
@@ -196,9 +194,9 @@ class _SideNavigationState extends State<SideNavigation> {
                   toggleProvider.toggleSideNavMinimized();
                 },
                 child: CircleAvatar(
-                  backgroundColor: AppUtils.$mainBlueAccent,
+                  backgroundColor: AppUtils.mainBlueAccent(context),
                   child: Icon(FluentIcons.panel_left_expand_20_regular,
-                      color: AppUtils.$mainBlue),
+                      color: AppUtils.mainBlue(context)),
                 ),
               );
             }),
@@ -220,12 +218,12 @@ class _SideNavigationState extends State<SideNavigation> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(FluentIcons.sign_out_24_regular,
-                            color: AppUtils.$mainBlack),
+                            color: AppUtils.mainBlack(context)),
                         const Gap(5),
-                        const Text(
+                         Text(
                           'Logout',
                           style: TextStyle(
-                              fontSize: 16, color: AppUtils.$mainBlack),
+                              fontSize: 16, color: AppUtils.mainBlack(context)),
                         ),
                       ],
                     ),
@@ -235,9 +233,9 @@ class _SideNavigationState extends State<SideNavigation> {
                       authContext.logout(context);
                     },
                     child: CircleAvatar(
-                      backgroundColor: AppUtils.$mainBlueAccent,
+                      backgroundColor: AppUtils.mainBlueAccent(context),
                       child: Icon(FluentIcons.sign_out_24_regular,
-                          color: AppUtils.$mainBlue),
+                          color: AppUtils.mainBlue(context)),
                     ),
                   );
           })
@@ -256,29 +254,31 @@ class _SideNavigationState extends State<SideNavigation> {
   }) {
     final isActive = currentRoute == route.replaceAll('/', '');
 
+    final toggleProvider = context.read<TogglesProvider>();
+
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
     return GestureDetector(
-      onTap: () => context.go(route),
+      onTap: () => {context.go(route), toggleProvider.deActivateSearchMode()},
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           border: Border(
               left: isActive
-                  ? BorderSide(width: 5, color: AppUtils.$mainWhite)
+                  ? BorderSide(width: 5, color: AppUtils.mainWhite(context))
                   : BorderSide.none),
         ),
         child: !isMinimized
-            ? Icon(icon, color: AppUtils.$mainWhite)
+            ? Icon(icon, color: AppUtils.mainWhite(context))
             : Row(
                 children: [
-                  Icon(icon, color: AppUtils.$mainWhite),
+                  Icon(icon, color: AppUtils.mainWhite(context)),
                   const Gap(5),
                   Text(
                     label,
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppUtils.$mainWhite,
+                      color: AppUtils.mainWhite(context),
                     ),
                   ),
                 ],

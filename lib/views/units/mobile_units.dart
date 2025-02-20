@@ -10,7 +10,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/units_widgets/mobile_semester_holder.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +30,7 @@ class _MobileUnitsState extends State<MobileUnits> {
   TextEditingController codeController = TextEditingController();
   TextEditingController courseIdController = TextEditingController();
   TextEditingController semesterController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String selectedCourseId = '';
   String selectedSemester = '';
@@ -54,6 +55,8 @@ class _MobileUnitsState extends State<MobileUnits> {
     final user = context.watch<UserProvider>().user;
     final units = unitsProvider.units;
 
+    final togglesProvider = context.watch<TogglesProvider>();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -72,7 +75,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                 width: double.infinity,
                 height: double.infinity,
                 child: LoadingAnimationWidget.newtonCradle(
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   size: 100,
                 ),
               )
@@ -87,7 +90,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                         "Units",
                         style: TextStyle(
                           fontSize: 18,
-                          color: AppUtils.$mainBlue,
+                          color: AppUtils.mainBlue(context),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -99,7 +102,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                 padding:
                                     WidgetStatePropertyAll(EdgeInsets.all(10)),
                                 backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                    WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                                 shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                         borderRadius:
@@ -114,10 +117,10 @@ class _MobileUnitsState extends State<MobileUnits> {
                                 Text("Add units",
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                                 Gap(5),
                                 Icon(FluentIcons.class_24_regular,
-                                    size: 16, color: AppUtils.$mainWhite),
+                                    size: 16, color: AppUtils.mainWhite(context)),
                               ],
                             ),
                           ),
@@ -131,14 +134,19 @@ class _MobileUnitsState extends State<MobileUnits> {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: searchController,
+                            onChanged: (value) {
+                              togglesProvider.searchAction(
+                                  searchController.text, units, 'name');
+                            },
                             decoration: InputDecoration(
                               prefixIcon: Icon(FluentIcons.search_24_regular),
                               contentPadding: const EdgeInsets.all(5),
                               filled: true,
-                              fillColor: AppUtils.$mainWhite,
+                              fillColor: AppUtils.mainWhite(context),
                               border: OutlineInputBorder(
                                   borderSide:
-                                      BorderSide(color: AppUtils.$mainGrey),
+                                      BorderSide(color: AppUtils.mainGrey(context)),
                                   borderRadius: BorderRadius.circular(5)),
                               hintText: "Search",
                               hintStyle: TextStyle(fontSize: 16),
@@ -149,17 +157,23 @@ class _MobileUnitsState extends State<MobileUnits> {
                     ),
                   ),
                   const Gap(10),
-                  const Divider(
-                    color: Color(0xFFCECECE),
-                  ),
+                  if (togglesProvider.searchMode)
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(togglesProvider.searchResults.isEmpty
+                          ? "No results found for '${searchController.text}'"
+                          : "Search results for '${searchController.text}'"),
+                    ),
                   const Gap(10),
-                  // Make the scrollable content expand dynamically
                   Expanded(
                     child: SingleChildScrollView(
                       // clipBehavior: Clip.none,
                       child: Column(
                         children: [
-                          MobileSemesterHolder(units: units),
+                          MobileSemesterHolder(
+                              units: togglesProvider.searchResults.isNotEmpty
+                                  ? togglesProvider.searchResults
+                                  : units),
                         ],
                       ),
                     ),
@@ -192,7 +206,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                           ? MediaQuery.of(context).size.height * 0.85
                           : MediaQuery.of(context).size.height * 0.5,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -205,7 +219,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                             "Add Unit",
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppUtils.$mainBlue,
+                              color: AppUtils.mainBlue(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -234,7 +248,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -251,7 +265,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -283,7 +297,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -293,7 +307,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -368,7 +382,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -378,7 +392,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -414,8 +428,8 @@ class _MobileUnitsState extends State<MobileUnits> {
                                               border: Border.all(
                                                 color:
                                                     selectedSemester == semester
-                                                        ? AppUtils.$mainBlue
-                                                        : AppUtils.$mainGrey,
+                                                        ? AppUtils.mainBlue(context)
+                                                        : AppUtils.mainGrey(context),
                                               ),
                                             ),
                                             child: Row(
@@ -480,7 +494,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                               backgroundColor: WidgetStatePropertyAll(
                                 unitProvider.isLoading
                                     ? Colors.grey
-                                    : AppUtils.$mainBlue,
+                                    : AppUtils.mainBlue(context),
                               ),
                               padding: WidgetStatePropertyAll(EdgeInsets.only(
                                   top: 10, bottom: 10, left: 10, right: 10)),
@@ -494,10 +508,10 @@ class _MobileUnitsState extends State<MobileUnits> {
                                       strokeWidth: 2.5,
                                     ),
                                   )
-                                : const Text('Add Unit',
+                                :  Text('Add Unit',
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                           ),
                         );
                       })

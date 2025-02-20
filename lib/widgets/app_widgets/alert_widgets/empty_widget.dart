@@ -17,15 +17,15 @@ class EmptyWidget extends StatefulWidget {
   @override
   State<EmptyWidget> createState() => _EmptyWidgetState();
 }
-
+ 
 class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.35,
       decoration: BoxDecoration(
-          color: AppUtils.$mainWhite, borderRadius: BorderRadius.circular(5)),
+          color: AppUtils.mainWhite(context), borderRadius: BorderRadius.circular(5)),
       child: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -50,12 +50,19 @@ class _EmptyWidgetState extends State<EmptyWidget> {
               Gap(10),
               ResponsiveLayout(
                   mobileLayout: Image(
-                      width: 200, height: 200, image: AssetImage(widget.image)),
+                      fit: BoxFit.contain,
+                      width: 200,
+                      height: 200,
+                      image: AssetImage(widget.image)),
                   tabletLayout: Image(
-                      width: 200, height: 200, image: AssetImage(widget.image)),
+                      fit: BoxFit.contain,
+                      width: 150,
+                      height: 150,
+                      image: AssetImage(widget.image)),
                   desktopLayout: Image(
-                      width: 250,
-                      height: 250,
+                      fit: BoxFit.contain,
+                      width: 200,
+                      height: 200,
                       image: AssetImage(widget.image))),
               Gap(10),
               Text(widget.errorDescription,

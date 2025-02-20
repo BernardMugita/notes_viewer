@@ -67,7 +67,7 @@ class _MobileSemesterHolderState extends State<MobileSemesterHolder> {
                   child: Text(
                     "Semester $semester",
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: AppUtils.$mainGrey, fontSize: 18),
+                    style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
                   ),
                 ),
                 Gap(20),

@@ -22,7 +22,7 @@ class _FailedWidgetState extends State<FailedWidget> {
         child: Text(
           widget.message,
           style: TextStyle(
-              color: AppUtils.$mainWhite,
+              color: AppUtils.mainWhite(context),
               fontWeight: FontWeight.bold,
               fontSize: 16),
         ),

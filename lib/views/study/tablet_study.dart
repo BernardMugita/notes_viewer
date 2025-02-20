@@ -15,7 +15,7 @@ import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/study_widgets/tablet_file.dart';
 import 'package:note_viewer/widgets/study_widgets/tablet_recording.dart';
 import 'package:provider/provider.dart';
@@ -151,7 +151,7 @@ class _TabletStudyState extends State<TabletStudy> {
                         lesson['name'] ?? "Lesson name",
                         style: TextStyle(
                           fontSize: 24,
-                          color: AppUtils.$mainBlue,
+                          color: AppUtils.mainBlue(context),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -160,8 +160,8 @@ class _TabletStudyState extends State<TabletStudy> {
                           style: ButtonStyle(
                             padding: WidgetStatePropertyAll(
                                 const EdgeInsets.all(20)),
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                            backgroundColor: WidgetStatePropertyAll(
+                                AppUtils.mainBlue(context)),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
@@ -174,23 +174,20 @@ class _TabletStudyState extends State<TabletStudy> {
                           child: Icon(
                             FluentIcons.book_add_24_regular,
                             size: 16,
-                            color: AppUtils.$mainWhite,
+                            color: AppUtils.mainWhite(context),
                           ),
                         ),
                     ],
                   ),
-                  Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(color: AppUtils.$mainWhite),
+                  Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("Study material",
                               style: TextStyle(
-                                  fontSize: 20, color: AppUtils.$mainGrey)),
+                                  fontSize: 20,
+                                  color: AppUtils.mainGrey(context))),
                           const Gap(20),
                           if (lesson.isEmpty &&
                               notes.isEmpty &&
@@ -203,9 +200,8 @@ class _TabletStudyState extends State<TabletStudy> {
                                     "There is no material available. Try again later",
                                 image: "assets/images/404.png")
                           else
-                            Wrap(
-                              spacing: 30,
-                              runSpacing: 30,
+                            Column(
+                              spacing: 5,
                               children: [
                                 ...notes.map((note) {
                                   return TabletFile(
@@ -284,7 +280,7 @@ class _TabletStudyState extends State<TabletStudy> {
                           ? MediaQuery.of(context).size.height
                           : MediaQuery.of(context).size.height * 0.8,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -297,7 +293,7 @@ class _TabletStudyState extends State<TabletStudy> {
                               "Upload file",
                               style: TextStyle(
                                 fontSize: 18,
-                                color: AppUtils.$mainBlue,
+                                color: AppUtils.mainBlue(context),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -316,14 +312,14 @@ class _TabletStudyState extends State<TabletStudy> {
                                   left: 5, right: 5, top: 10, bottom: 10),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppUtils.$mainBlack,
+                                  color: AppUtils.mainBlack(context),
                                 ),
                                 borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                               child: isUploading
                                   ? LoadingAnimationWidget.staggeredDotsWave(
-                                      color: AppUtils.$mainBlue,
+                                      color: AppUtils.mainBlue(context),
                                       size: 40,
                                     )
                                   : Row(
@@ -349,7 +345,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.$mainBlue,
+                              focusColor: AppUtils.mainBlue(context),
                             ),
                           ),
                         ),
@@ -366,7 +362,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.$mainBlue,
+                              focusColor: AppUtils.mainBlue(context),
                             ),
                           ),
                         ),
@@ -400,7 +396,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                               ),
@@ -411,7 +407,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: AppUtils.$mainWhite,
+                                    color: AppUtils.mainWhite(context),
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color.fromARGB(
@@ -499,7 +495,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                 backgroundColor: WidgetStatePropertyAll(
                                   uploadsProvider.isLoading
                                       ? Colors.grey
-                                      : AppUtils.$mainBlue,
+                                      : AppUtils.mainBlue(context),
                                 ),
                                 padding: WidgetStatePropertyAll(EdgeInsets.only(
                                     top: 20, bottom: 20, left: 10, right: 10)),
@@ -513,10 +509,10 @@ class _TabletStudyState extends State<TabletStudy> {
                                         strokeWidth: 2.5,
                                       ),
                                     )
-                                  : const Text('Upload',
+                                  : Text('Upload',
                                       style: TextStyle(
                                           fontSize: 16,
-                                          color: AppUtils.$mainWhite)),
+                                          color: AppUtils.mainWhite(context))),
                             ),
                           );
                         })

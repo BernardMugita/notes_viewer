@@ -64,7 +64,7 @@ class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
                   children: [
                     Text(
                       "Semester $semester",
-                      style: TextStyle(color: AppUtils.$mainGrey, fontSize: 18),
+                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
                     ),
                     Gap(20),
                     Column(

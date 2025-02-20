@@ -45,34 +45,31 @@ class _DesktopRecordingState extends State<DesktopRecording> {
               : widget.recordings,
         });
       },
-      child: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.height / 3.75,
-            height: MediaQuery.of(context).size.height / 6,
-            decoration: BoxDecoration(
-                color: const Color(0xFFf9f9ff),
-                borderRadius: BorderRadius.circular(5),
+      child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context),
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: AppUtils.mainGrey(context))),
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppUtils.mainBlueAccent(context),
+                child: Icon(
+                  widget.icon,
+                  size: 20,
+                  color: AppUtils.mainBlue(context),
                 ),
-            padding: const EdgeInsets.all(20),
-            child: Center(
-                child: CircleAvatar(
-              radius: 40,
-              child: Icon(
-                widget.icon,
-                size: 50,
-                color: AppUtils.$mainBlue,
               ),
-            )),
-          ),
-          Gap(20),
-          SizedBox(
-              width: 150,
-              child: Text(widget.fileName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18))),
-        ],
-      ),
+              Gap(10),
+              SizedBox(
+                  child: Text(widget.fileName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 18))),
+            ],
+          )),
     );
   }
 }

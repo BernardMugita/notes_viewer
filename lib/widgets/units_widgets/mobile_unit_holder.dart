@@ -34,14 +34,15 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
           context.read<UserProvider>().fetchUserDetails(token);
         }
         context.go('/units/notes');
+        context.read<TogglesProvider>().deActivateSearchMode();
       },
       child: Container(
         padding: const EdgeInsets.all(10),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
+            color: AppUtils.mainWhite(context),
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: AppUtils.$mainGrey)),
+            border: Border.all(color: AppUtils.mainGrey(context))),
         child: Column(
           children: [
             Row(
@@ -49,7 +50,7 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
                 Text("${unit['code']}: ${unit['name']}",
                     style: TextStyle(
                         fontSize: 18,
-                        color: AppUtils.$mainBlue,
+                        color: AppUtils.mainBlue(context),
                         fontWeight: FontWeight.bold)),
                 const Spacer(),
                 Consumer<TogglesProvider>(
@@ -70,11 +71,11 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
                       icon: isSelectedUnit && toggleProvider.isUnitExpanded
                           ? Icon(
                               FluentIcons.chevron_up_24_regular,
-                              color: AppUtils.$mainBlack,
+                              color: AppUtils.mainBlack(context),
                             )
                           : Icon(
                               FluentIcons.chevron_down_24_regular,
-                              color: AppUtils.$mainBlack,
+                              color: AppUtils.mainBlack(context),
                             ));
                 })
               ],
@@ -85,7 +86,7 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
                 spacing: 5,
                 children: [
                   Divider(
-                    color: AppUtils.$mainBlueAccent,
+                    color: AppUtils.mainBlueAccent(context),
                     indent: 10,
                   ),
                   Padding(
@@ -116,14 +117,14 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
           style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: AppUtils.$mainBlack),
+              color: AppUtils.mainBlack(context)),
         ),
         Text(
           title == "Date Created"
               ? AppUtils.formatDate(value.toString())
               : value.toString(),
           style: TextStyle(
-            color: AppUtils.$mainBlack,
+            color: AppUtils.mainBlack(context),
           ),
         ),
       ],

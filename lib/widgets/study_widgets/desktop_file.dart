@@ -40,39 +40,47 @@ class _DesktopFileState extends State<DesktopFile> {
               widget.notes.isEmpty ? widget.slides : widget.notes,
         });
       },
-      child: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.height / 3.75,
-            height: MediaQuery.of(context).size.height / 6,
-            decoration: BoxDecoration(
-                color: const Color(0xFFf9f9ff),
-                borderRadius: BorderRadius.circular(5),
-                ),
-            padding: const EdgeInsets.all(20),
-            child: Center(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: AppUtils.mainWhite(context),
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppUtils.mainGrey(context))),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        child: Row(
+          children: [
+            CircleAvatar(
+                backgroundColor: fileExtension == 'pdf'
+                    ? AppUtils.mainRed(context).withOpacity(0.3)
+                    : fileExtension == 'docx'
+                        ? AppUtils.mainBlue(context).withOpacity(0.3)
+                        : fileExtension == 'xlxs'
+                            ? const Color.fromARGB(255, 100, 187, 0)
+                            : fileExtension == 'ppt'
+                                ? Colors.orange.withOpacity(0.3)
+                                : AppUtils.mainBlue(context).withOpacity(0.3),
                 child: Icon(
-              widget.icon,
-              size: 70,
-              color: fileExtension == 'pdf'
-                  ? AppUtils.$mainRed
-                  : fileExtension == 'docx'
-                      ? AppUtils.$mainBlue
-                      : fileExtension == 'xlxs'
-                          ? const Color.fromARGB(255, 100, 187, 0)
-                          : fileExtension == 'ppt'
-                              ? Colors.orange
-                              : AppUtils.$mainBlue,
-            )),
-          ),
-          Gap(20),
-          SizedBox(
-            width: 150,
-            child: Text(widget.fileName,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16)),
-          ),
-        ],
+                  widget.icon,
+                  size: 20,
+                  color: fileExtension == 'pdf'
+                      ? AppUtils.mainRed(context)
+                      : fileExtension == 'docx'
+                          ? AppUtils.mainBlue(context)
+                          : fileExtension == 'xlxs'
+                              ? const Color.fromARGB(255, 100, 187, 0)
+                              : fileExtension == 'ppt'
+                                  ? Colors.orange
+                                  : AppUtils.mainBlue(context),
+                )),
+            Gap(10),
+            SizedBox(
+              child: Text(widget.fileName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
       ),
     );
   }

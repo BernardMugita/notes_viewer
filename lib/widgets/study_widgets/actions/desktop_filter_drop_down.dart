@@ -11,7 +11,7 @@ class DesktopFilterDropDown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-            color: AppUtils.$mainWhite,
+            color: AppUtils.mainWhite(context),
             borderRadius: BorderRadius.circular(5),
             boxShadow: [
               BoxShadow(
@@ -30,7 +30,7 @@ class DesktopFilterDropDown extends StatelessWidget {
             SizedBox(
               width: 80,
               child: Divider(
-                color: AppUtils.$mainBlue,
+                color: AppUtils.mainBlue(context),
                 thickness: 1,
               ),
             ),

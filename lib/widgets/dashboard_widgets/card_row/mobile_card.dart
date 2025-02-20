@@ -26,7 +26,7 @@ class _MobileCardState extends State<MobileCard> {
       children: [
         Container(
           decoration: BoxDecoration(
-              color: AppUtils.$mainWhite,
+              color: AppUtils.mainWhite(context),
               borderRadius: BorderRadius.circular(5)),
           padding: const EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width / 3.5,
@@ -41,10 +41,10 @@ class _MobileCardState extends State<MobileCard> {
                     : widget.material == 'slides'
                         ? Colors.amber.withOpacity(0.2)
                         : widget.material == 'recordings'
-                            ? AppUtils.$mainBlue.withOpacity(0.2)
+                            ? AppUtils.mainBlue(context).withOpacity(0.2)
                             : widget.material == "student_contributions"
                                 ? Colors.deepOrange.withOpacity(0.2)
-                                : AppUtils.$mainGreen.withOpacity(0.2),
+                                : AppUtils.mainGreen(context).withOpacity(0.2),
                 radius: 25,
                 child: Icon(
                   widget.material == 'notes'
@@ -61,7 +61,7 @@ class _MobileCardState extends State<MobileCard> {
                       : widget.material == 'slides'
                           ? Colors.amber
                           : widget.material == 'recordings'
-                              ? AppUtils.$mainBlue
+                              ? AppUtils.mainBlue(context)
                               : widget.material == "student_contributions"
                                   ? Colors.deepOrange
                                   : const Color(0xFF008800),
@@ -106,10 +106,10 @@ class _MobileCardState extends State<MobileCard> {
                       : widget.material == 'slides'
                           ? Colors.amber
                           : widget.material == 'recordings'
-                              ? AppUtils.$mainBlue
+                              ? AppUtils.mainBlue(context)
                               : widget.material == "student_contributions"
                                   ? Colors.deepOrange
-                                  : AppUtils.$mainGreen,
+                                  : AppUtils.mainGreen(context),
                   borderRadius: BorderRadius.circular(10)),
             ))
       ],

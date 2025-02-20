@@ -18,10 +18,10 @@ class DesktopEmptyOverview extends StatelessWidget {
           ),
           Gap(10),
           Text("Notes not selected",
-              style: TextStyle(fontSize: 20, color: AppUtils.$mainBlue)),
+              style: TextStyle(fontSize: 20, color: AppUtils.mainBlue(context))),
           Gap(5),
           Text("Select a notes item from the list to view it",
-              style: TextStyle(fontSize: 16, color: AppUtils.$mainBlack)),
+              style: TextStyle(fontSize: 16, color: AppUtils.mainBlack(context))),
         ],
       ),
     );

@@ -70,7 +70,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
             Text(
               widget.fileName,
               style: TextStyle(
-                color: AppUtils.$mainBlue,
+                color: AppUtils.mainBlue(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -80,14 +80,14 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               onPressed: () {},
               icon: Icon(
                 FluentIcons.thumb_like_24_regular,
-                color: AppUtils.$mainBlack,
+                color: AppUtils.mainBlack(context),
               ),
             ),
             IconButton(
               onPressed: () {},
               icon: Icon(
                 FluentIcons.thumb_dislike_24_regular,
-                color: AppUtils.$mainBlack,
+                color: AppUtils.mainBlack(context),
               ),
             ),
           ],
@@ -120,7 +120,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               } else if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: LoadingAnimationWidget.newtonCradle(
-                    color: AppUtils.$mainBlue,
+                    color: AppUtils.mainBlue(context),
                     size: 100,
                   ),
                 );
@@ -147,8 +147,8 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                   videoPlayerController
                       .seekTo(Duration(seconds: value.toInt()));
                 },
-                activeColor: AppUtils.$mainBlue,
-                inactiveColor: AppUtils.$mainGrey,
+                activeColor: AppUtils.mainBlue(context),
+                inactiveColor: AppUtils.mainGrey(context),
               )
             : const SizedBox(),
         const Gap(10),
@@ -170,14 +170,14 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                   videoPlayerController.value.isPlaying
                       ? FluentIcons.pause_24_regular
                       : FluentIcons.play_24_regular,
-                  color: AppUtils.$mainBlack,
+                  color: AppUtils.mainBlack(context),
                 ),
               ),
             ),
             const Gap(10),
             Text(
               "${formatDuration(videoPlayerController.value.position)}/${formatDuration(videoPlayerController.value.duration)}",
-              style: TextStyle(color: AppUtils.$mainBlack),
+              style: TextStyle(color: AppUtils.mainBlack(context)),
             ),
             const Spacer(),
             Row(
@@ -185,7 +185,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               children: [
                 Text(
                   "Playback Speed: ",
-                  style: TextStyle(color: AppUtils.$mainBlack),
+                  style: TextStyle(color: AppUtils.mainBlack(context)),
                 ),
                 DropdownButton<double>(
                   value: _playbackSpeed,
@@ -219,7 +219,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               },
               icon: Icon(
                 FluentIcons.skip_back_10_24_regular,
-                color: AppUtils.$mainBlack,
+                color: AppUtils.mainBlack(context),
               ),
             ),
             // Fast Forward +10 sec.
@@ -236,7 +236,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               },
               icon: Icon(
                 FluentIcons.skip_forward_10_24_regular,
-                color: AppUtils.$mainBlack,
+                color: AppUtils.mainBlack(context),
               ),
             ),
             // Full Screen button.
@@ -259,7 +259,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
               },
               icon: Icon(
                 FluentIcons.full_screen_maximize_24_regular,
-                color: AppUtils.$mainBlack,
+                color: AppUtils.mainBlack(context),
               ),
             ),
           ],
@@ -390,8 +390,8 @@ class _FullScreenVideoState extends State<FullScreenVideo> {
                                 videoPlayerController
                                     .seekTo(Duration(seconds: value.toInt()));
                               },
-                              activeColor: AppUtils.$mainBlue,
-                              inactiveColor: AppUtils.$mainGrey,
+                              activeColor: AppUtils.mainBlue(context),
+                              inactiveColor: AppUtils.mainGrey(context),
                             )
                           : const SizedBox(),
                       Row(

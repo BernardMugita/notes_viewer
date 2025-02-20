@@ -44,7 +44,7 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: AppUtils.$mainWhite, borderRadius: BorderRadius.circular(5)),
+          color: AppUtils.mainWhite(context), borderRadius: BorderRadius.circular(5)),
       height: MediaQuery.of(context).size.height / 1,
       child: Column(
         children: [
@@ -56,7 +56,7 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
                   widget.fileName,
                   style: TextStyle(
                     overflow: TextOverflow.ellipsis,
-                    color: AppUtils.$mainBlue,
+                    color: AppUtils.mainBlue(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -69,13 +69,13 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
                       onPressed: () {},
                       icon: Icon(
                         FluentIcons.thumb_like_24_regular,
-                        color: AppUtils.$mainBlack,
+                        color: AppUtils.mainBlack(context),
                       )),
                   IconButton(
                       onPressed: () {},
                       icon: Icon(
                         FluentIcons.thumb_dislike_24_regular,
-                        color: AppUtils.$mainBlack,
+                        color: AppUtils.mainBlack(context),
                       )),
                 ],
               )
@@ -83,14 +83,14 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
           ),
           Gap(5),
           Divider(
-            color: AppUtils.$mainGrey,
+            color: AppUtils.mainGrey(context),
           ),
           Gap(5),
           Expanded(
             child: isLoading
                 ? Center(
                     child: LoadingAnimationWidget.newtonCradle(
-                      color: AppUtils.$mainBlue,
+                      color: AppUtils.mainBlue(context),
                       size: 100,
                     ),
                   )
@@ -98,7 +98,7 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
                     width: double.infinity,
                     height: double.infinity,
                     padding: const EdgeInsets.all(20),
-                    color: AppUtils.$mainBlueAccent,
+                    color: AppUtils.mainBlueAccent(context),
                     child: SfPdfViewer.network(
                       _pdfFilePath!,
                       initialZoomLevel: -0.5,
@@ -124,7 +124,7 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
             child: Text(
               textAlign: TextAlign.center,
               "Page 1/1",
-              style: TextStyle(color: AppUtils.$mainBlue),
+              style: TextStyle(color: AppUtils.mainBlue(context)),
             ),
           )
         ],

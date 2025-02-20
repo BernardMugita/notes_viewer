@@ -13,7 +13,7 @@ class PlatformDetails extends StatelessWidget {
           "About Platform",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: AppUtils.$mainBlue,
+            color: AppUtils.mainBlue(context),
           ),
         ),
         Image(

@@ -66,7 +66,7 @@ class _DesktopSemesterHolderState extends State<DesktopSemesterHolder> {
               children: [
                 Text(
                   "Semester $semester",
-                  style: TextStyle(color: AppUtils.$mainGrey, fontSize: 18),
+                  style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
                 ),
                 Gap(20),
                 Column(

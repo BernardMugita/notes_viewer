@@ -24,14 +24,14 @@ class _DashboardBannerState extends State<DashboardBanner> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        color: AppUtils.$mainBlue,
+        color: AppUtils.mainBlue(context),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Welcome to Maktaba!",
-            style: TextStyle(color: AppUtils.$mainWhite),
+            style: TextStyle(color: AppUtils.mainWhite(context)),
           ),
           Spacer(),
           Row(
@@ -44,11 +44,11 @@ class _DashboardBannerState extends State<DashboardBanner> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: AppUtils.$mainWhite)),
+                          color: AppUtils.mainWhite(context))),
                   Text(
                       "Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
                       style:
-                          TextStyle(fontSize: 16, color: AppUtils.$mainWhite)),
+                          TextStyle(fontSize: 16, color: AppUtils.mainWhite(context))),
                 ],
               ),
               Spacer(),
@@ -60,7 +60,7 @@ class _DashboardBannerState extends State<DashboardBanner> {
                       Icon(
                         FluentIcons.alert_24_regular,
                         size: 35,
-                        color: AppUtils.$mainWhite,
+                        color: AppUtils.mainWhite(context),
                       ),
                       Positioned(
                           top: 0,
@@ -68,8 +68,8 @@ class _DashboardBannerState extends State<DashboardBanner> {
                           child: CircleAvatar(
                             radius: 5,
                             backgroundColor: isNewActivities
-                                ? AppUtils.$mainRed
-                                : AppUtils.$mainGrey,
+                                ? AppUtils.mainRed(context)
+                                : AppUtils.mainGrey(context),
                           ))
                     ],
                   ),
@@ -78,7 +78,7 @@ class _DashboardBannerState extends State<DashboardBanner> {
                       icon: Icon(
                         FluentIcons.settings_24_regular,
                         size: 30,
-                        color: AppUtils.$mainWhite,
+                        color: AppUtils.mainWhite(context),
                       ))
                 ],
               )

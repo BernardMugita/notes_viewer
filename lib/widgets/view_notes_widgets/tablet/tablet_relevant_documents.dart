@@ -21,14 +21,14 @@ class _TabletRelevantDocumentsState extends State<TabletRelevantDocuments> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppUtils.$mainGrey)),
+          border: Border.all(color: AppUtils.mainGrey(context))),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: AppUtils.$mainRed.withOpacity(0.3),
+            backgroundColor: AppUtils.mainRed(context).withOpacity(0.3),
             child: Icon(
               FluentIcons.document_pdf_24_regular,
-              color: AppUtils.$mainRed,
+              color: AppUtils.mainRed(context),
             ),
           ),
           Gap(10),
@@ -38,7 +38,7 @@ class _TabletRelevantDocumentsState extends State<TabletRelevantDocuments> {
               style: TextStyle(
                   fontSize: 14,
                   overflow: TextOverflow.ellipsis,
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   fontWeight: FontWeight.bold),
             ),
           ),

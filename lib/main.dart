@@ -4,12 +4,14 @@ import 'package:note_viewer/providers/activity_provider.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/router/router.dart'; // Make sure to import this
+import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/views/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -39,6 +41,7 @@ void main() async {
   final uploadsProvider = UploadsProvider();
   final dashboardProvider = DashboardProvider();
   final activityProvider = ActivityProvider();
+  final themeProvider = ThemeProvider();
 
   // Request permissions (only on mobile platforms)
   await _requestPermissions();
@@ -59,6 +62,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => uploadsProvider),
         ChangeNotifierProvider(create: (_) => dashboardProvider),
         ChangeNotifierProvider(create: (_) => activityProvider),
+        ChangeNotifierProvider(create: (_) => themeProvider),
       ],
       child: MyApp(
         authProvider: authProvider,
@@ -70,6 +74,7 @@ void main() async {
         uploadsProvider: uploadsProvider,
         dashboardProvider: dashboardProvider,
         activityProvider: activityProvider,
+        themeProvider: themeProvider,
       ),
     ),
   );
@@ -85,6 +90,7 @@ class MyApp extends StatelessWidget {
   final UploadsProvider uploadsProvider;
   final DashboardProvider dashboardProvider;
   final ActivityProvider activityProvider;
+  final ThemeProvider themeProvider;
 
   const MyApp({
     super.key,
@@ -97,6 +103,7 @@ class MyApp extends StatelessWidget {
     required this.uploadsProvider,
     required this.dashboardProvider,
     required this.activityProvider,
+    required this.themeProvider,
   });
 
   @override
@@ -115,7 +122,9 @@ class MyApp extends StatelessWidget {
       title: 'Note Viewer',
       routerConfig: router,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2A68AF)),
+        colorScheme: Provider.of<ThemeProvider>(context).isDarkMode
+            ? ColorScheme.dark(primary: AppUtils.mainBlack(context))
+            : ColorScheme.light(primary: AppUtils.mainWhite(context)),
         useMaterial3: true,
         fontFamily: 'Jost',
       ),

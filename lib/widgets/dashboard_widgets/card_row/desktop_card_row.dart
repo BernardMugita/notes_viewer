@@ -26,7 +26,7 @@ class _DesktopCardRowState extends State<DesktopCardRow> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Summary",
-              style: TextStyle(fontSize: 16, color: AppUtils.$mainGrey)),
+              style: TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
           Gap(10),
           Row(
             children: [

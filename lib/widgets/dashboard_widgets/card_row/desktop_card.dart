@@ -36,11 +36,11 @@ class _DesktopCardState extends State<DesktopCard> {
                 padding: const EdgeInsets.all(20),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 224, 224, 224),
+                        color: AppUtils.mainShaddow(context),
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset: Offset(10, 5),
@@ -52,27 +52,24 @@ class _DesktopCardState extends State<DesktopCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 100,
-                          child: Text(
-                            widget.users > 0
-                                ? "REGISTERED STUDENTS"
-                                : widget.material
-                                    .toString()
-                                    .toUpperCase()
-                                    .replaceAll('_', " "),
-                            style: TextStyle(
-                                overflow: TextOverflow.ellipsis,
-                                fontSize: 12,
-                                color: AppUtils.$mainBlack,
-                                fontWeight: FontWeight.bold),
-                          ),
+                        Text(
+                          widget.users > 0
+                              ? "REGISTERED STUDENTS"
+                              : widget.material
+                                  .toString()
+                                  .toUpperCase()
+                                  .replaceAll('_', " "),
+                          style: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 12,
+                              color: AppUtils.mainBlack(context),
+                              fontWeight: FontWeight.bold),
                         ),
                         Text(
                           "Total: ${widget.users > 0 ? widget.users : widget.count}",
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppUtils.$mainBlack,
+                            color: AppUtils.mainBlack(context),
                           ),
                         ),
                       ],
@@ -84,10 +81,11 @@ class _DesktopCardState extends State<DesktopCard> {
                           : widget.material == 'slides'
                               ? Colors.amber.withOpacity(0.2)
                               : widget.material == 'recordings'
-                                  ? AppUtils.$mainBlue.withOpacity(0.2)
+                                  ? AppUtils.mainBlue(context).withOpacity(0.2)
                                   : widget.material == "student_contributions"
                                       ? Colors.deepOrange.withOpacity(0.2)
-                                      : AppUtils.$mainGreen.withOpacity(0.2),
+                                      : AppUtils.mainGreen(context)
+                                          .withOpacity(0.2),
                       radius: 30,
                       child: Icon(
                         widget.material == 'notes'
@@ -104,7 +102,7 @@ class _DesktopCardState extends State<DesktopCard> {
                             : widget.material == 'slides'
                                 ? Colors.amber
                                 : widget.material == 'recordings'
-                                    ? AppUtils.$mainBlue
+                                    ? AppUtils.mainBlue(context)
                                     : widget.material == "student_contributions"
                                         ? Colors.deepOrange
                                         : const Color(0xFF008800),
@@ -125,10 +123,10 @@ class _DesktopCardState extends State<DesktopCard> {
                             : widget.material == 'slides'
                                 ? Colors.amber
                                 : widget.material == 'recordings'
-                                    ? AppUtils.$mainBlue
+                                    ? AppUtils.mainBlue(context)
                                     : widget.material == "student_contributions"
                                         ? Colors.deepOrange
-                                        : AppUtils.$mainGreen,
+                                        : AppUtils.mainGreen(context),
                         borderRadius: BorderRadius.circular(10)),
                   ))
             ],

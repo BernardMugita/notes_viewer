@@ -35,7 +35,7 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveLayout(
+    return  ResponsiveLayout(
         mobileLayout: MobileDashboard(),
         tabletLayout: TabletDashboard(),
         desktopLayout: DesktopDashboard());

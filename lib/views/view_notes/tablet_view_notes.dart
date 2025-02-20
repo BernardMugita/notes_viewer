@@ -65,47 +65,47 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                   },
                 ),
                 Gap(10),
-                Divider(color: AppUtils.$mainGrey),
+                Divider(color: AppUtils.mainGrey(context)),
                 Gap(10),
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: AppUtils.$mainGrey),
+                    border: Border.all(color: AppUtils.mainGrey(context)),
                   ),
                   width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(material['name'] ?? 'Material Name',
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: AppUtils.$mainBlue)),
+                              color: AppUtils.mainBlue(context))),
                       Gap(5),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 5),
                         decoration: BoxDecoration(
-                          color: AppUtils.$mainBlue.withOpacity(0.3),
+                          color: AppUtils.mainBlue(context).withOpacity(0.3),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(lessonName,
-                            style: const TextStyle(
+                            style:  TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppUtils.$mainBlack)),
+                                color: AppUtils.mainBlack(context))),
                       ),
                       Gap(10),
-                      Divider(color: AppUtils.$mainGrey),
+                      Divider(color: AppUtils.mainGrey(context)),
                       Gap(10),
                       Text(
                           "${fileName.split('.')[1] == 'mp4' ? 'Video' : 'Document'} Description",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
-                              color: AppUtils.$mainBlack)),
+                              color: AppUtils.mainBlack(context))),
                       Gap(5),
                       Text(
                           material['description'] ?? 'No description available',
@@ -117,7 +117,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: AppUtils.$mainBlack)),
+                                  color: AppUtils.mainBlack(context))),
                           Gap(5),
                           Text("John Doe", style: TextStyle(fontSize: 16))
                         ],
@@ -129,7 +129,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: AppUtils.$mainBlack)),
+                                  color: AppUtils.mainBlack(context))),
                           Gap(5),
                           Text(
                             material.isEmpty
@@ -140,12 +140,12 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                         ],
                       ),
                       Gap(20),
-                      Divider(color: AppUtils.$mainGrey),
+                      Divider(color: AppUtils.mainGrey(context)),
                       Gap(20),
                       Text(
                           "Other $lessonName ${fileName.split('.')[1] == 'mp4' ? 'Videos' : 'Documents'}",
                           style: TextStyle(
-                              fontSize: 18, color: AppUtils.$mainBlue)),
+                              fontSize: 18, color: AppUtils.mainBlue(context))),
                       Gap(20),
                       if (fileName.split('.')[1] == 'mp4')
                         featuredMaterial.isEmpty

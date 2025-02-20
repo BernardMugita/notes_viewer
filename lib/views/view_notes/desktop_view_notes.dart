@@ -3,10 +3,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 // import 'package:go_router/go_router.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_file_viewer.dart';
 import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_documents.dart';
 import 'package:note_viewer/widgets/view_notes_widgets/desktop/desktop_relevant_videos.dart';
@@ -63,9 +65,11 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                   Text("Units/Notes/$lessonName/$fileName",
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppUtils.$mainGrey,
+                        color: AppUtils.mainGrey(context),
                         fontWeight: FontWeight.bold,
                       )),
+                  Spacer(),
+                  TopNavigation(isRecentActivities: context.watch<DashboardProvider>().isNewActivities)
                 ],
               ),
               Gap(20),
@@ -89,9 +93,9 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                       child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                              color: AppUtils.$mainWhite,
+                              color: AppUtils.mainWhite(context),
                               borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: AppUtils.$mainGrey)),
+                              border: Border.all(color: AppUtils.mainGrey(context))),
                           width: MediaQuery.of(context).size.width * 0.25,
                           height: MediaQuery.of(context).size.height * 0.85,
                           child: SingleChildScrollView(
@@ -103,10 +107,10 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(material['name'] ?? 'Material Name',
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: AppUtils.$mainBlue)),
+                                            color: AppUtils.mainBlue(context))),
                                     Gap(5),
                                     Container(
                                       padding: const EdgeInsets.only(
@@ -116,14 +120,14 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           bottom: 5),
                                       decoration: BoxDecoration(
                                         color:
-                                            AppUtils.$mainBlue.withOpacity(0.3),
+                                            AppUtils.mainBlue(context).withOpacity(0.3),
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Text(lessonName,
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: AppUtils.$mainBlack)),
+                                              color: AppUtils.mainBlack(context))),
                                     ),
                                     Gap(10),
                                     Container(
@@ -131,7 +135,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                             MediaQuery.of(context).size.height /
                                                 3,
                                         height: 1,
-                                        color: AppUtils.$mainGrey),
+                                        color: AppUtils.mainGrey(context)),
                                     Gap(10),
                                     Column(
                                       crossAxisAlignment:
@@ -142,7 +146,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
-                                                color: AppUtils.$mainBlack)),
+                                                color: AppUtils.mainBlack(context))),
                                         Gap(5),
                                         Text(
                                             material['description'] ??
@@ -158,7 +162,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
-                                              color: AppUtils.$mainBlack),
+                                              color: AppUtils.mainBlack(context)),
                                         ),
                                         Gap(5),
                                         Text(
@@ -175,7 +179,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
-                                              color: AppUtils.$mainBlack),
+                                              color: AppUtils.mainBlack(context)),
                                         ),
                                         Gap(5),
                                         Text(
@@ -194,7 +198,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                     width:
                                         MediaQuery.of(context).size.height / 3,
                                     height: 1,
-                                    color: AppUtils.$mainGrey),
+                                    color: AppUtils.mainGrey(context)),
                                 Gap(20),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +207,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                         "Other $lessonName ${fileName.split('.')[1] == 'mp4' ? 'Videos' : 'Documents'}",
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: AppUtils.$mainBlue)),
+                                            color: AppUtils.mainBlue(context))),
                                     Gap(20),
                                     if (fileName.split('.')[1] == 'mp4')
                                       featuredMaterial

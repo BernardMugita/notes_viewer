@@ -1,10 +1,11 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
 
 class MobileSettings extends StatefulWidget {
@@ -19,6 +20,8 @@ class _MobileSettingsState extends State<MobileSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.read<ThemeProvider>();
+
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -40,7 +43,7 @@ class _MobileSettingsState extends State<MobileSettings> {
                       "Settings",
                       style: TextStyle(
                         fontSize: 24,
-                        color: AppUtils.$mainBlue,
+                        color: AppUtils.mainBlue(context),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -54,7 +57,7 @@ class _MobileSettingsState extends State<MobileSettings> {
                       padding: const EdgeInsets.all(20),
                       height: MediaQuery.of(context).size.height * 0.55,
                       decoration: BoxDecoration(
-                        color: AppUtils.$mainWhite,
+                        color: AppUtils.mainWhite(context),
                       ),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,23 +65,26 @@ class _MobileSettingsState extends State<MobileSettings> {
                             Text("Settings",
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: AppUtils.$mainBlue,
+                                    color: AppUtils.mainBlue(context),
                                     fontWeight: FontWeight.bold)),
                             Gap(30),
                             _buildAccountDetails(context,
                                 title: 'Appearance',
-                                value: 'Light Mode / Dark Mode'),
+                                value: 'Light Mode / Dark Mode',
+                                onpressed: themeProvider.toggleTheme),
                             Spacer(),
                             Divider(),
                             Gap(5),
                             Text(
                               "Acknowledgment",
-                              style: TextStyle(color: AppUtils.$mainBlue),
+                              style:
+                                  TextStyle(color: AppUtils.mainBlue(context)),
                             ),
                             Gap(5),
                             Text(
                               "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                              style: TextStyle(color: AppUtils.$mainGrey),
+                              style:
+                                  TextStyle(color: AppUtils.mainGrey(context)),
                             ),
                             Text("Powered by Labs")
                           ]),
@@ -92,7 +98,9 @@ class _MobileSettingsState extends State<MobileSettings> {
   }
 
   Widget _buildAccountDetails(BuildContext context,
-      {required String title, required String value}) {
+      {required String title,
+      required String value,
+      required VoidCallback onpressed}) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -101,17 +109,20 @@ class _MobileSettingsState extends State<MobileSettings> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppUtils.$mainGrey)),
+                border: Border(
+                    bottom: BorderSide(color: AppUtils.mainGrey(context))),
                 borderRadius: BorderRadius.circular(5)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(value),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      onpressed();
+                    },
                     icon: Icon(
                       FluentIcons.dark_theme_24_regular,
-                      color: AppUtils.$mainBlue,
+                      color: AppUtils.mainBlue(context),
                     ))
               ],
             )),
@@ -120,7 +131,7 @@ class _MobileSettingsState extends State<MobileSettings> {
             left: 5,
             child: Container(
               padding: const EdgeInsets.only(left: 5, right: 5),
-              color: AppUtils.$mainWhite,
+              color: AppUtils.mainWhite(context),
               child: context.watch<UserProvider>().isLoading
                   ? SizedBox(
                       width: double.infinity,
@@ -128,7 +139,8 @@ class _MobileSettingsState extends State<MobileSettings> {
                     )
                   : Text(
                       title,
-                      style: TextStyle(color: AppUtils.$mainGrey, fontSize: 12),
+                      style: TextStyle(
+                          color: AppUtils.mainGrey(context), fontSize: 12),
                     ),
             ))
       ],

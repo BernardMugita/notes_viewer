@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
@@ -19,10 +20,12 @@ class DesktopLogin extends StatelessWidget {
           Container(
             padding:
                 const EdgeInsets.only(top: 40, bottom: 40, left: 80, right: 80),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/images/banner.png'),
+                image: AssetImage(context.read<ThemeProvider>().isDarkMode
+                    ? 'assets/images/banner-dark.png'
+                    : 'assets/images/banner.png'),
               ),
             ),
             child: Row(
@@ -37,8 +40,8 @@ class DesktopLogin extends StatelessWidget {
                       children: [
                         Gap(MediaQuery.of(context).size.height / 4),
                         TabBar(
-                          labelColor: AppUtils.$mainBlue,
-                          unselectedLabelColor: AppUtils.$mainBlack,
+                          labelColor: AppUtils.mainBlue(context),
+                          unselectedLabelColor: AppUtils.mainBlack(context),
                           indicatorColor: Colors.blue,
                           labelStyle: const TextStyle(fontSize: 18),
                           tabs: const [
@@ -176,6 +179,7 @@ class _SignInTabState extends State<SignInTab> {
         TextField(
           controller: emailController,
           decoration: InputDecoration(
+            floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
             prefixIcon: const Icon(FluentIcons.mail_24_regular),
             labelText: 'Email',
             errorText: emailError,
@@ -226,13 +230,13 @@ class _SignInTabState extends State<SignInTab> {
 
   OutlineInputBorder _focusedBorder(String? error) => OutlineInputBorder(
         borderSide: BorderSide(
-          color: error != null ? Colors.red : AppUtils.$mainBlue,
+          color: error != null ? Colors.red : AppUtils.mainBlue(context),
         ),
       );
 
   ButtonStyle _buttonStyle(bool isLoading) => ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
-            isLoading ? Colors.grey : AppUtils.$mainBlue),
+            isLoading ? Colors.grey : AppUtils.mainBlue(context)),
         padding:
             const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 20)),
       );
@@ -448,6 +452,7 @@ class _SignUpTabState extends State<SignUpTab> {
           obscureText: !context.watch<TogglesProvider>().showPassword,
           decoration: InputDecoration(
             prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
+            floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
             suffixIcon: GestureDetector(
               onTap: () => context.read<TogglesProvider>().togglePassword(),
               child: Icon(context.watch<TogglesProvider>().showPassword
@@ -549,6 +554,7 @@ class _SignUpTabState extends State<SignUpTab> {
       labelText: label,
       errorText: error,
       border: _errorBorder(error),
+      floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
       focusedBorder: _focusedBorder(error),
     );
   }
@@ -561,13 +567,13 @@ class _SignUpTabState extends State<SignUpTab> {
 
   OutlineInputBorder _focusedBorder(String? error) => OutlineInputBorder(
         borderSide: BorderSide(
-          color: error != null ? Colors.red : AppUtils.$mainBlue,
+          color: error != null ? Colors.red : AppUtils.mainBlue(context),
         ),
       );
 
   ButtonStyle _buttonStyle(bool isLoading) => ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
-            isLoading ? Colors.grey : AppUtils.$mainBlue),
+            isLoading ? Colors.grey : AppUtils.mainBlue(context)),
         padding:
             const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 20)),
       );

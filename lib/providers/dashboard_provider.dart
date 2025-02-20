@@ -10,6 +10,8 @@ class DashboardProvider extends ChangeNotifier {
 
   DashApi dashApi = DashApi();
 
+  bool isNewActivities = false;
+
   Future<Map<String, dynamic>> fetchDashData(String token) async {
     isLoading = true;
     error = false;
@@ -24,6 +26,7 @@ class DashboardProvider extends ChangeNotifier {
         success = true;
         message = "Data fetched successfully";
         dashData = dashDataRequest['data'];
+        isNewActivities = dashData['notifications']['unread'].isNotEmpty;
         isLoading = false;
         notifyListeners();
         Future.delayed(const Duration(seconds: 3), () {

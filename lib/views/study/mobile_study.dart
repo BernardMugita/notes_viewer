@@ -14,7 +14,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/study_widgets/mobile_file.dart';
 import 'package:note_viewer/widgets/study_widgets/mobile_recording.dart';
 import 'package:provider/provider.dart';
@@ -149,7 +149,7 @@ class _MobileStudyState extends State<MobileStudy> {
                     lesson['name'] ?? "Lesson Name",
                     style: TextStyle(
                       fontSize: 24,
-                      color: AppUtils.$mainBlue,
+                      color: AppUtils.mainBlue(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -159,7 +159,7 @@ class _MobileStudyState extends State<MobileStudy> {
                         padding:
                             WidgetStatePropertyAll(const EdgeInsets.all(20)),
                         backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.$mainBlue),
+                            WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -172,118 +172,109 @@ class _MobileStudyState extends State<MobileStudy> {
                       child: Icon(
                         FluentIcons.book_add_24_regular,
                         size: 16,
-                        color: AppUtils.$mainWhite,
+                        color: AppUtils.mainWhite(context),
                       ),
                     ),
                 ],
               ),
               const Gap(20),
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(color: AppUtils.$mainWhite),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Study material",
-                            style: TextStyle(
-                                fontSize: 18, color: AppUtils.$mainGrey)),
-                        const Gap(20),
-                        if (lesson.isEmpty &&
-                            notes.isEmpty &&
-                            slides.isEmpty &&
-                            recordings.isEmpty &&
-                            contributions.isEmpty)
-                          Expanded(
-                              child: Center(
-                            child: Container(
-                              width: 400,
-                              height: 400,
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppUtils.$mainBlueAccent,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FluentIcons.prohibited_24_regular,
-                                    size: 100,
-                                    color: Colors.orange,
-                                  ),
-                                  Gap(20),
-                                  Text("How Empty!",
-                                      style: TextStyle(fontSize: 20)),
-                                  Gap(10),
-                                  Text(
-                                    "There's no study material for this lesson",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ))
-                        else
-                          Wrap(
-                            spacing: 20,
-                            runSpacing: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Study material",
+                        style:
+                            TextStyle(fontSize: 18, color: AppUtils.mainGrey(context))),
+                    const Gap(20),
+                    if (lesson.isEmpty &&
+                        notes.isEmpty &&
+                        slides.isEmpty &&
+                        recordings.isEmpty &&
+                        contributions.isEmpty)
+                      Expanded(
+                          child: Center(
+                        child: Container(
+                          width: 400,
+                          height: 400,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppUtils.mainBlueAccent(context),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ...notes.map((note) {
-                                return MobileFile(
-                                  notes: notes,
-                                  slides: [],
-                                  fileName:
-                                      (note['file'] as String).split('/').last,
-                                  lesson: lesson['name'],
-                                  material: note,
-                                  icon: FluentIcons.document_pdf_24_regular,
-                                );
-                              }),
-                              ...slides.map((slide) {
-                                return MobileFile(
-                                  slides: slides,
-                                  notes: [],
-                                  fileName:
-                                      (slide['file'] as String).split('/').last,
-                                  lesson: lesson['name'],
-                                  material: slide,
-                                  icon: FluentIcons.slide_layout_24_regular,
-                                );
-                              }),
-                              ...recordings.map((recording) {
-                                return MobileRecording(
-                                  recordings: recordings,
-                                  contributions: [],
-                                  fileName: (recording['file'] as String)
-                                      .split('/')
-                                      .last,
-                                  lesson: lesson['name'],
-                                  material: recording,
-                                  icon: FluentIcons.play_24_filled,
-                                );
-                              }),
-                              ...contributions.map((contribution) {
-                                return MobileRecording(
-                                  recordings: [],
-                                  contributions: contributions,
-                                  fileName: (contribution['file'] as String)
-                                      .split('/')
-                                      .last,
-                                  lesson: lesson['name'],
-                                  material: contribution,
-                                  icon: FluentIcons.play_24_filled,
-                                );
-                              }),
+                              Icon(
+                                FluentIcons.prohibited_24_regular,
+                                size: 100,
+                                color: Colors.orange,
+                              ),
+                              Gap(20),
+                              Text("How Empty!",
+                                  style: TextStyle(fontSize: 20)),
+                              Gap(10),
+                              Text(
+                                "There's no study material for this lesson",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              )
                             ],
                           ),
-                      ],
-                    ),
-                  ),
+                        ),
+                      ))
+                    else
+                      Column(
+                        spacing: 5,
+                        children: [
+                          ...notes.map((note) {
+                            return MobileFile(
+                              notes: notes,
+                              slides: [],
+                              fileName:
+                                  (note['file'] as String).split('/').last,
+                              lesson: lesson['name'],
+                              material: note,
+                              icon: FluentIcons.document_pdf_24_regular,
+                            );
+                          }),
+                          ...slides.map((slide) {
+                            return MobileFile(
+                              slides: slides,
+                              notes: [],
+                              fileName:
+                                  (slide['file'] as String).split('/').last,
+                              lesson: lesson['name'],
+                              material: slide,
+                              icon: FluentIcons.slide_layout_24_regular,
+                            );
+                          }),
+                          ...recordings.map((recording) {
+                            return MobileRecording(
+                              recordings: recordings,
+                              contributions: [],
+                              fileName:
+                                  (recording['file'] as String).split('/').last,
+                              lesson: lesson['name'],
+                              material: recording,
+                              icon: FluentIcons.play_24_filled,
+                            );
+                          }),
+                          ...contributions.map((contribution) {
+                            return MobileRecording(
+                              recordings: [],
+                              contributions: contributions,
+                              fileName: (contribution['file'] as String)
+                                  .split('/')
+                                  .last,
+                              lesson: lesson['name'],
+                              material: contribution,
+                              icon: FluentIcons.play_24_filled,
+                            );
+                          }),
+                        ],
+                      ),
+                  ],
                 ),
               ),
             ])));
@@ -309,7 +300,7 @@ class _MobileStudyState extends State<MobileStudy> {
                           ? MediaQuery.of(context).size.height * 0.75
                           : MediaQuery.of(context).size.height * 0.6,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -322,7 +313,7 @@ class _MobileStudyState extends State<MobileStudy> {
                               "Upload file",
                               style: TextStyle(
                                 fontSize: 18,
-                                color: AppUtils.$mainBlue,
+                                color: AppUtils.mainBlue(context),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -341,14 +332,14 @@ class _MobileStudyState extends State<MobileStudy> {
                                   left: 5, right: 5, top: 10, bottom: 10),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppUtils.$mainBlack,
+                                  color: AppUtils.mainBlack(context),
                                 ),
                                 borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.$mainWhite,
+                                color: AppUtils.mainWhite(context),
                               ),
                               child: isUploading
                                   ? LoadingAnimationWidget.staggeredDotsWave(
-                                      color: AppUtils.$mainBlue,
+                                      color: AppUtils.mainBlue(context),
                                       size: 40,
                                     )
                                   : Row(
@@ -374,7 +365,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.$mainBlue,
+                              focusColor: AppUtils.mainBlue(context),
                             ),
                           ),
                         ),
@@ -391,7 +382,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.$mainBlue,
+                              focusColor: AppUtils.mainBlue(context),
                             ),
                           ),
                         ),
@@ -425,7 +416,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                               ),
@@ -436,7 +427,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: AppUtils.$mainWhite,
+                                    color: AppUtils.mainWhite(context),
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color.fromARGB(
@@ -524,7 +515,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                 backgroundColor: WidgetStatePropertyAll(
                                   uploadsProvider.isLoading
                                       ? Colors.grey
-                                      : AppUtils.$mainBlue,
+                                      : AppUtils.mainBlue(context),
                                 ),
                                 padding: WidgetStatePropertyAll(EdgeInsets.only(
                                     top: 10, bottom: 10, left: 10, right: 10)),
@@ -538,10 +529,10 @@ class _MobileStudyState extends State<MobileStudy> {
                                         strokeWidth: 2.5,
                                       ),
                                     )
-                                  : const Text('Upload',
+                                  :  Text('Upload',
                                       style: TextStyle(
                                           fontSize: 16,
-                                          color: AppUtils.$mainWhite)),
+                                          color: AppUtils.mainWhite(context))),
                             ),
                           );
                         })

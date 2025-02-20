@@ -9,7 +9,7 @@ import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/side_navigation/responsive_nav.dart';
+import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/units_widgets/tablet_semester_holder.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +29,7 @@ class _TabletUnitsState extends State<TabletUnits> {
   TextEditingController codeController = TextEditingController();
   TextEditingController courseIdController = TextEditingController();
   TextEditingController semesterController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String selectedCourseId = '';
   String selectedSemester = '';
@@ -51,6 +52,7 @@ class _TabletUnitsState extends State<TabletUnits> {
     final courses = context.watch<CoursesProvider>().courses;
     final unitsProvider = context.watch<UnitsProvider>();
     final units = unitsProvider.units;
+    final toggleProvider = context.watch<TogglesProvider>();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -70,7 +72,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                 width: double.infinity,
                 height: double.infinity,
                 child: LoadingAnimationWidget.newtonCradle(
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   size: 100,
                 ),
               )
@@ -82,7 +84,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                     "Units",
                     style: TextStyle(
                       fontSize: 24,
-                      color: AppUtils.$mainBlue,
+                      color: AppUtils.mainBlue(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -92,7 +94,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                         style: ButtonStyle(
                             padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
                             backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.$mainBlue),
+                                WidgetStatePropertyAll(AppUtils.mainBlue(context)),
                             shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)))),
@@ -107,17 +109,22 @@ class _TabletUnitsState extends State<TabletUnits> {
                               Text("Add units",
                                   style: TextStyle(
                                       fontSize: 16,
-                                      color: AppUtils.$mainWhite)),
+                                      color: AppUtils.mainWhite(context))),
                               Icon(FluentIcons.class_24_regular,
-                                  size: 16, color: AppUtils.$mainWhite),
+                                  size: 16, color: AppUtils.mainWhite(context)),
                             ])),
                   ),
                   SizedBox(
                     width: double.infinity,
                     child: TextField(
-                      decoration: const InputDecoration(
+                      controller: searchController,
+                      onChanged: (value) {
+                        toggleProvider.searchAction(
+                            searchController.text, units, 'name');
+                      },
+                      decoration:  InputDecoration(
                         filled: true,
-                        fillColor: AppUtils.$mainWhite,
+                        fillColor: AppUtils.mainWhite(context),
                         contentPadding: EdgeInsets.all(5),
                         prefixIcon: Icon(FluentIcons.search_24_filled),
                         border: OutlineInputBorder(),
@@ -126,13 +133,23 @@ class _TabletUnitsState extends State<TabletUnits> {
                       ),
                     ),
                   ),
+                  if (toggleProvider.searchMode)
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(toggleProvider.searchResults.isEmpty
+                          ? "No results found for '${searchController.text}'"
+                          : "Search results for '${searchController.text}'"),
+                    ),
                   Expanded(
                     child: SingleChildScrollView(
                       // clipBehavior: Clip.none,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TabletSemesterHolder(units: units),
+                          TabletSemesterHolder(
+                              units: toggleProvider.searchResults.isNotEmpty
+                                  ? toggleProvider.searchResults
+                                  : units),
                         ],
                       ),
                     ),
@@ -165,7 +182,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                           ? MediaQuery.of(context).size.height + 40
                           : MediaQuery.of(context).size.height * 0.65,
                   decoration: BoxDecoration(
-                    color: AppUtils.$mainWhite,
+                    color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Column(
@@ -178,7 +195,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                             "Add Unit",
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppUtils.$mainBlue,
+                              color: AppUtils.mainBlue(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -207,7 +224,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -224,7 +241,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.$mainBlue,
+                                focusColor: AppUtils.mainBlue(context),
                               ),
                             ),
                           ),
@@ -256,7 +273,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -266,7 +283,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -341,7 +358,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                             Color.fromARGB(255, 212, 212, 212),
                                       ),
                                     ),
-                                    focusColor: AppUtils.$mainBlue,
+                                    focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
                                 Gap(10),
@@ -351,7 +368,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
-                                      color: AppUtils.$mainWhite,
+                                      color: AppUtils.mainWhite(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: const Color.fromARGB(
@@ -386,8 +403,8 @@ class _TabletUnitsState extends State<TabletUnits> {
                                               border: Border.all(
                                                 color:
                                                     selectedSemester == semester
-                                                        ? AppUtils.$mainBlue
-                                                        : AppUtils.$mainGrey,
+                                                        ? AppUtils.mainBlue(context)
+                                                        : AppUtils.mainGrey(context),
                                               ),
                                             ),
                                             child: Row(
@@ -452,7 +469,7 @@ class _TabletUnitsState extends State<TabletUnits> {
                               backgroundColor: WidgetStatePropertyAll(
                                 unitProvider.isLoading
                                     ? Colors.grey
-                                    : AppUtils.$mainBlue,
+                                    : AppUtils.mainBlue(context),
                               ),
                               padding: WidgetStatePropertyAll(EdgeInsets.only(
                                   top: 20, bottom: 20, left: 10, right: 10)),
@@ -466,10 +483,10 @@ class _TabletUnitsState extends State<TabletUnits> {
                                       strokeWidth: 2.5,
                                     ),
                                   )
-                                : const Text('Add Unit',
+                                :  Text('Add Unit',
                                     style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.$mainWhite)),
+                                        color: AppUtils.mainWhite(context))),
                           ),
                         );
                       })

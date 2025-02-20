@@ -85,7 +85,7 @@ class _TabletCourseState extends State<TabletCourse> {
                     controller: courseController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: AppUtils.$mainWhite,
+                      fillColor: AppUtils.mainWhite(context),
                       prefixIcon: const Icon(FluentIcons.book_24_regular),
                       suffixIcon: GestureDetector(
                         onTap: () {
@@ -99,7 +99,7 @@ class _TabletCourseState extends State<TabletCourse> {
                       border: const OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Color.fromARGB(255, 212, 212, 212))),
-                      focusColor: AppUtils.$mainBlue,
+                      focusColor: AppUtils.mainBlue(context),
                     ),
                   ),
                 ),
@@ -112,7 +112,7 @@ class _TabletCourseState extends State<TabletCourse> {
                       height: 150,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: AppUtils.$mainWhite,
+                          color: AppUtils.mainWhite(context),
                           boxShadow: [
                             BoxShadow(
                               color: const Color.fromARGB(255, 229, 229, 229),
@@ -175,8 +175,8 @@ class _TabletCourseState extends State<TabletCourse> {
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll(
                         authProvider.isLoading
-                            ? AppUtils.$mainGrey
-                            : AppUtils.$mainBlue,
+                            ? AppUtils.mainGrey(context)
+                            : AppUtils.mainBlue(context),
                       ),
                       padding: WidgetStatePropertyAll(
                           const EdgeInsets.symmetric(
@@ -191,10 +191,11 @@ class _TabletCourseState extends State<TabletCourse> {
                               strokeWidth: 2.5,
                             ),
                           )
-                        : const Text(
+                        : Text(
                             'Continue',
                             style: TextStyle(
-                                fontSize: 16, color: AppUtils.$mainWhite),
+                                fontSize: 16,
+                                color: AppUtils.mainWhite(context)),
                           ),
                   ),
                 ),

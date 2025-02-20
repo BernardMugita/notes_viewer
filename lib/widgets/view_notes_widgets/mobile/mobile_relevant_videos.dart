@@ -20,7 +20,7 @@ class _MobileRelevantVideosState extends State<MobileRelevantVideos> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppUtils.$mainGrey)),
+          border: Border.all(color: AppUtils.mainGrey(context))),
       child: Row(
         children: [
           CircleAvatar(
@@ -34,7 +34,7 @@ class _MobileRelevantVideosState extends State<MobileRelevantVideos> {
               style: TextStyle(
                   overflow: TextOverflow.ellipsis,
                   fontSize: 14,
-                  color: AppUtils.$mainBlue,
+                  color: AppUtils.mainBlue(context),
                   fontWeight: FontWeight.bold),
             ),
           ),

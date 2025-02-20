@@ -19,29 +19,28 @@ class ActivityHistory extends StatelessWidget {
           return b['created_at'].compareTo(a['created_at']);
         });
 
-        return SizedBox(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (readActivities.isNotEmpty)
-                  Column(
-                    children: readActivities.map((activity) {
-                      return Activity(activity: activity);
-                    }).toList(),
-                  )
-                else
-                  EmptyWidget(
-                    errorHeading: "No Activities Loaded",
-                    errorDescription: "Activity history may be empty",
-                    image: 'assets/images/404.png',
-                  )
-              ],
-            ),
-          ),
-        );
+        return readActivities.isEmpty
+            ? EmptyWidget(
+                errorHeading: "No Activities Loaded",
+                errorDescription: "Activity history may be empty",
+                image: 'assets/images/empty_act.png',
+              )
+            : SizedBox(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: readActivities.map((activity) {
+                          return Activity(activity: activity);
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                ),
+              );
       },
     );
   }
