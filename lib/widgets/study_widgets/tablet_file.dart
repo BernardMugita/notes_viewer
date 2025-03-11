@@ -33,7 +33,7 @@ class _TabletFileState extends State<TabletFile> {
 
     String uploadType = fileExtension == 'pdf' ? 'notes' : 'slides';
 
-    final String url = AppUtils.$baseUrl;
+    final String url = AppUtils.$serverDir;
     final Map lesson = context.read<LessonsProvider>().lesson;
 
     return GestureDetector(
@@ -77,7 +77,7 @@ class _TabletFileState extends State<TabletFile> {
                 )),
             Gap(10),
             SizedBox(
-              child: Text(widget.fileName,
+              child: Text(widget.material['name'],
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16)),
             ),

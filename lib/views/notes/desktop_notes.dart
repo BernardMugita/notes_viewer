@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
@@ -159,8 +160,8 @@ class _DesktopNotesState extends State<DesktopNotes> {
                             style: ButtonStyle(
                               padding: WidgetStatePropertyAll(
                                   const EdgeInsets.all(20)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  AppUtils.mainBlue(context)),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
@@ -207,14 +208,19 @@ class _DesktopNotesState extends State<DesktopNotes> {
                               height: MediaQuery.of(context).size.height,
                               child: context.watch<LessonsProvider>().isLoading
                                   ? LoadingAnimationWidget.newtonCradle(
-                                      color: AppUtils.mainBlue(context), size: 100)
+                                      color: AppUtils.mainBlue(context),
+                                      size: 100)
                                   : lessons.isEmpty
                                       ? EmptyWidget(
                                           errorHeading:
                                               "Empty List of Lessons!",
                                           errorDescription:
                                               "No lessons uploaded for this unit.",
-                                          image: 'assets/images/404.png')
+                                          image: context
+                                                  .watch<ThemeProvider>()
+                                                  .isDarkMode
+                                              ? 'assets/images/404-dark.png'
+                                              : 'assets/images/404.png')
                                       : ListView.builder(
                                           itemCount: toggleProvider
                                                   .searchResults.isNotEmpty
@@ -515,10 +521,11 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                             strokeWidth: 2.5,
                                           ),
                                         )
-                                      :  Text('Add Lesson',
+                                      : Text('Add Lesson',
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.mainWhite(context))),
+                                              color:
+                                                  AppUtils.mainWhite(context))),
                                 ),
                               );
                             })

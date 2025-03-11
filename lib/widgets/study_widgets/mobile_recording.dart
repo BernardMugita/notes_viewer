@@ -28,7 +28,7 @@ class MobileRecording extends StatefulWidget {
 class _MobileRecordingState extends State<MobileRecording> {
   String uploadType = 'recordings';
 
-  final String url = AppUtils.$baseUrl;
+  final String url = AppUtils.$serverDir;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class _MobileRecordingState extends State<MobileRecording> {
               Gap(10),
               SizedBox(
                   width: 250,
-                  child: Text(widget.fileName,
+                  child: Text(widget.material['name'],
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
                       style: const TextStyle(fontSize: 18))),

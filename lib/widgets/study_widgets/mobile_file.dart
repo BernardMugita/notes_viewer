@@ -30,7 +30,7 @@ class _MobileFileState extends State<MobileFile> {
   Widget build(BuildContext context) {
     final fileExtension = widget.fileName.split('.')[1];
 
-    final String url = AppUtils.$baseUrl;
+    final String url = AppUtils.$serverDir;
 
     return GestureDetector(
       onTap: () {
@@ -77,7 +77,7 @@ class _MobileFileState extends State<MobileFile> {
             Gap(10),
             SizedBox(
               width: 250,
-              child: Text(widget.fileName,
+              child: Text(widget.material['name'],
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
                   style: const TextStyle(fontSize: 16)),

@@ -2,11 +2,13 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +30,7 @@ class _MobileAccountState extends State<MobileAccount> {
   TextEditingController regNoController = TextEditingController();
 
   Map user = {};
+  Map course = {};
 
   String tokenRef = '';
 
@@ -39,6 +42,12 @@ class _MobileAccountState extends State<MobileAccount> {
       if (token != null) {
         tokenRef = token;
         context.read<UserProvider>().fetchUserDetails(token);
+
+        user = context.read<UserProvider>().user;
+
+        context
+            .read<CoursesProvider>()
+            .fetchCourse(token: token, id: user['course_id']);
       }
     });
   }
@@ -60,6 +69,8 @@ class _MobileAccountState extends State<MobileAccount> {
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
 
+    course = context.watch<CoursesProvider>().course;
+
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -74,7 +85,16 @@ class _MobileAccountState extends State<MobileAccount> {
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(children: [
+              child: Column(spacing: 10, children: [
+                if (!context
+                              .watch<TogglesProvider>()
+                              .isBannerDismissed)
+                            Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                 SizedBox(
                   width: double.infinity,
                   child: Column(
@@ -95,8 +115,8 @@ class _MobileAccountState extends State<MobileAccount> {
                           style: ButtonStyle(
                             padding: WidgetStatePropertyAll(
                                 const EdgeInsets.all(20)),
-                            backgroundColor:
-                                WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                            backgroundColor: WidgetStatePropertyAll(
+                                AppUtils.mainBlue(context)),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
@@ -234,8 +254,11 @@ class _MobileAccountState extends State<MobileAccount> {
                                             : user['reg_no']),
                                     _buildAccountDetails(context,
                                         title: 'Course',
-                                        value:
-                                            'Bachelors Degree in Computer Science'),
+                                        value: isLoading
+                                            ? 'course'
+                                            : course.isNotEmpty
+                                                ? course['name']
+                                                : 'Details not found'),
                                     _buildAccountDetails(context,
                                         title: 'Date Joined',
                                         value: isLoading
@@ -263,7 +286,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                           child: Text(
                                             "Not verified",
                                             style: TextStyle(
-                                                color: AppUtils.mainRed(context)),
+                                                color:
+                                                    AppUtils.mainRed(context)),
                                           ),
                                         ),
                                         ElevatedButton(
@@ -290,7 +314,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                               Text(
                                                 "Verify Account",
                                                 style: TextStyle(
-                                                  color: AppUtils.mainWhite(context),
+                                                  color: AppUtils.mainWhite(
+                                                      context),
                                                 ),
                                               ),
                                               const Gap(5),
@@ -298,7 +323,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                                 FluentIcons
                                                     .checkmark_circle_24_filled,
                                                 size: 16,
-                                                color: AppUtils.mainWhite(context),
+                                                color:
+                                                    AppUtils.mainWhite(context),
                                               ),
                                             ],
                                           ),
@@ -310,14 +336,14 @@ class _MobileAccountState extends State<MobileAccount> {
                                     Gap(5),
                                     Text(
                                       "Acknowledgment",
-                                      style:
-                                          TextStyle(color: AppUtils.mainBlue(context)),
+                                      style: TextStyle(
+                                          color: AppUtils.mainBlue(context)),
                                     ),
                                     Gap(5),
                                     Text(
                                       "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                      style:
-                                          TextStyle(color: AppUtils.mainGrey(context)),
+                                      style: TextStyle(
+                                          color: AppUtils.mainGrey(context)),
                                     ),
                                     Text("Powered by Labs")
                                   ]
@@ -326,7 +352,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                         Text("Account Membership",
                                             style: TextStyle(
                                                 fontSize: 18,
-                                                color: AppUtils.mainBlue(context),
+                                                color:
+                                                    AppUtils.mainBlue(context),
                                                 fontWeight: FontWeight.bold)),
                                         Gap(30),
                                         Spacer(),
@@ -336,13 +363,15 @@ class _MobileAccountState extends State<MobileAccount> {
                                         Text(
                                           "Acknowledgment",
                                           style: TextStyle(
-                                              color: AppUtils.mainBlue(context)),
+                                              color:
+                                                  AppUtils.mainBlue(context)),
                                         ),
                                         Gap(5),
                                         Text(
                                           "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                           style: TextStyle(
-                                              color: AppUtils.mainGrey(context)),
+                                              color:
+                                                  AppUtils.mainGrey(context)),
                                         ),
                                         Text("Powered by Labs")
                                       ]
@@ -372,7 +401,8 @@ class _MobileAccountState extends State<MobileAccount> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppUtils.mainGrey(context))),
+                border: Border(
+                    bottom: BorderSide(color: AppUtils.mainGrey(context))),
                 borderRadius: BorderRadius.circular(5)),
             child: context.watch<UserProvider>().isLoading
                 ? SizedBox(
@@ -393,7 +423,8 @@ class _MobileAccountState extends State<MobileAccount> {
                     )
                   : Text(
                       title,
-                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 12),
+                      style: TextStyle(
+                          color: AppUtils.mainGrey(context), fontSize: 12),
                     ),
             ))
       ],
@@ -477,7 +508,8 @@ class _MobileAccountState extends State<MobileAccount> {
                                       Text("Browse",
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.mainWhite(context))),
+                                              color:
+                                                  AppUtils.mainWhite(context))),
                                     ],
                                   )),
                             )
@@ -527,8 +559,8 @@ class _MobileAccountState extends State<MobileAccount> {
                             style: ButtonStyle(
                               padding: WidgetStatePropertyAll(
                                   const EdgeInsets.all(5)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  AppUtils.mainBlue(context)),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),

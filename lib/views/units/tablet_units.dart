@@ -9,6 +9,7 @@ import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:note_viewer/widgets/units_widgets/tablet_semester_holder.dart';
 import 'package:provider/provider.dart';
@@ -80,6 +81,15 @@ class _TabletUnitsState extends State<TabletUnits> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 10,
                 children: [
+                  if (!context
+                              .watch<TogglesProvider>()
+                              .isBannerDismissed)
+                            Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                   Text(
                     "Units",
                     style: TextStyle(

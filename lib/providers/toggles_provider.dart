@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:note_viewer/utils/app_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TogglesProvider extends ChangeNotifier {
-  List searchResults = [];
+  TogglesProvider() {
+    fetchDismissalStatus();
+  }
 
+  List searchResults = [];
   bool showPassword = false;
   bool showCoursesDropDown = false;
   bool rememberSelection = false;
@@ -26,6 +30,7 @@ class TogglesProvider extends ChangeNotifier {
   bool isUnitExpanded = false;
   bool searchMode = false;
   bool isSearchItemExpanded = false;
+  bool isBannerDismissed = false;
 
   void togglePassword() {
     showPassword = !showPassword;
@@ -99,6 +104,79 @@ class TogglesProvider extends ChangeNotifier {
     searchMode = false;
     searchResults = [];
     notifyListeners();
+  }
+
+  int getWeek(double percent) {
+    if (percent <= 25) {
+      return 1;
+    } else if (percent > 25 && percent <= 50) {
+      return 2;
+    } else if (percent > 50 && percent <= 75) {
+      return 3;
+    } else {
+      return 4;
+    }
+  }
+
+  Future<void> fetchDismissalStatus() async {
+    isLoading = true;
+    notifyListeners();
+
+    final now = DateTime.now();
+    final year = now.year;
+    final month = now.month;
+    final day = now.day;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final prevDismissedDate = prefs.getString('dismissed_date');
+
+      final daysInMonth =
+          AppUtils.getMonthsDays(year, month); // get days in month
+
+      final currentPercentage = day / daysInMonth * 100;
+      final currentWeek = getWeek(currentPercentage); // get week
+
+      int lastDayDismissed = int.parse(prevDismissedDate!.split('-')[0]);
+      final previousPercentage = lastDayDismissed / daysInMonth * 100;
+      final previousWeek = getWeek(previousPercentage); // get week
+
+      if (currentWeek > previousWeek) {
+        isBannerDismissed = false;
+        notifyListeners();
+
+        prefs.setBool('is_dismissed', isBannerDismissed);
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> dismissMembershipBanner() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final now = DateTime.now();
+      final year = now.year;
+      final month = now.month;
+      final day = now.day;
+
+      String dismissedDate = '$day-$month-$year';
+      isBannerDismissed = true;
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('dismissed_date', dismissedDate);
+      await prefs.setBool('is_dismissed', isBannerDismissed);
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> loadRememberSelection() async {

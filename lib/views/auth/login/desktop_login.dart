@@ -178,6 +178,7 @@ class _SignInTabState extends State<SignInTab> {
         const Gap(10),
         TextField(
           controller: emailController,
+          cursorColor: AppUtils.mainBlue(context),
           decoration: InputDecoration(
             floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
             prefixIcon: const Icon(FluentIcons.mail_24_regular),
@@ -192,6 +193,7 @@ class _SignInTabState extends State<SignInTab> {
           controller: passwordController,
           obscureText: !context.watch<TogglesProvider>().showPassword,
           decoration: InputDecoration(
+            floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
             prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
             suffixIcon: GestureDetector(
               onTap: () => context.read<TogglesProvider>().togglePassword(),
@@ -411,6 +413,7 @@ class _SignUpTabState extends State<SignUpTab> {
         const Text("Use your Registration Number to create an account"),
         const Gap(10),
         TextField(
+          cursorColor: AppUtils.mainBlue(context),
           controller: usernameController,
           decoration: _inputDecoration(
             label: 'Username',
@@ -420,6 +423,7 @@ class _SignUpTabState extends State<SignUpTab> {
         ),
         const Gap(10),
         TextField(
+          cursorColor: AppUtils.mainBlue(context),
           controller: emailController,
           decoration: _inputDecoration(
             label: 'Email',
@@ -429,6 +433,7 @@ class _SignUpTabState extends State<SignUpTab> {
         ),
         const Gap(10),
         TextField(
+          cursorColor: AppUtils.mainBlue(context),
           controller: phoneController,
           keyboardType: TextInputType.phone,
           decoration: _inputDecoration(
@@ -439,6 +444,7 @@ class _SignUpTabState extends State<SignUpTab> {
         ),
         const Gap(20),
         TextField(
+          cursorColor: AppUtils.mainBlue(context),
           controller: regNoController,
           decoration: _inputDecoration(
             label: 'Registration Number',
@@ -448,6 +454,7 @@ class _SignUpTabState extends State<SignUpTab> {
         ),
         const Gap(20),
         TextField(
+          cursorColor: AppUtils.mainBlue(context),
           controller: passwordController,
           obscureText: !context.watch<TogglesProvider>().showPassword,
           decoration: InputDecoration(

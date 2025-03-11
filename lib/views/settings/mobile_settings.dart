@@ -2,8 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/theme_provider.dart';
+import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +38,18 @@ class _MobileSettingsState extends State<MobileSettings> {
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(children: [
+              child: Column(
+                spacing: 10,
+                children: [
+                  if (!context
+                              .watch<TogglesProvider>()
+                              .isBannerDismissed)
+                            Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                 Row(
                   children: [
                     Text(

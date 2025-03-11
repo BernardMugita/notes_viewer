@@ -58,7 +58,9 @@ class AppUtils {
     return const Color(0xFFf9f9ff);
   }
 
-  static const String $baseUrl = 'http://127.0.0.1:8000';
+  static const String $baseUrl = 'https://r1-server.arifulib.co.ke/r1server';
+
+  static const String $serverDir = 'https://r1-server.arifulib.co.ke';
 
   static String formatDate(String dateTime) {
     DateTime parsedDate = DateTime.parse(dateTime);
@@ -72,5 +74,36 @@ class AppUtils {
     );
     await tempFile.writeAsBytes(fileBytes);
     return tempFile.path;
+  }
+
+  static bool isLeapYear(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+  }
+
+  static int getMonthsDays(int year, int monthValue) {
+    int currentMonthDays = 0;
+    List months = [
+      {'month': 1, 'days': 31},
+      {'month': 2, 'days': isLeapYear(year) ? 29 : 28},
+      {'month': 3, 'days': 31},
+      {'month': 4, 'days': 30},
+      {'month': 5, 'days': 31},
+      {'month': 6, 'days': 30},
+      {'month': 7, 'days': 31},
+      {'month': 8, 'days': 31},
+      {'month': 9, 'days': 30},
+      {'month': 10, 'days': 31},
+      {'month': 11, 'days': 30},
+      {'month': 12, 'days': 31},
+    ];
+
+    for (var month in months) {
+      if (month['month'] == monthValue) {
+        currentMonthDays = month['days'];
+        break;
+      }
+    }
+
+    return currentMonthDays;
   }
 }

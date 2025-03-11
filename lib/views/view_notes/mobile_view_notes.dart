@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:note_viewer/widgets/view_notes_widgets/mobile/mobile_file_viewer.dart';
@@ -152,7 +153,11 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Videos",
                                 errorDescription: "No relevant videos found",
-                                image: 'assets/images/404.png')
+                                image: context
+                                                  .watch<ThemeProvider>()
+                                                  .isDarkMode
+                                              ? 'assets/images/404-dark.png'
+                                              : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])
@@ -166,7 +171,11 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Documents",
                                 errorDescription: "No relevant documents found",
-                                image: 'assets/images/404.png')
+                                image: context
+                                                  .watch<ThemeProvider>()
+                                                  .isDarkMode
+                                              ? 'assets/images/404-dark.png'
+                                              : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])

@@ -30,7 +30,7 @@ class _TabletRecordingState extends State<TabletRecording> {
   Widget build(BuildContext context) {
     String uploadType = 'recordings';
 
-    final String url = AppUtils.$baseUrl;
+    final String url = AppUtils.$serverDir;
 
     return GestureDetector(
       onTap: () {
@@ -63,7 +63,7 @@ class _TabletRecordingState extends State<TabletRecording> {
               ),
               Gap(10),
               SizedBox(
-                  child: Text(widget.fileName,
+                  child: Text(widget.material['name'],
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 18))),
             ],

@@ -7,7 +7,7 @@ class CoursesApi {
   final url = AppUtils.$baseUrl;
 
   Future<Map<String, dynamic>> getCourse(
-      {required String token, required String id}) async {
+      {required String? token, required String id}) async {
     try {
       final getCourseRequest =
           await http.post(Uri.parse('$url/courses/get_course'),
@@ -15,9 +15,7 @@ class CoursesApi {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
               },
-              body: jsonEncode(<String, String>{'id': id}));
-
-      print(getCourseRequest.body);
+              body: jsonEncode(<String, String>{'course_id': id}));
 
       return jsonDecode(getCourseRequest.body) as Map<String, dynamic>;
     } catch (e) {

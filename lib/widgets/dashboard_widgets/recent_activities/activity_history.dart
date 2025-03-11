@@ -13,7 +13,10 @@ class ActivityHistory extends StatelessWidget {
       builder: (BuildContext context, dashboardProvider, _) {
         Map activities = dashboardProvider.dashData['notifications'] ?? {};
 
-        List readActivities = List.from(activities['read'] as List);
+        List readActivities =
+            activities.isNotEmpty && activities['read'].isNotEmpty
+                ? List.from(activities['read'] as List)
+                : [];
 
         readActivities.sort((a, b) {
           return b['created_at'].compareTo(a['created_at']);

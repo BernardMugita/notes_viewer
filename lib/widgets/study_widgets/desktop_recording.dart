@@ -32,7 +32,7 @@ class _DesktopRecordingState extends State<DesktopRecording> {
 
     String uploadType = 'recordings';
 
-    final String url = AppUtils.$baseUrl;
+    final String url = AppUtils.$serverDir;
 
     return GestureDetector(
       onTap: () {
@@ -65,7 +65,7 @@ class _DesktopRecordingState extends State<DesktopRecording> {
               ),
               Gap(10),
               SizedBox(
-                  child: Text(widget.fileName,
+                  child: Text(widget.material['name'],
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 18))),
             ],

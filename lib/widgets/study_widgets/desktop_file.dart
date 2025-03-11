@@ -29,7 +29,9 @@ class _DesktopFileState extends State<DesktopFile> {
   Widget build(BuildContext context) {
     final fileExtension = widget.material['file'].split('.')[1];
 
-    final String url = AppUtils.$baseUrl;
+    final String url = AppUtils.$serverDir;
+
+    print(widget.material);
 
     return GestureDetector(
       onTap: () {
@@ -75,7 +77,7 @@ class _DesktopFileState extends State<DesktopFile> {
                 )),
             Gap(10),
             SizedBox(
-              child: Text(widget.fileName,
+              child: Text(widget.material['name'] ?? 'material',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16)),
             ),

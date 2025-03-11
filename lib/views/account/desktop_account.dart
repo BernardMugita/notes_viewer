@@ -2,12 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
@@ -28,6 +30,7 @@ class _DesktopAccountState extends State<DesktopAccount> {
   TextEditingController regNoController = TextEditingController();
 
   Map user = {};
+  Map course = {};
 
   String tokenRef = '';
 
@@ -39,6 +42,12 @@ class _DesktopAccountState extends State<DesktopAccount> {
       if (token != null) {
         tokenRef = token;
         context.read<UserProvider>().fetchUserDetails(token);
+
+        user = context.read<UserProvider>().user;
+
+        context
+            .read<CoursesProvider>()
+            .fetchCourse(token: token, id: user['course_id']);
       }
     });
   }
@@ -60,6 +69,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
+
+    course = context.watch<CoursesProvider>().course;
 
     return Scaffold(
         body: Flex(
@@ -85,7 +96,14 @@ class _DesktopAccountState extends State<DesktopAccount> {
                       bottom: 20),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
                       children: [
+                        Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                         Row(
                           children: [
                             Text(
@@ -114,7 +132,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                 children: [
                                   CircleAvatar(
                                     radius: 100,
-                                    backgroundColor: AppUtils.mainWhite(context),
+                                    backgroundColor:
+                                        AppUtils.mainWhite(context),
                                     child: Icon(
                                       FluentIcons.person_24_regular,
                                       size: 100,
@@ -212,7 +231,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                         style: TextStyle(
                                                             fontSize: 18,
                                                             color: AppUtils
-                                                                .mainBlue(context),
+                                                                .mainBlue(
+                                                                    context),
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold)),
@@ -225,8 +245,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                                     .all(10)),
                                                         backgroundColor:
                                                             WidgetStatePropertyAll(
-                                                                AppUtils
-                                                                    .mainBlue(context)),
+                                                                AppUtils.mainBlue(
+                                                                    context)),
                                                         shape:
                                                             WidgetStatePropertyAll(
                                                           RoundedRectangleBorder(
@@ -248,7 +268,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                             style: TextStyle(
                                                               fontSize: 16,
                                                               color: AppUtils
-                                                                  .mainWhite(context),
+                                                                  .mainWhite(
+                                                                      context),
                                                             ),
                                                           ),
                                                           const Gap(5),
@@ -257,7 +278,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                                 .person_edit_24_regular,
                                                             size: 14,
                                                             color: AppUtils
-                                                                .mainWhite(context),
+                                                                .mainWhite(
+                                                                    context),
                                                           ),
                                                         ],
                                                       ),
@@ -296,8 +318,11 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                             : 'Details not found'),
                                                 _buildAccountDetails(context,
                                                     title: 'Course',
-                                                    value:
-                                                        'Bachelors Degree in Computer Science'),
+                                                    value: isLoading
+                                                        ? 'course'
+                                                        : course.isNotEmpty
+                                                            ? course['name']
+                                                            : 'Details not found'),
                                                 _buildAccountDetails(context,
                                                     title: 'Date Joined',
                                                     value: isLoading
@@ -333,7 +358,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                         "Not verified",
                                                         style: TextStyle(
                                                             color: AppUtils
-                                                                .mainRed(context)),
+                                                                .mainRed(
+                                                                    context)),
                                                       ),
                                                     ),
                                                     ElevatedButton(
@@ -348,8 +374,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                                     bottom: 5)),
                                                         backgroundColor:
                                                             WidgetStatePropertyAll(
-                                                                AppUtils
-                                                                    .mainBlue(context)),
+                                                                AppUtils.mainBlue(
+                                                                    context)),
                                                         shape:
                                                             WidgetStatePropertyAll(
                                                           RoundedRectangleBorder(
@@ -367,7 +393,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                             "Verify Account",
                                                             style: TextStyle(
                                                               color: AppUtils
-                                                                  .mainWhite(context),
+                                                                  .mainWhite(
+                                                                      context),
                                                             ),
                                                           ),
                                                           const Gap(5),
@@ -376,7 +403,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                                 .checkmark_circle_24_filled,
                                                             size: 16,
                                                             color: AppUtils
-                                                                .mainWhite(context),
+                                                                .mainWhite(
+                                                                    context),
                                                           ),
                                                         ],
                                                       ),
@@ -389,15 +417,15 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                 Text(
                                                   "Acknowledgment",
                                                   style: TextStyle(
-                                                      color:
-                                                          AppUtils.mainBlue(context)),
+                                                      color: AppUtils.mainBlue(
+                                                          context)),
                                                 ),
                                                 Gap(5),
                                                 Text(
                                                   "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                                   style: TextStyle(
-                                                      color:
-                                                          AppUtils.mainGrey(context)),
+                                                      color: AppUtils.mainGrey(
+                                                          context)),
                                                 ),
                                                 Text("Powered by Labs")
                                               ]
@@ -407,7 +435,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                         style: TextStyle(
                                                             fontSize: 18,
                                                             color: AppUtils
-                                                                .mainBlue(context),
+                                                                .mainBlue(
+                                                                    context),
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold)),
@@ -419,15 +448,17 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                     Text(
                                                       "Acknowledgment",
                                                       style: TextStyle(
-                                                          color: AppUtils
-                                                              .mainBlue(context)),
+                                                          color:
+                                                              AppUtils.mainBlue(
+                                                                  context)),
                                                     ),
                                                     Gap(5),
                                                     Text(
                                                       "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                                       style: TextStyle(
-                                                          color: AppUtils
-                                                              .mainGrey(context)),
+                                                          color:
+                                                              AppUtils.mainGrey(
+                                                                  context)),
                                                     ),
                                                     Text("Powered by Labs")
                                                   ]
@@ -465,7 +496,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppUtils.mainGrey(context))),
+                border: Border(
+                    bottom: BorderSide(color: AppUtils.mainGrey(context))),
                 borderRadius: BorderRadius.circular(5)),
             child: context.watch<UserProvider>().isLoading
                 ? SizedBox(
@@ -486,7 +518,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                     )
                   : Text(
                       title,
-                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 12),
+                      style: TextStyle(
+                          color: AppUtils.mainGrey(context), fontSize: 12),
                     ),
             ))
       ],
@@ -568,7 +601,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                       Text("Browse",
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.mainWhite(context))),
+                                              color:
+                                                  AppUtils.mainWhite(context))),
                                     ],
                                   )),
                             )
@@ -618,8 +652,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
                             style: ButtonStyle(
                               padding: WidgetStatePropertyAll(
                                   const EdgeInsets.all(20)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  AppUtils.mainBlue(context)),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),

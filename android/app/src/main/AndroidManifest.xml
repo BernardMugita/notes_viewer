@@ -4,9 +4,9 @@
     <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="note_viewer"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:label="maktaba"
+        android:name="maktaba"
+        android:icon="@mipmap/ali-logo"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity

@@ -2,11 +2,13 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
+import 'package:note_viewer/providers/courses_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +30,7 @@ class _TabletAccountState extends State<TabletAccount> {
   TextEditingController regNoController = TextEditingController();
 
   Map user = {};
+  Map course = {};
 
   String tokenRef = '';
 
@@ -39,6 +42,12 @@ class _TabletAccountState extends State<TabletAccount> {
       if (token != null) {
         tokenRef = token;
         context.read<UserProvider>().fetchUserDetails(token);
+
+        user = context.read<UserProvider>().user;
+
+        context
+            .read<CoursesProvider>()
+            .fetchCourse(token: token, id: user['course_id']);
       }
     });
   }
@@ -59,6 +68,7 @@ class _TabletAccountState extends State<TabletAccount> {
   @override
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
+    course = context.watch<CoursesProvider>().course;
 
     return Scaffold(
         key: _scaffoldKey,
@@ -76,7 +86,17 @@ class _TabletAccountState extends State<TabletAccount> {
               padding: const EdgeInsets.all(20),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
                   children: [
+                    if (!context
+                              .watch<TogglesProvider>()
+                              .isBannerDismissed)
+                            Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 10,
@@ -95,8 +115,8 @@ class _TabletAccountState extends State<TabletAccount> {
                             style: ButtonStyle(
                               padding: WidgetStatePropertyAll(
                                   const EdgeInsets.all(10)),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  AppUtils.mainBlue(context)),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
@@ -208,7 +228,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                         Text("Account Details",
                                             style: TextStyle(
                                                 fontSize: 18,
-                                                color: AppUtils.mainBlue(context),
+                                                color:
+                                                    AppUtils.mainBlue(context),
                                                 fontWeight: FontWeight.bold)),
                                         Gap(30),
                                         _buildAccountDetails(context,
@@ -233,8 +254,11 @@ class _TabletAccountState extends State<TabletAccount> {
                                                 : user['reg_no']),
                                         _buildAccountDetails(context,
                                             title: 'Course',
-                                            value:
-                                                'Bachelors Degree in Computer Science'),
+                                            value: isLoading
+                                                ? 'course'
+                                                : course.isNotEmpty
+                                                    ? course['name']
+                                                    : 'Details not found'),
                                         _buildAccountDetails(context,
                                             title: 'Date Joined',
                                             value: isLoading
@@ -262,7 +286,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                               child: Text(
                                                 "Not verified",
                                                 style: TextStyle(
-                                                    color: AppUtils.mainRed(context)),
+                                                    color: AppUtils.mainRed(
+                                                        context)),
                                               ),
                                             ),
                                             ElevatedButton(
@@ -275,7 +300,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                                         bottom: 5)),
                                                 backgroundColor:
                                                     WidgetStatePropertyAll(
-                                                        AppUtils.mainBlue(context)),
+                                                        AppUtils.mainBlue(
+                                                            context)),
                                                 shape: WidgetStatePropertyAll(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -290,8 +316,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                                   Text(
                                                     "Verify Account",
                                                     style: TextStyle(
-                                                      color:
-                                                          AppUtils.mainWhite(context),
+                                                      color: AppUtils.mainWhite(
+                                                          context),
                                                     ),
                                                   ),
                                                   const Gap(5),
@@ -299,7 +325,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                                     FluentIcons
                                                         .checkmark_circle_24_filled,
                                                     size: 16,
-                                                    color: AppUtils.mainWhite(context),
+                                                    color: AppUtils.mainWhite(
+                                                        context),
                                                   ),
                                                 ],
                                               ),
@@ -312,13 +339,15 @@ class _TabletAccountState extends State<TabletAccount> {
                                         Text(
                                           "Acknowledgment",
                                           style: TextStyle(
-                                              color: AppUtils.mainBlue(context)),
+                                              color:
+                                                  AppUtils.mainBlue(context)),
                                         ),
                                         Gap(5),
                                         Text(
                                           "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                           style: TextStyle(
-                                              color: AppUtils.mainGrey(context)),
+                                              color:
+                                                  AppUtils.mainGrey(context)),
                                         ),
                                         Text("Powered by Labs")
                                       ]
@@ -327,7 +356,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                             Text("Account Membership",
                                                 style: TextStyle(
                                                     fontSize: 18,
-                                                    color: AppUtils.mainBlue(context),
+                                                    color: AppUtils.mainBlue(
+                                                        context),
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             Gap(30),
@@ -338,13 +368,15 @@ class _TabletAccountState extends State<TabletAccount> {
                                             Text(
                                               "Acknowledgment",
                                               style: TextStyle(
-                                                  color: AppUtils.mainBlue(context)),
+                                                  color: AppUtils.mainBlue(
+                                                      context)),
                                             ),
                                             Gap(5),
                                             Text(
                                               "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
                                               style: TextStyle(
-                                                  color: AppUtils.mainGrey(context)),
+                                                  color: AppUtils.mainGrey(
+                                                      context)),
                                             ),
                                             Text("Powered by Labs")
                                           ]
@@ -373,7 +405,8 @@ class _TabletAccountState extends State<TabletAccount> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(bottom: 30),
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppUtils.mainGrey(context))),
+                border: Border(
+                    bottom: BorderSide(color: AppUtils.mainGrey(context))),
                 borderRadius: BorderRadius.circular(5)),
             child: context.watch<UserProvider>().isLoading
                 ? SizedBox(
@@ -394,7 +427,8 @@ class _TabletAccountState extends State<TabletAccount> {
                     )
                   : Text(
                       title,
-                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 12),
+                      style: TextStyle(
+                          color: AppUtils.mainGrey(context), fontSize: 12),
                     ),
             ))
       ],
@@ -445,7 +479,8 @@ class _TabletAccountState extends State<TabletAccount> {
                             children: [
                               CircleAvatar(
                                 radius: 80,
-                                backgroundColor: AppUtils.mainBlueAccent(context),
+                                backgroundColor:
+                                    AppUtils.mainBlueAccent(context),
                                 child: Image(
                                   height: 70,
                                   width: 70,
@@ -483,7 +518,8 @@ class _TabletAccountState extends State<TabletAccount> {
                                         Text("Browse",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: AppUtils.mainWhite(context))),
+                                                color: AppUtils.mainWhite(
+                                                    context))),
                                       ],
                                     )),
                               )
@@ -534,8 +570,8 @@ class _TabletAccountState extends State<TabletAccount> {
                               style: ButtonStyle(
                                 padding: WidgetStatePropertyAll(
                                     const EdgeInsets.all(5)),
-                                backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                                backgroundColor: WidgetStatePropertyAll(
+                                    AppUtils.mainBlue(context)),
                                 shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),

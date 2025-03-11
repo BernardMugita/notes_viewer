@@ -16,7 +16,10 @@ class _DashboardBannerState extends State<DashboardBanner> {
   Widget build(BuildContext context) {
     final dashData = widget.data;
 
-    bool isNewActivities = dashData['notifications']['unread'].isNotEmpty;
+    bool isNewActivities =
+        dashData.isNotEmpty && dashData['notifications'].isNotEmpty
+            ? dashData['notifications']!['unread']!.isNotEmpty
+            : false;
 
     return Container(
       width: double.infinity,
@@ -47,8 +50,8 @@ class _DashboardBannerState extends State<DashboardBanner> {
                           color: AppUtils.mainWhite(context))),
                   Text(
                       "Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
-                      style:
-                          TextStyle(fontSize: 16, color: AppUtils.mainWhite(context))),
+                      style: TextStyle(
+                          fontSize: 16, color: AppUtils.mainWhite(context))),
                 ],
               ),
               Spacer(),

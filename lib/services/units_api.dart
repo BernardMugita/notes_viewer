@@ -41,6 +41,28 @@ class UnitsApi {
     }
   }
 
+  Future<Map<String, dynamic>> getUnit(
+      {required String token, required String unitId}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final getUnitRequest = await http.post(
+        Uri.parse('$url/units/get_user_units'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          'unit_id': unitId,
+        }),
+      );
+
+      return jsonDecode(getUnitRequest.body);
+    } catch (e) {
+      throw Exception('Failed to get user units $e');
+    }
+  }
+
   Future<Map<String, dynamic>> getUserUnits({required String token}) async {
     final url = AppUtils.$baseUrl;
 

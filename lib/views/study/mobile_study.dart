@@ -179,102 +179,104 @@ class _MobileStudyState extends State<MobileStudy> {
               ),
               const Gap(20),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Study material",
-                        style:
-                            TextStyle(fontSize: 18, color: AppUtils.mainGrey(context))),
-                    const Gap(20),
-                    if (lesson.isEmpty &&
-                        notes.isEmpty &&
-                        slides.isEmpty &&
-                        recordings.isEmpty &&
-                        contributions.isEmpty)
-                      Expanded(
-                          child: Center(
-                        child: Container(
-                          width: 400,
-                          height: 400,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: AppUtils.mainBlueAccent(context),
-                            borderRadius: BorderRadius.circular(5),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Study material",
+                          style:
+                              TextStyle(fontSize: 18, color: AppUtils.mainGrey(context))),
+                      const Gap(20),
+                      if (lesson.isEmpty &&
+                          notes.isEmpty &&
+                          slides.isEmpty &&
+                          recordings.isEmpty &&
+                          contributions.isEmpty)
+                        Expanded(
+                            child: Center(
+                          child: Container(
+                            width: 400,
+                            height: 400,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppUtils.mainBlueAccent(context),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FluentIcons.prohibited_24_regular,
+                                  size: 100,
+                                  color: Colors.orange,
+                                ),
+                                Gap(20),
+                                Text("How Empty!",
+                                    style: TextStyle(fontSize: 20)),
+                                Gap(10),
+                                Text(
+                                  "There's no study material for this lesson",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 16),
+                                )
+                              ],
+                            ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FluentIcons.prohibited_24_regular,
-                                size: 100,
-                                color: Colors.orange,
-                              ),
-                              Gap(20),
-                              Text("How Empty!",
-                                  style: TextStyle(fontSize: 20)),
-                              Gap(10),
-                              Text(
-                                "There's no study material for this lesson",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              )
-                            ],
-                          ),
+                        ))
+                      else
+                        Column(
+                          spacing: 5,
+                          children: [
+                            ...notes.map((note) {
+                              return MobileFile(
+                                notes: notes,
+                                slides: [],
+                                fileName:
+                                    (note['file'] as String).split('/').last,
+                                lesson: lesson['name'],
+                                material: note,
+                                icon: FluentIcons.document_pdf_24_regular,
+                              );
+                            }),
+                            ...slides.map((slide) {
+                              return MobileFile(
+                                slides: slides,
+                                notes: [],
+                                fileName:
+                                    (slide['file'] as String).split('/').last,
+                                lesson: lesson['name'],
+                                material: slide,
+                                icon: FluentIcons.slide_layout_24_regular,
+                              );
+                            }),
+                            ...recordings.map((recording) {
+                              return MobileRecording(
+                                recordings: recordings,
+                                contributions: [],
+                                fileName:
+                                    (recording['file'] as String).split('/').last,
+                                lesson: lesson['name'],
+                                material: recording,
+                                icon: FluentIcons.play_24_filled,
+                              );
+                            }),
+                            ...contributions.map((contribution) {
+                              return MobileRecording(
+                                recordings: [],
+                                contributions: contributions,
+                                fileName: (contribution['file'] as String)
+                                    .split('/')
+                                    .last,
+                                lesson: lesson['name'],
+                                material: contribution,
+                                icon: FluentIcons.play_24_filled,
+                              );
+                            }),
+                          ],
                         ),
-                      ))
-                    else
-                      Column(
-                        spacing: 5,
-                        children: [
-                          ...notes.map((note) {
-                            return MobileFile(
-                              notes: notes,
-                              slides: [],
-                              fileName:
-                                  (note['file'] as String).split('/').last,
-                              lesson: lesson['name'],
-                              material: note,
-                              icon: FluentIcons.document_pdf_24_regular,
-                            );
-                          }),
-                          ...slides.map((slide) {
-                            return MobileFile(
-                              slides: slides,
-                              notes: [],
-                              fileName:
-                                  (slide['file'] as String).split('/').last,
-                              lesson: lesson['name'],
-                              material: slide,
-                              icon: FluentIcons.slide_layout_24_regular,
-                            );
-                          }),
-                          ...recordings.map((recording) {
-                            return MobileRecording(
-                              recordings: recordings,
-                              contributions: [],
-                              fileName:
-                                  (recording['file'] as String).split('/').last,
-                              lesson: lesson['name'],
-                              material: recording,
-                              icon: FluentIcons.play_24_filled,
-                            );
-                          }),
-                          ...contributions.map((contribution) {
-                            return MobileRecording(
-                              recordings: [],
-                              contributions: contributions,
-                              fileName: (contribution['file'] as String)
-                                  .split('/')
-                                  .last,
-                              lesson: lesson['name'],
-                              material: contribution,
-                              icon: FluentIcons.play_24_filled,
-                            );
-                          }),
-                        ],
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ])));

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class DesktopDocumentViewer extends StatefulWidget {
@@ -94,7 +96,11 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
                         ? EmptyWidget(
                             errorHeading: "No Document!",
                             errorDescription: "Document not found",
-                            image: 'assets/images/404.png')
+                            image: context
+                                                  .watch<ThemeProvider>()
+                                                  .isDarkMode
+                                              ? 'assets/images/404-dark.png'
+                                              : 'assets/images/404.png')
                         : SfPdfViewer.network(
                             _pdfFilePath!,
                             initialZoomLevel: -0.5,

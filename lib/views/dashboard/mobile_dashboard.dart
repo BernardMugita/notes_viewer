@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
+import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/search/search_results.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
 import 'package:note_viewer/widgets/dashboard_widgets/card_row/mobile_card_row.dart';
@@ -52,7 +53,17 @@ class MobileDashboard extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
                   children: [
+                    if (!context
+                              .watch<TogglesProvider>()
+                              .isBannerDismissed)
+                            Consumer<TogglesProvider>(
+                            builder: (context, toggleProvider, _) {
+                          return toggleProvider.isBannerDismissed
+                              ? SizedBox()
+                              : MembershipBanner();
+                        }),
                     if (!togglesProvider.searchMode)
                       DashboardBanner(data: dashData),
                     const Gap(10),

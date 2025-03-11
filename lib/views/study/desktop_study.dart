@@ -9,6 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/uploads_provider.dart';
 import 'package:note_viewer/providers/user_provider.dart';
@@ -245,86 +246,92 @@ class _DesktopStudyState extends State<DesktopStudy> {
                             ),
                             const Gap(20),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Study material",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppUtils.mainGrey(context),
-                                          fontWeight: FontWeight.bold)),
-                                  const Gap(20),
-                                  if (isMaterialsEmpty)
-                                    Expanded(
-                                      child: Center(
-                                        child: EmptyWidget(
-                                            errorHeading: "How Empty!",
-                                            errorDescription:
-                                                "There's no study material for this lesson",
-                                            image: 'assets/images/404.png'),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Study material",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppUtils.mainGrey(context),
+                                            fontWeight: FontWeight.bold)),
+                                    const Gap(20),
+                                    if (isMaterialsEmpty)
+                                      Expanded(
+                                        child: Center(
+                                          child: EmptyWidget(
+                                              errorHeading: "How Empty!",
+                                              errorDescription:
+                                                  "There's no study material for this lesson",
+                                              image: context
+                                                    .watch<ThemeProvider>()
+                                                    .isDarkMode
+                                                ? 'assets/images/404-dark.png'
+                                                : 'assets/images/404.png'),
+                                        ),
+                                      )
+                                    else
+                                      Column(
+                                        spacing: 5,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ...notes.map((note) {
+                                            return DesktopFile(
+                                              notes: notes,
+                                              slides: [],
+                                              fileName: (note['file'] as String)
+                                                  .split('/')
+                                                  .last,
+                                              lesson: lesson['name'],
+                                              material: note,
+                                              icon: FluentIcons
+                                                  .document_pdf_24_regular,
+                                            );
+                                          }).toList(),
+                                          ...slides.map((slide) {
+                                            return DesktopFile(
+                                              slides: slides,
+                                              notes: [],
+                                              fileName: (slide['file'] as String)
+                                                  .split('/')
+                                                  .last,
+                                              lesson: lesson['name'],
+                                              material: slide,
+                                              icon: FluentIcons
+                                                  .slide_layout_24_regular,
+                                            );
+                                          }).toList(),
+                                          ...recordings.map((recording) {
+                                            return DesktopRecording(
+                                              recordings: recordings,
+                                              contributions: [],
+                                              fileName:
+                                                  (recording['file'] as String)
+                                                      .split('/')
+                                                      .last,
+                                              lesson: lesson['name'],
+                                              material: recording,
+                                              icon: FluentIcons.play_24_filled,
+                                            );
+                                          }).toList(),
+                                          ...contributions.map((contribution) {
+                                            return DesktopRecording(
+                                              contributions: contributions,
+                                              recordings: [],
+                                              fileName:
+                                                  (contribution['file'] as String)
+                                                      .split('/')
+                                                      .last,
+                                              lesson: lesson['name'],
+                                              material: contribution,
+                                              icon: FluentIcons.play_24_filled,
+                                            );
+                                          }).toList(),
+                                        ],
                                       ),
-                                    )
-                                  else
-                                    Column(
-                                      spacing: 5,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ...notes.map((note) {
-                                          return DesktopFile(
-                                            notes: notes,
-                                            slides: [],
-                                            fileName: (note['file'] as String)
-                                                .split('/')
-                                                .last,
-                                            lesson: lesson['name'],
-                                            material: note,
-                                            icon: FluentIcons
-                                                .document_pdf_24_regular,
-                                          );
-                                        }).toList(),
-                                        ...slides.map((slide) {
-                                          return DesktopFile(
-                                            slides: slides,
-                                            notes: [],
-                                            fileName: (slide['file'] as String)
-                                                .split('/')
-                                                .last,
-                                            lesson: lesson['name'],
-                                            material: slide,
-                                            icon: FluentIcons
-                                                .slide_layout_24_regular,
-                                          );
-                                        }).toList(),
-                                        ...recordings.map((recording) {
-                                          return DesktopRecording(
-                                            recordings: recordings,
-                                            contributions: [],
-                                            fileName:
-                                                (recording['file'] as String)
-                                                    .split('/')
-                                                    .last,
-                                            lesson: lesson['name'],
-                                            material: recording,
-                                            icon: FluentIcons.play_24_filled,
-                                          );
-                                        }).toList(),
-                                        ...contributions.map((contribution) {
-                                          return DesktopRecording(
-                                            contributions: contributions,
-                                            recordings: [],
-                                            fileName:
-                                                (contribution['file'] as String)
-                                                    .split('/')
-                                                    .last,
-                                            lesson: lesson['name'],
-                                            material: contribution,
-                                            icon: FluentIcons.play_24_filled,
-                                          );
-                                        }).toList(),
-                                      ],
-                                    ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],

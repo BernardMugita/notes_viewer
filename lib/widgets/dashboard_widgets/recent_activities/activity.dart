@@ -39,7 +39,7 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     final activity = widget.activity;
-    final uploadType = activity['type'] ?? 'notes';
+    String uploadType = activity['type'] ?? 'notes';
     final unitId = activity['unit_id'];
 
     return Consumer3<TogglesProvider, DashboardProvider, LessonsProvider>(
@@ -49,19 +49,27 @@ class _ActivityState extends State<Activity> {
         final unit = dashUnits.firstWhere((unit) {
           return unit['id'] == unitId;
         });
-        List lessons = unit['lessons'];
+        List lessons = unit['lessons'].isNotEmpty ? unit['lessons'] : [];
 
-        final activityLesson = lessons.firstWhere((lesson) {
-          String lessonName = lesson['name'].toString().toLowerCase();
-          String activityLessonName = activity['message']
-              .toString()
-              .split(uploadType)[0]
-              .replaceAll('-', '')
-              .toLowerCase();
+        if (uploadType != '' &&
+            uploadType.isNotEmpty &&
+            uploadType == 'recordings') {
+          uploadType = uploadType.substring(0, uploadType.length - 1);
+        }
 
-          return lessonName.replaceAll(' ', '') ==
-              activityLessonName.replaceAll(' ', '');
-        });
+        final activityLesson = lessons.isNotEmpty
+            ? lessons.firstWhere((lesson) {
+                String lessonName = lesson['name'].toString().toLowerCase();
+                String activityLessonName = activity['message']
+                    .toString()
+                    .split(uploadType)[0]
+                    .replaceAll('-', '')
+                    .toLowerCase();
+
+                return lessonName.replaceAll(' ', '') ==
+                    activityLessonName.replaceAll(' ', '');
+              })
+            : null;
 
         Future<void> getLessonDetailsFromActivityLesson() async {
           await lessonProvider.getLesson(tokenRef, activityLesson['id']);
@@ -118,7 +126,7 @@ class _ActivityState extends State<Activity> {
                     ),
                     ListTile(
                       onTap: () {
-                        String url = AppUtils.$baseUrl;
+                        String url = AppUtils.$serverDir;
                         Map lesson = lessonProvider.lesson;
                         Map filteredMaterial =
                             (lesson['materials'][uploadType] as List)

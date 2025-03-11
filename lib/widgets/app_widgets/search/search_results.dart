@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:note_viewer/providers/auth_provider.dart';
 import 'package:note_viewer/providers/dashboard_provider.dart';
 import 'package:note_viewer/providers/lessons_provider.dart';
+import 'package:note_viewer/providers/theme_provider.dart';
 import 'package:note_viewer/providers/toggles_provider.dart';
 import 'package:note_viewer/providers/units_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
@@ -51,12 +52,20 @@ class _SearchResultsState extends State<SearchResults> {
             ? EmptyWidget(
                 errorHeading: "Empty Results",
                 errorDescription: "No matches found for '${widget.query}'",
-                image: 'assets/images/404.png')
+                image: context.watch<ThemeProvider>().isDarkMode
+                    ? 'assets/images/404-dark.png'
+                    : 'assets/images/404.png')
             : Column(
                 spacing: 2.5,
                 children: widget.searchResults.map((result) {
-                  final uploadType = result['type'] ?? 'notes';
+                  String uploadType = result['type'] ?? 'notes';
                   final unitId = result['unit_id'];
+
+                  if (uploadType != '' &&
+                      uploadType.isNotEmpty &&
+                      uploadType == 'recordings') {
+                    uploadType = uploadType.substring(0, uploadType.length - 1);
+                  }
 
                   return Consumer3<TogglesProvider, DashboardProvider,
                       LessonsProvider>(
@@ -93,15 +102,16 @@ class _SearchResultsState extends State<SearchResults> {
                         decoration: BoxDecoration(
                             color: AppUtils.mainWhite(context),
                             borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: AppUtils.mainGrey(context))),
+                            border:
+                                Border.all(color: AppUtils.mainGrey(context))),
                         child: Column(
                           children: [
                             Row(
                               spacing: 10,
                               children: [
                                 CircleAvatar(
-                                  backgroundColor:
-                                      AppUtils.mainGreen(context).withOpacity(0.3),
+                                  backgroundColor: AppUtils.mainGreen(context)
+                                      .withOpacity(0.3),
                                   child: Icon(
                                     FluentIcons
                                         .text_bullet_list_square_search_20_regular,
@@ -159,7 +169,7 @@ class _SearchResultsState extends State<SearchResults> {
                                   ),
                                   ListTile(
                                     onTap: () {
-                                      String url = AppUtils.$baseUrl;
+                                      String url = AppUtils.$serverDir;
                                       Map lesson = lessonProvider.lesson;
                                       Map filteredMaterial =
                                           (lesson['materials'][uploadType]
@@ -198,7 +208,8 @@ class _SearchResultsState extends State<SearchResults> {
                                                           .withOpacity(0.2)
                                                       : uploadType ==
                                                               'recordings'
-                                                          ? AppUtils.mainBlue(context)
+                                                          ? AppUtils.mainBlue(
+                                                                  context)
                                                               .withOpacity(0.2)
                                                           : uploadType ==
                                                                   "student_contributions"
@@ -206,8 +217,8 @@ class _SearchResultsState extends State<SearchResults> {
                                                                   .deepOrange
                                                                   .withOpacity(
                                                                       0.2)
-                                                              : AppUtils
-                                                                  .mainGreen(context)
+                                                              : AppUtils.mainGreen(
+                                                                      context)
                                                                   .withOpacity(
                                                                       0.2),
                                               child: Icon(
@@ -233,13 +244,15 @@ class _SearchResultsState extends State<SearchResults> {
                                                         ? Colors.amber
                                                         : uploadType ==
                                                                 'recordings'
-                                                            ? AppUtils.mainBlue(context)
+                                                            ? AppUtils.mainBlue(
+                                                                context)
                                                             : uploadType ==
                                                                     "student_contributions"
                                                                 ? Colors
                                                                     .deepOrange
                                                                 : AppUtils
-                                                                    .mainGreen(context),
+                                                                    .mainGreen(
+                                                                        context),
                                               ),
                                             ),
                                             Gap(10),
