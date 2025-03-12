@@ -1,4 +1,4 @@
-package com.example.note_viewer
+package com.example.maktaba
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -9,7 +9,7 @@ import 'package:note_viewer/providers/user_provider.dart';
 import 'package:note_viewer/utils/app_utils.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
+// import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
@@ -98,12 +98,12 @@ class _DesktopAccountState extends State<DesktopAccount> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 10,
                       children: [
-                        Consumer<TogglesProvider>(
-                            builder: (context, toggleProvider, _) {
-                          return toggleProvider.isBannerDismissed
-                              ? SizedBox()
-                              : MembershipBanner();
-                        }),
+                        // Consumer<TogglesProvider>(
+                        //     builder: (context, toggleProvider, _) {
+                        //   return toggleProvider.isBannerDismissed
+                        //       ? SizedBox()
+                        //       : MembershipBanner();
+                        // }),
                         Row(
                           children: [
                             Text(

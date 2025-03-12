@@ -4,7 +4,7 @@ project(note_viewer LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "note_viewer")
+set(BINARY_NAME "maktaba")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
