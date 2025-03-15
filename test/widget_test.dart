@@ -7,17 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:note_viewer/main.dart';
-import 'package:note_viewer/providers/activity_provider.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/courses_provider.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
-import 'package:note_viewer/providers/uploads_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
+import 'package:maktaba/main.dart';
+import 'package:maktaba/providers/activity_provider.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/units_provider.dart';
+import 'package:maktaba/providers/uploads_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/dashboard_widgets/card_row/desktop_card.dart';
 import 'package:provider/provider.dart';
 
 class DesktopCardRow extends StatefulWidget {

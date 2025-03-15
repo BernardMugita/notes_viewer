@@ -2,10 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/courses_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 
 class MobileCourse extends StatefulWidget {
@@ -86,6 +86,7 @@ class _MobileCourseState extends State<MobileCourse> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: AppUtils.mainWhite(context),
+                      contentPadding: EdgeInsets.all(5),
                       prefixIcon: const Icon(FluentIcons.book_24_regular),
                       suffixIcon: GestureDetector(
                         onTap: () {
@@ -177,7 +178,7 @@ class _MobileCourseState extends State<MobileCourse> {
                       ),
                       padding: WidgetStatePropertyAll(
                           const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10)),
+                              vertical: 5, horizontal: 20)),
                     ),
                     child: authProvider.isLoading
                         ? const SizedBox(

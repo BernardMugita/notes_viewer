@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_document_viewer.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_video_viewer.dart';
+import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_document_viewer.dart';
+import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_video_viewer.dart';
 
 class TabletFileViewer extends StatefulWidget {
   final String fileName;

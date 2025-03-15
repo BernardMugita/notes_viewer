@@ -1,12 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:provider/provider.dart';
 
 class MobileLogin extends StatelessWidget {
@@ -15,103 +15,103 @@ class MobileLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            padding:
-                const EdgeInsets.only(top: 20, bottom: 20, left: 40, right: 40),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(context.read<ThemeProvider>().isDarkMode
-                    ? 'assets/images/banner-dark.png'
-                    : 'assets/images/mobile_banner.png'),
-              ),
-            ),
-            child: Column(
-              children: [
-                const Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image(
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.contain,
-                            image: AssetImage(
-                                'assets/images/alib-hd-shaddow.png')),
-                        Text(
-                          "WELCOME",
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "This platform was designed under the visionary leadership of Francis Flynn Chacha",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text("Powered by Labs"),
-                      ],
-                    ),
-                  ),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              padding:
+                  const EdgeInsets.only(top: 40, bottom: 20, left: 40, right: 40),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(context.read<ThemeProvider>().isDarkMode
+                      ? 'assets/images/banner-dark.png'
+                      : 'assets/images/mobile_banner.png'),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: DefaultTabController(
-                    length: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Gap(MediaQuery.of(context).size.height / 4),
-                        TabBar(
-                          labelColor: AppUtils.mainBlue(context),
-                          unselectedLabelColor: AppUtils.mainBlack(context),
-                          indicatorColor: Colors.blue,
-                          labelStyle: TextStyle(fontSize: 18),
-                          tabs: const [
-                            Tab(text: "Sign in"),
-                            Tab(text: "Sign up"),
-                          ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image(
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          image: AssetImage('assets/images/alib-hd-shaddow.png')),
+                      Text(
+                        "WELCOME",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const Gap(20),
-                        Expanded(
-                          child: TabBarView(
-                            children: [
-                              SignInTab(),
-                              SignUpTab(),
+                      ),
+                      Text(
+                        "This platform was designed under the visionary leadership of Francis Flynn Chacha",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text("Powered by Labs"),
+                    ],
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 500,
+                    child: DefaultTabController(
+                      length: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Gap(MediaQuery.of(context).size.height / 4),
+                          TabBar(
+                            labelColor: AppUtils.mainBlue(context),
+                            unselectedLabelColor: AppUtils.mainBlack(context),
+                            indicatorColor: Colors.blue,
+                            labelStyle: TextStyle(fontSize: 18),
+                            tabs: const [
+                              Tab(text: "Sign in"),
+                              Tab(text: "Sign up"),
                             ],
                           ),
-                        )
-                      ],
+                          const Gap(20),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                SignInTab(),
+                                SignUpTab(),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          if (context.watch<AuthProvider>().success)
-            Positioned(
+            if (context.watch<AuthProvider>().success)
+              Positioned(
+                  top: 20,
+                  right: 20,
+                  child: SuccessWidget(
+                      message: context.watch<AuthProvider>().message))
+            else if (context.watch<AuthProvider>().error)
+              Positioned(
                 top: 20,
                 right: 20,
-                child: SuccessWidget(
-                    message: context.watch<AuthProvider>().message))
-          else if (context.watch<AuthProvider>().error)
-            Positioned(
-              top: 20,
-              right: 20,
-              child:
-                  FailedWidget(message: context.watch<AuthProvider>().message),
-            )
-        ],
+                child:
+                    FailedWidget(message: context.watch<AuthProvider>().message),
+              )
+          ],
+        ),
       ),
     );
   }
@@ -184,6 +184,7 @@ class _SignInTabState extends State<SignInTab> {
             controller: emailController,
             cursorColor: AppUtils.mainBlue(context),
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(5),
               prefixIcon: const Icon(FluentIcons.mail_24_regular),
               floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
@@ -200,6 +201,7 @@ class _SignInTabState extends State<SignInTab> {
             obscureText: !context.watch<TogglesProvider>().showPassword,
             cursorColor: AppUtils.mainBlue(context),
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(5),
               prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
               floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               filled: true,
@@ -472,6 +474,7 @@ class _SignUpTabState extends State<SignUpTab> {
             controller: passwordController,
             obscureText: !context.watch<TogglesProvider>().showPassword,
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(5),
               prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
               floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
               suffixIcon: GestureDetector(
@@ -590,6 +593,7 @@ class _SignUpTabState extends State<SignUpTab> {
       labelText: label,
       errorText: error,
       filled: true,
+      contentPadding: EdgeInsets.all(5),
       fillColor: AppUtils.mainWhite(context),
       border: _errorBorder(error),
       floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),

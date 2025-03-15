@@ -1,6 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/utils/app_utils.dart';
 
 class MobileNotesOverview extends StatefulWidget {
   final Map lesson;

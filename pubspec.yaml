@@ -1,4 +1,4 @@
-name: note_viewer
+name: maktaba
 description: "Maktaba by Arifu Library"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

@@ -1,15 +1,15 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-// import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
-import 'package:note_viewer/widgets/app_widgets/navigation/top_navigation.dart';
-import 'package:note_viewer/widgets/app_widgets/platform_widgets/platform_details.dart';
-import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+// import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/top_navigation.dart';
+import 'package:maktaba/widgets/app_widgets/platform_widgets/platform_details.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
 class DesktopSettings extends StatefulWidget {

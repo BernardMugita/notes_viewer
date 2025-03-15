@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/study/desktop_study.dart';
-import 'package:note_viewer/views/study/mobile_study.dart';
-import 'package:note_viewer/views/study/tablet_study.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/study/desktop_study.dart';
+import 'package:maktaba/views/study/mobile_study.dart';
+import 'package:maktaba/views/study/tablet_study.dart';
 import 'package:provider/provider.dart';
 
 class StudyView extends StatefulWidget {

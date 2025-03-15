@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/view_notes/desktop_view_notes.dart';
-import 'package:note_viewer/views/view_notes/mobile_view_notes.dart';
-import 'package:note_viewer/views/view_notes/tablet_view_notes.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/view_notes/desktop_view_notes.dart';
+import 'package:maktaba/views/view_notes/mobile_view_notes.dart';
+import 'package:maktaba/views/view_notes/tablet_view_notes.dart';
 
 class ViewNotesView extends StatefulWidget {
   final String lesson;

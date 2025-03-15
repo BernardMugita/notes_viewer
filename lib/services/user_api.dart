@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/utils/app_utils.dart';
 import 'package:http/http.dart' as http;
 
 class UserApi {
@@ -42,8 +42,6 @@ class UserApi {
             'img': image,
             'phone': phone,
           }));
-
-      print(editUserRequest.body);
 
       return jsonDecode(editUserRequest.body);
     } catch (e) {

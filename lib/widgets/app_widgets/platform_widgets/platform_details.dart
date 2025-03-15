@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/utils/app_utils.dart';
 
 class PlatformDetails extends StatelessWidget {
   const PlatformDetails({super.key});

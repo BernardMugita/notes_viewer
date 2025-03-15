@@ -2,14 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_file_viewer.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_relevant_documents.dart';
-import 'package:note_viewer/widgets/view_notes_widgets/tablet/tablet_relevant_videos.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
+import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_file_viewer.dart';
+import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_relevant_documents.dart';
+import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_relevant_videos.dart';
 import 'package:provider/provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
 
 class TabletViewNotes extends StatefulWidget {
   const TabletViewNotes({super.key});

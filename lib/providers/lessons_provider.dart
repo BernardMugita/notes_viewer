@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/services/lesson_api.dart';
+import 'package:maktaba/services/lesson_api.dart';
 
 class LessonsProvider extends ChangeNotifier {
   bool isLoading = false;
@@ -149,6 +149,54 @@ class LessonsProvider extends ChangeNotifier {
       error = true;
       message = "Error fetching lesson! $e";
       isLoading = false;
+      notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
+    }
+
+    return {};
+  }
+
+  Future<Map<String, dynamic>> deleteLesson(
+      String token, String lessonId) async {
+    isLoading = true;
+    error = false;
+    success = false;
+    notifyListeners();
+
+    try {
+      final deleteRequest =
+          await lessonApi.deleteLesson(token: token, lessonId: lessonId);
+
+      if (deleteRequest['status'] == 'success') {
+        isLoading = false;
+        success = true;
+        // units = deleteRequest['units'];
+        message = "Lesson deleted successfully";
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
+      } else {
+        error = true;
+        isLoading = false;
+        message = "Failed to delete lesson";
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
+      }
+    } catch (e) {
+      error = true;
+      isLoading = false;
+      message = "Failed to delete lesson $e";
       notifyListeners();
       Future.delayed(const Duration(seconds: 3), () {
         error = false;

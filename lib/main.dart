@@ -1,18 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:note_viewer/providers/activity_provider.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/courses_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
-import 'package:note_viewer/providers/uploads_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/router/router.dart'; // Make sure to import this
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/views/splash/splash_screen.dart';
+import 'package:maktaba/providers/activity_provider.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/units_provider.dart';
+import 'package:maktaba/providers/uploads_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/router/router.dart'; // Make sure to import this
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/views/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 

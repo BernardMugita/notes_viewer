@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/settings/desktop_settings.dart';
-import 'package:note_viewer/views/settings/mobile_settings.dart';
-import 'package:note_viewer/views/settings/tablet_settings.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/settings/desktop_settings.dart';
+import 'package:maktaba/views/settings/mobile_settings.dart';
+import 'package:maktaba/views/settings/tablet_settings.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});

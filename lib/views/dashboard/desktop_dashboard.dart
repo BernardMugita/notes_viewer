@@ -2,16 +2,16 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-// import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
-import 'package:note_viewer/widgets/app_widgets/search/search_results.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/banner/dashboard_banner.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity_history.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
-import 'package:note_viewer/widgets/app_widgets/navigation/side_navigation.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+// import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
+import 'package:maktaba/widgets/app_widgets/search/search_results.dart';
+import 'package:maktaba/widgets/dashboard_widgets/banner/dashboard_banner.dart';
+import 'package:maktaba/widgets/dashboard_widgets/card_row/desktop_card_row.dart';
+import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity_history.dart';
+import 'package:maktaba/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
 class DesktopDashboard extends StatelessWidget {

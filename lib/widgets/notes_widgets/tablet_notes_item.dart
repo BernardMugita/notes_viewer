@@ -2,9 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/notes_widgets/tablet_notes_overview.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/notes_widgets/tablet_notes_overview.dart';
 import 'package:provider/provider.dart';
 
 class TabletNotesItem extends StatefulWidget {

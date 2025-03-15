@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/services/courses_api.dart';
+import 'package:maktaba/services/courses_api.dart';
 
 class CoursesProvider extends ChangeNotifier {
   bool isFetchingCourses = false;

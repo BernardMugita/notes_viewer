@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/units_widgets/tablet_unit_holder.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/units_widgets/tablet_unit_holder.dart';
 
 class TabletSemesterHolder extends StatefulWidget {
   final List units;

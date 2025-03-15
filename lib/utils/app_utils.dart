@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:note_viewer/providers/theme_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class AppUtils {

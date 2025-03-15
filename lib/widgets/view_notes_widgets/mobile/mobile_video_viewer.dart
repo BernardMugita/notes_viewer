@@ -3,8 +3,8 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 

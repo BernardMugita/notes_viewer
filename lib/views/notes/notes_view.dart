@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/notes/desktop_notes.dart';
-import 'package:note_viewer/views/notes/mobile_notes.dart';
-import 'package:note_viewer/views/notes/tablet_notes.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/notes/desktop_notes.dart';
+import 'package:maktaba/views/notes/mobile_notes.dart';
+import 'package:maktaba/views/notes/tablet_notes.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/units_provider.dart';
 import 'package:provider/provider.dart';
 
 class NotesView extends StatefulWidget {

@@ -1,4 +1,4 @@
-# note_viewer
+# maktaba
 
 A new Flutter project.
 

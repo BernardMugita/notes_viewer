@@ -1,12 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/utils/app_utils.dart';
 
 class MobileCard extends StatefulWidget {
-  final double users;
+  final int users;
   final String material;
-  final double count;
+  final int count;
 
   const MobileCard({
     super.key,

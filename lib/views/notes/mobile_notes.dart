@@ -2,14 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
-import 'package:note_viewer/widgets/notes_widgets/mobile_notes_item.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
+import 'package:maktaba/widgets/notes_widgets/mobile_notes_item.dart';
 import 'package:provider/provider.dart';
 
 class MobileNotes extends StatefulWidget {

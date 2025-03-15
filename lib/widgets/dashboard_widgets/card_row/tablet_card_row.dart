@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/card_row/tablet_card.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/dashboard_widgets/card_row/tablet_card.dart';
 
 class TabletCardRow extends StatefulWidget {
   final Map user;

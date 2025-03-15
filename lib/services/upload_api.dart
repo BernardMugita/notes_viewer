@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/utils/app_utils.dart';
 import 'package:http/http.dart' as http;
 
 class UploadApi {
@@ -53,6 +53,25 @@ class UploadApi {
       }
     } catch (e) {
       throw Exception('Failed to upload file: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteUpload(
+      {required String token, required String materialId}) async {
+    try {
+      final getUserUnitsRequest = await http.post(
+        Uri.parse('$url/uploads/delete_material'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'id': materialId,
+        }),
+      );
+      return jsonDecode(getUserUnitsRequest.body);
+    } catch (e) {
+      throw Exception('Failed to delete upload: $e');
     }
   }
 }

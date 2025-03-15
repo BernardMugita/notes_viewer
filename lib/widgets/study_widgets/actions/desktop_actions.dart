@@ -1,10 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/widgets/study_widgets/actions/desktop_filter_drop_down.dart';
-import 'package:note_viewer/widgets/study_widgets/actions/desktop_group_drop_down.dart';
-import 'package:note_viewer/widgets/study_widgets/actions/desktop_sort_drop_down.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/widgets/study_widgets/actions/desktop_filter_drop_down.dart';
+import 'package:maktaba/widgets/study_widgets/actions/desktop_group_drop_down.dart';
+import 'package:maktaba/widgets/study_widgets/actions/desktop_sort_drop_down.dart';
 import 'package:provider/provider.dart';
 
 class DesktopActions extends StatelessWidget {

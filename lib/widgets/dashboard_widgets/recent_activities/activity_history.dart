@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/empty_widget.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/recent_activities/activity.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
+import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity.dart';
 import 'package:provider/provider.dart';
 
 class ActivityHistory extends StatelessWidget {

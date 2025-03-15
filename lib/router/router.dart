@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/courses_provider.dart';
-import 'package:note_viewer/providers/lessons_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/views/account/account_view.dart';
-import 'package:note_viewer/views/auth/course/course_view.dart';
-import 'package:note_viewer/views/auth/login/login_view.dart';
-import 'package:note_viewer/views/dashboard/dashboard_view.dart';
-import 'package:note_viewer/views/notes/notes_view.dart';
-import 'package:note_viewer/views/settings/settings_view.dart';
-import 'package:note_viewer/views/splash/splash_screen.dart';
-import 'package:note_viewer/views/study/study_view.dart';
-import 'package:note_viewer/views/units/units_view.dart';
-import 'package:note_viewer/views/view_notes/view_notes_view.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/units_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/views/account/account_view.dart';
+import 'package:maktaba/views/auth/course/course_view.dart';
+import 'package:maktaba/views/auth/login/login_view.dart';
+import 'package:maktaba/views/dashboard/dashboard_view.dart';
+import 'package:maktaba/views/notes/notes_view.dart';
+import 'package:maktaba/views/settings/settings_view.dart';
+import 'package:maktaba/views/splash/splash_screen.dart';
+import 'package:maktaba/views/study/study_view.dart';
+import 'package:maktaba/views/units/units_view.dart';
+import 'package:maktaba/views/view_notes/view_notes_view.dart';
 
 final authProvider = AuthProvider();
 

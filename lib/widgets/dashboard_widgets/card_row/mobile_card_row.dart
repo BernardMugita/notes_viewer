@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/dashboard_widgets/card_row/mobile_card.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/dashboard_widgets/card_row/mobile_card.dart';
 
 class MobileCardRow extends StatefulWidget {
   final Map user;
-  final double users;
+  final int users;
   final Map materialCount;
 
   const MobileCardRow(
@@ -30,7 +30,8 @@ class _MobileCardRowState extends State<MobileCardRow> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Summary",
-              style: TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
+              style:
+                  TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
           Gap(20),
           SizedBox(
             width: double.infinity,

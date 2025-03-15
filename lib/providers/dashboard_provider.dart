@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/services/dash_api.dart';
+import 'package:maktaba/services/dash_api.dart';
 
 class DashboardProvider extends ChangeNotifier {
   bool isLoading = false;

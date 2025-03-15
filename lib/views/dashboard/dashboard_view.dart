@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/dashboard_provider.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/dashboard/desktop_dashboard.dart';
-import 'package:note_viewer/views/dashboard/mobile_dashboard.dart';
-import 'package:note_viewer/views/dashboard/tablet_dashboard.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/dashboard/desktop_dashboard.dart';
+import 'package:maktaba/views/dashboard/mobile_dashboard.dart';
+import 'package:maktaba/views/dashboard/tablet_dashboard.dart';
 import 'package:provider/provider.dart';
 
 class DashboardView extends StatefulWidget {

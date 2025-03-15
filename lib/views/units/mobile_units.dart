@@ -2,17 +2,17 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:note_viewer/providers/auth_provider.dart';
-import 'package:note_viewer/providers/courses_provider.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/providers/units_provider.dart';
-import 'package:note_viewer/providers/user_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/failed_widget.dart';
-import 'package:note_viewer/widgets/app_widgets/alert_widgets/success_widget.dart';
-// import 'package:note_viewer/widgets/app_widgets/membership_banner/membership_banner.dart';
-import 'package:note_viewer/widgets/app_widgets/navigation/responsive_nav.dart';
-import 'package:note_viewer/widgets/units_widgets/mobile_semester_holder.dart';
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/units_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
+// import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
+import 'package:maktaba/widgets/units_widgets/mobile_semester_holder.dart';
 import 'package:provider/provider.dart';
 
 class MobileUnits extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/services/user_api.dart';
+import 'package:maktaba/services/user_api.dart';
 
 class UserProvider extends ChangeNotifier {
   bool isLoading = false;

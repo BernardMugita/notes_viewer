@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:note_viewer/providers/toggles_provider.dart';
-import 'package:note_viewer/utils/app_utils.dart';
+import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 
 class DesktopFilterDropDown extends StatelessWidget {

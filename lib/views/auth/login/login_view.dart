@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note_viewer/responsive/responsive_layout.dart';
-import 'package:note_viewer/views/auth/login/desktop_login.dart';
-import 'package:note_viewer/views/auth/login/mobile_login.dart';
-import 'package:note_viewer/views/auth/login/tablet_login.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/views/auth/login/desktop_login.dart';
+import 'package:maktaba/views/auth/login/mobile_login.dart';
+import 'package:maktaba/views/auth/login/tablet_login.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
