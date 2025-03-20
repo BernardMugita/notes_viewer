@@ -24,7 +24,7 @@ class DesktopViewNotes extends StatefulWidget {
 class _DesktopViewNotesState extends State<DesktopViewNotes> {
   Map material = {};
   List featuredMaterial = [];
-  String duration = '';
+  Duration duration = const Duration(milliseconds: 0);
 
   @override
   void initState() {
@@ -69,7 +69,9 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                         fontWeight: FontWeight.bold,
                       )),
                   Spacer(),
-                  TopNavigation(isRecentActivities: context.watch<DashboardProvider>().isNewActivities)
+                  TopNavigation(
+                      isRecentActivities:
+                          context.watch<DashboardProvider>().isNewActivities)
                 ],
               ),
               Gap(20),
@@ -82,7 +84,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                     flex: 4,
                     child: DesktopFileViewer(
                         fileName: fileName,
-                        onPressed: (String videoDuration) {
+                        onPressed: (Duration videoDuration) {
                           setState(() {
                             duration = videoDuration;
                           });
@@ -95,7 +97,8 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                           decoration: BoxDecoration(
                               color: AppUtils.mainWhite(context),
                               borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: AppUtils.mainGrey(context))),
+                              border: Border.all(
+                                  color: AppUtils.mainGrey(context))),
                           width: MediaQuery.of(context).size.width * 0.25,
                           height: MediaQuery.of(context).size.height * 0.85,
                           child: SingleChildScrollView(
@@ -107,7 +110,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(material['name'] ?? 'Material Name',
-                                        style:  TextStyle(
+                                        style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: AppUtils.mainBlue(context))),
@@ -119,15 +122,16 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           top: 5,
                                           bottom: 5),
                                       decoration: BoxDecoration(
-                                        color:
-                                            AppUtils.mainBlue(context).withOpacity(0.3),
+                                        color: AppUtils.mainBlue(context)
+                                            .withOpacity(0.3),
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Text(lessonName,
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: AppUtils.mainBlack(context))),
+                                              color:
+                                                  AppUtils.mainBlack(context))),
                                     ),
                                     Gap(10),
                                     Container(
@@ -146,7 +150,8 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
-                                                color: AppUtils.mainBlack(context))),
+                                                color: AppUtils.mainBlack(
+                                                    context))),
                                         Gap(5),
                                         Text(
                                             material['description'] ??
@@ -162,7 +167,8 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
-                                              color: AppUtils.mainBlack(context)),
+                                              color:
+                                                  AppUtils.mainBlack(context)),
                                         ),
                                         Gap(5),
                                         Text(
@@ -179,7 +185,8 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
-                                              color: AppUtils.mainBlack(context)),
+                                              color:
+                                                  AppUtils.mainBlack(context)),
                                         ),
                                         Gap(5),
                                         Text(

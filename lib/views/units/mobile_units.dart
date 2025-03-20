@@ -8,6 +8,7 @@ import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/confirm_exit.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 // import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
@@ -50,6 +51,7 @@ class _MobileUnitsState extends State<MobileUnits> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     final courses = context.watch<CoursesProvider>().courses;
     final unitsProvider = context.watch<UnitsProvider>();
@@ -58,139 +60,142 @@ class _MobileUnitsState extends State<MobileUnits> {
 
     final togglesProvider = context.watch<TogglesProvider>();
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          child: const Icon(FluentIcons.re_order_24_regular),
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => ConfirmExit(),
+        );
+
+        return shouldExit ?? false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: AppUtils.mainBlue(context),
+          elevation: 3,
+          leading: GestureDetector(
+            onTap: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            child: Icon(
+              FluentIcons.re_order_24_regular,
+              color: AppUtils.mainWhite(context),
+            ),
+          ),
         ),
-      ),
-      drawer: const ResponsiveNav(),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: unitsProvider.isLoading
-            ? SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: LoadingAnimationWidget.newtonCradle(
-                  color: AppUtils.mainBlue(context),
-                  size: 100,
-                ),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  // if (!context
-                    //           .watch<TogglesProvider>()
-                    //           .isBannerDismissed)
-                    //         Consumer<TogglesProvider>(
-                    //         builder: (context, toggleProvider, _) {
-                    //       return toggleProvider.isBannerDismissed
-                    //           ? SizedBox()
-                    //           : MembershipBanner();
-                    //     }),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      Text(
-                        "Units",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: AppUtils.mainBlue(context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (user.isNotEmpty && user['role'] == 'admin')
-                        SizedBox(
-                          width: 120,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                padding:
-                                    WidgetStatePropertyAll(EdgeInsets.all(10)),
-                                backgroundColor:
-                                    WidgetStatePropertyAll(AppUtils.mainBlue(context)),
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5)))),
-                            onPressed: () {
-                              _showDialog(context,
-                                  courses: courses, token: tokenRef);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Add units",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppUtils.mainWhite(context))),
-                                Gap(5),
-                                Icon(FluentIcons.class_24_regular,
-                                    size: 16, color: AppUtils.mainWhite(context)),
-                              ],
-                            ),
-                          ),
-                        )
-                    ],
+        drawer: const ResponsiveNav(),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: unitsProvider.isLoading
+              ? SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: LoadingAnimationWidget.newtonCradle(
+                    color: AppUtils.mainBlue(context),
+                    size: 100,
                   ),
-                  const Gap(10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
                       children: [
-                        Expanded(
-                          child: TextField(
-                            controller: searchController,
-                            onChanged: (value) {
-                              togglesProvider.searchAction(
-                                  searchController.text, units, 'name');
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(FluentIcons.search_24_regular),
-                              contentPadding: const EdgeInsets.all(5),
-                              filled: true,
-                              fillColor: AppUtils.mainWhite(context),
-                              border: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: AppUtils.mainGrey(context)),
-                                  borderRadius: BorderRadius.circular(5)),
-                              hintText: "Search",
-                              hintStyle: TextStyle(fontSize: 16),
-                            ),
+                        Text(
+                          "Units",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: AppUtils.mainBlue(context),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                        if (user.isNotEmpty && user['role'] == 'admin')
+                          SizedBox(
+                            width: 120,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                  padding: WidgetStatePropertyAll(
+                                      const EdgeInsets.all(10)),
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      AppUtils.mainBlue(context)),
+                                  shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5)))),
+                              onPressed: () {
+                                _showDialog(context,
+                                    courses: courses, token: tokenRef);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Add units",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppUtils.mainWhite(context))),
+                                  const Gap(5),
+                                  Icon(FluentIcons.class_24_regular,
+                                      size: 16,
+                                      color: AppUtils.mainWhite(context)),
+                                ],
+                              ),
+                            ),
+                          )
                       ],
                     ),
-                  ),
-                  const Gap(10),
-                  if (togglesProvider.searchMode)
                     SizedBox(
                       width: double.infinity,
-                      child: Text(togglesProvider.searchResults.isEmpty
-                          ? "No results found for '${searchController.text}'"
-                          : "Search results for '${searchController.text}'"),
-                    ),
-                  const Gap(10),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      // clipBehavior: Clip.none,
-                      child: Column(
+                      child: Row(
                         children: [
-                          MobileSemesterHolder(
-                              units: togglesProvider.searchResults.isNotEmpty
-                                  ? togglesProvider.searchResults
-                                  : units),
+                          Expanded(
+                            child: TextField(
+                              controller: searchController,
+                              onChanged: (value) {
+                                togglesProvider.searchAction(
+                                    searchController.text, units, 'name');
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(FluentIcons.search_24_regular),
+                                contentPadding: const EdgeInsets.all(5),
+                                filled: true,
+                                fillColor: AppUtils.mainWhite(context),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppUtils.mainGrey(context)),
+                                    borderRadius: BorderRadius.circular(5)),
+                                hintText: "Search",
+                                hintStyle: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    if (togglesProvider.searchMode)
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(togglesProvider.searchResults.isEmpty
+                            ? "No results found for '${searchController.text}'"
+                            : "Search results for '${searchController.text}'"),
+                      ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            MobileSemesterHolder(
+                                units: togglesProvider.searchResults.isNotEmpty
+                                    ? togglesProvider.searchResults
+                                    : units),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -215,7 +220,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                       ? MediaQuery.of(context).size.height * 0.65
                       : togglesProvider.showSemesterDropDown
                           ? MediaQuery.of(context).size.height * 0.85
-                          : MediaQuery.of(context).size.height * 0.5,
+                          : MediaQuery.of(context).size.height * 0.55,
                   decoration: BoxDecoration(
                     color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
@@ -311,10 +316,10 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
-                                Gap(10),
                                 if (togglesProvider.showCoursesDropDown)
                                   Container(
                                     padding: const EdgeInsets.all(20),
+                                    margin: EdgeInsets.only(top: 5),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
@@ -396,10 +401,10 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     focusColor: AppUtils.mainBlue(context),
                                   ),
                                 ),
-                                Gap(10),
                                 if (togglesProvider.showSemesterDropDown)
                                   Container(
                                     padding: const EdgeInsets.all(20),
+                                    margin: EdgeInsets.only(top: 5),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
@@ -417,6 +422,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                     child: Wrap(
                                       spacing: 10,
                                       runSpacing: 10,
+                                      alignment: WrapAlignment.spaceEvenly,
                                       children:
                                           semesters.map<Widget>((semester) {
                                         return GestureDetector(
@@ -431,16 +437,17 @@ class _MobileUnitsState extends State<MobileUnits> {
                                             });
                                           },
                                           child: Container(
-                                            width: 120,
-                                            padding: const EdgeInsets.all(5),
+                                            width: 100,
+                                            // padding: const EdgeInsets.all(5),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               border: Border.all(
-                                                color:
-                                                    selectedSemester == semester
-                                                        ? AppUtils.mainBlue(context)
-                                                        : AppUtils.mainGrey(context),
+                                                color: selectedSemester ==
+                                                        semester
+                                                    ? AppUtils.mainBlue(context)
+                                                    : AppUtils.mainGrey(
+                                                        context),
                                               ),
                                             ),
                                             child: Row(
@@ -473,7 +480,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                           ),
                         ],
                       ),
-                      Gap(20),
+                      Gap(10),
                       Consumer<UnitsProvider>(
                           builder: (context, unitProvider, child) {
                         return SizedBox(
@@ -519,7 +526,7 @@ class _MobileUnitsState extends State<MobileUnits> {
                                       strokeWidth: 2.5,
                                     ),
                                   )
-                                :  Text('Add Unit',
+                                : Text('Add Unit',
                                     style: TextStyle(
                                         fontSize: 16,
                                         color: AppUtils.mainWhite(context))),

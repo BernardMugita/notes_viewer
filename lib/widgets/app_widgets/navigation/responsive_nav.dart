@@ -35,7 +35,11 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
   @override
   Widget build(BuildContext context) {
     final routeName = ModalRoute.of(context)?.settings.name;
-    final currentRoute = routeName != null ? routeName.split('/')[1] : '';
+    final currentRoute = routeName != null && routeName.contains('/')
+        ? routeName.split('/')[1]
+        : routeName!.startsWith('notes')
+            ? 'units'
+            : routeName;
 
     user = context.watch<UserProvider>().user;
 
@@ -97,7 +101,8 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                   Spacer(),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: AppUtils.mainBlueAccent(context)),
+                        border:
+                            Border.all(color: AppUtils.mainBlueAccent(context)),
                         borderRadius: BorderRadius.circular(5)),
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -167,10 +172,10 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
                     Icon(FluentIcons.sign_out_24_regular,
                         color: AppUtils.mainBlack(context)),
                     const Gap(5),
-                     Text(
+                    Text(
                       'Logout',
-                      style:
-                          TextStyle(fontSize: 16, color: AppUtils.mainBlack(context)),
+                      style: TextStyle(
+                          fontSize: 16, color: AppUtils.mainBlack(context)),
                     ),
                   ],
                 ),
@@ -205,13 +210,17 @@ class _ResponsiveNavState extends State<ResponsiveNav> {
         child: Row(
           children: [
             Icon(icon,
-                color: isActive ? AppUtils.mainBlue(context) : AppUtils.mainWhite(context)),
+                color: isActive
+                    ? AppUtils.mainBlue(context)
+                    : AppUtils.mainWhite(context)),
             const Gap(5),
             Text(
               label,
               style: TextStyle(
                 fontSize: 16,
-                color: isActive ? AppUtils.mainBlue(context) : AppUtils.mainWhite(context),
+                color: isActive
+                    ? AppUtils.mainBlue(context)
+                    : AppUtils.mainWhite(context),
               ),
             ),
           ],

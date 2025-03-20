@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/units_widgets/mobile_unit_holder.dart';
 
@@ -60,6 +59,7 @@ class _MobileSemesterHolderState extends State<MobileSemesterHolder> {
           return Container(
             margin: const EdgeInsets.only(bottom: 20),
             child: Column(
+              spacing: 10,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
@@ -67,10 +67,10 @@ class _MobileSemesterHolderState extends State<MobileSemesterHolder> {
                   child: Text(
                     "Semester $semester",
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
+                    style: TextStyle(
+                        color: AppUtils.mainGrey(context), fontSize: 16),
                   ),
                 ),
-                Gap(20),
                 Column(
                   spacing: 10,
                   children: groupedUnits[semester]!.map<Widget>((unit) {

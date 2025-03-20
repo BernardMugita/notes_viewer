@@ -40,7 +40,7 @@ class _MobileNotesOverviewState extends State<MobileNotesOverview> {
   }
 
   Widget _buildLessonOverviewItems(
-      BuildContext context, String itemName, double itemCount) {
+      BuildContext context, String itemName, int itemCount) {
     return SizedBox(
       child: Row(
         spacing: 10,

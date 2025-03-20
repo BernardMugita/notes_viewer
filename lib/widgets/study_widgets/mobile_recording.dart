@@ -50,11 +50,11 @@ class _MobileRecordingState extends State<MobileRecording> {
               borderRadius: BorderRadius.circular(5),
               border: Border.all(color: AppUtils.mainGrey(context))),
           padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppUtils.mainBlueAccent(context),
+                backgroundColor: AppUtils.mainBlue(context).withOpacity(0.5),
                 child: Icon(
                   widget.icon,
                   size: 20,

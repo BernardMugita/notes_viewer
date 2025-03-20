@@ -128,158 +128,167 @@ class _MobileStudyState extends State<MobileStudy> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          backgroundColor: AppUtils.mainBlue(context),
+          elevation: 3,
           leading: GestureDetector(
             onTap: () {
               _scaffoldKey.currentState?.openDrawer();
             },
-            child: const Icon(FluentIcons.re_order_24_regular),
+            child: Icon(
+              FluentIcons.re_order_24_regular,
+              color: AppUtils.mainWhite(context),
+            ),
           ),
         ),
         drawer: const ResponsiveNav(),
         body: Padding(
-            padding: const EdgeInsets.all(20),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+            child: Column(
                 spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Gap(5),
-                  Text(
-                    lesson['name'] ?? "Lesson Name",
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: AppUtils.mainBlue(context),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (user.isNotEmpty && user['role'] == 'admin')
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        padding:
-                            WidgetStatePropertyAll(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppUtils.mainBlue(context)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      Text(
+                        lesson['name'] ?? "Lesson Name",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: AppUtils.mainBlue(context),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onPressed: () {
-                        _showDialog(context);
-                      },
-                      child: Icon(
-                        FluentIcons.book_add_24_regular,
-                        size: 16,
-                        color: AppUtils.mainWhite(context),
-                      ),
-                    ),
-                ],
-              ),
-              const Gap(20),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Study material",
-                          style:
-                              TextStyle(fontSize: 18, color: AppUtils.mainGrey(context))),
-                      const Gap(20),
-                      if (lesson.isEmpty &&
-                          notes.isEmpty &&
-                          slides.isEmpty &&
-                          recordings.isEmpty &&
-                          contributions.isEmpty)
-                        Expanded(
-                            child: Center(
-                          child: Container(
-                            width: 400,
-                            height: 400,
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: AppUtils.mainBlueAccent(context),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  FluentIcons.prohibited_24_regular,
-                                  size: 100,
-                                  color: Colors.orange,
-                                ),
-                                Gap(20),
-                                Text("How Empty!",
-                                    style: TextStyle(fontSize: 20)),
-                                Gap(10),
-                                Text(
-                                  "There's no study material for this lesson",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 16),
-                                )
-                              ],
+                      if (user.isNotEmpty && user['role'] == 'admin')
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: WidgetStatePropertyAll(
+                                const EdgeInsets.all(20)),
+                            backgroundColor: WidgetStatePropertyAll(
+                                AppUtils.mainBlue(context)),
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
                             ),
                           ),
-                        ))
-                      else
-                        Column(
-                          spacing: 5,
-                          children: [
-                            ...notes.map((note) {
-                              return MobileFile(
-                                notes: notes,
-                                slides: [],
-                                fileName:
-                                    (note['file'] as String).split('/').last,
-                                lesson: lesson['name'],
-                                material: note,
-                                icon: FluentIcons.document_pdf_24_regular,
-                              );
-                            }),
-                            ...slides.map((slide) {
-                              return MobileFile(
-                                slides: slides,
-                                notes: [],
-                                fileName:
-                                    (slide['file'] as String).split('/').last,
-                                lesson: lesson['name'],
-                                material: slide,
-                                icon: FluentIcons.slide_layout_24_regular,
-                              );
-                            }),
-                            ...recordings.map((recording) {
-                              return MobileRecording(
-                                recordings: recordings,
-                                contributions: [],
-                                fileName:
-                                    (recording['file'] as String).split('/').last,
-                                lesson: lesson['name'],
-                                material: recording,
-                                icon: FluentIcons.play_24_filled,
-                              );
-                            }),
-                            ...contributions.map((contribution) {
-                              return MobileRecording(
-                                recordings: [],
-                                contributions: contributions,
-                                fileName: (contribution['file'] as String)
-                                    .split('/')
-                                    .last,
-                                lesson: lesson['name'],
-                                material: contribution,
-                                icon: FluentIcons.play_24_filled,
-                              );
-                            }),
-                          ],
+                          onPressed: () {
+                            _showDialog(context);
+                          },
+                          child: Icon(
+                            FluentIcons.book_add_24_regular,
+                            size: 16,
+                            color: AppUtils.mainWhite(context),
+                          ),
                         ),
                     ],
                   ),
-                ),
-              ),
-            ])));
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        spacing: 10,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Study material",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: AppUtils.mainGrey(context))),
+                          if (lesson.isEmpty &&
+                              notes.isEmpty &&
+                              slides.isEmpty &&
+                              recordings.isEmpty &&
+                              contributions.isEmpty)
+                            Expanded(
+                                child: Center(
+                              child: Container(
+                                width: 400,
+                                height: 400,
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: AppUtils.mainBlueAccent(context),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Column(
+                                  spacing: 20,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FluentIcons.prohibited_24_regular,
+                                      size: 100,
+                                      color: Colors.orange,
+                                    ),
+                                    Text("How Empty!",
+                                        style: TextStyle(fontSize: 20)),
+                                    Text(
+                                      "There's no study material for this lesson",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ))
+                          else
+                            Column(
+                              spacing: 10,
+                              children: [
+                                ...notes.map((note) {
+                                  return MobileFile(
+                                    notes: notes,
+                                    slides: [],
+                                    fileName: (note['file'] as String)
+                                        .split('/')
+                                        .last,
+                                    lesson: lesson['name'],
+                                    material: note,
+                                    icon: FluentIcons.document_pdf_24_regular,
+                                  );
+                                }),
+                                ...slides.map((slide) {
+                                  return MobileFile(
+                                    slides: slides,
+                                    notes: [],
+                                    fileName: (slide['file'] as String)
+                                        .split('/')
+                                        .last,
+                                    lesson: lesson['name'],
+                                    material: slide,
+                                    icon: FluentIcons.slide_layout_24_regular,
+                                  );
+                                }),
+                                ...recordings.map((recording) {
+                                  return MobileRecording(
+                                    recordings: recordings,
+                                    contributions: [],
+                                    fileName: (recording['file'] as String)
+                                        .split('/')
+                                        .last,
+                                    lesson: lesson['name'],
+                                    material: recording,
+                                    icon: FluentIcons.play_24_filled,
+                                  );
+                                }),
+                                ...contributions.map((contribution) {
+                                  return MobileRecording(
+                                    recordings: [],
+                                    contributions: contributions,
+                                    fileName: (contribution['file'] as String)
+                                        .split('/')
+                                        .last,
+                                    lesson: lesson['name'],
+                                    material: contribution,
+                                    icon: FluentIcons.play_24_filled,
+                                  );
+                                }),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ])));
   }
 
   void _showDialog(
@@ -531,7 +540,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                         strokeWidth: 2.5,
                                       ),
                                     )
-                                  :  Text('Upload',
+                                  : Text('Upload',
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: AppUtils.mainWhite(context))),

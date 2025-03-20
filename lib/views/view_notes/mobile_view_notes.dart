@@ -45,9 +45,16 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppUtils.mainBlue(context),
+        elevation: 3,
         leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: const Icon(FluentIcons.arrow_left_24_regular),
+          onTap: () {
+            
+          },
+          child: Icon(
+            FluentIcons.re_order_24_regular,
+            color: AppUtils.mainWhite(context),
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -80,7 +87,7 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(material['name'] ?? 'Material Name',
-                          style:  TextStyle(
+                          style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: AppUtils.mainBlue(context))),
@@ -93,7 +100,7 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(lessonName,
-                            style:  TextStyle(
+                            style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppUtils.mainBlack(context))),
@@ -153,11 +160,9 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Videos",
                                 errorDescription: "No relevant videos found",
-                                image: context
-                                                  .watch<ThemeProvider>()
-                                                  .isDarkMode
-                                              ? 'assets/images/404-dark.png'
-                                              : 'assets/images/404.png')
+                                image: context.watch<ThemeProvider>().isDarkMode
+                                    ? 'assets/images/404-dark.png'
+                                    : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])
@@ -171,11 +176,9 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Documents",
                                 errorDescription: "No relevant documents found",
-                                image: context
-                                                  .watch<ThemeProvider>()
-                                                  .isDarkMode
-                                              ? 'assets/images/404-dark.png'
-                                              : 'assets/images/404.png')
+                                image: context.watch<ThemeProvider>().isDarkMode
+                                    ? 'assets/images/404-dark.png'
+                                    : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])

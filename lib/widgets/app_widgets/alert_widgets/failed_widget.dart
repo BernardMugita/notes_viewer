@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
 import 'package:maktaba/utils/app_utils.dart';
 
 class FailedWidget extends StatefulWidget {
@@ -13,10 +14,19 @@ class FailedWidget extends StatefulWidget {
 class _FailedWidgetState extends State<FailedWidget> {
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+        mobileLayout: _builfFailedWidget(14, 10, 5),
+        tabletLayout: _builfFailedWidget(16, 20, 10),
+        desktopLayout: _builfFailedWidget(16, 20, 10));
+  }
+
+  Widget _builfFailedWidget(
+      double failedFontSize, double verticalPadding, double horizontalPadding) {
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+      padding: EdgeInsets.symmetric(
+          vertical: verticalPadding, horizontal: horizontalPadding),
       decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 139, 0, 0),
+          color: AppUtils.mainRed(context),
           borderRadius: BorderRadius.circular(5)),
       child: Center(
         child: Text(
@@ -24,7 +34,7 @@ class _FailedWidgetState extends State<FailedWidget> {
           style: TextStyle(
               color: AppUtils.mainWhite(context),
               fontWeight: FontWeight.bold,
-              fontSize: 16),
+              fontSize: failedFontSize),
         ),
       ),
     );

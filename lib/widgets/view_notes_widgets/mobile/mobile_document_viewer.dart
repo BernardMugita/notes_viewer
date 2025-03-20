@@ -41,10 +41,7 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-          color: AppUtils.mainWhite(context), borderRadius: BorderRadius.circular(5)),
+    return SizedBox(
       height: MediaQuery.of(context).size.height / 1,
       child: Column(
         children: [
@@ -97,9 +94,10 @@ class _MobileDocumentViewerState extends State<MobileDocumentViewer> {
                 : Container(
                     width: double.infinity,
                     height: double.infinity,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(5),
                     color: AppUtils.mainBlueAccent(context),
                     child: SfPdfViewer.network(
+                      
                       _pdfFilePath!,
                       initialZoomLevel: -0.5,
                       headers: <String, String>{

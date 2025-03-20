@@ -48,7 +48,7 @@ class _MobileFileState extends State<MobileFile> {
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: AppUtils.mainGrey(context))),
         padding:
-            const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+            const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
         child: Row(
           children: [
             CircleAvatar(

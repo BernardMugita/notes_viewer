@@ -1,5 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
 import 'package:maktaba/utils/app_utils.dart';
 
 class DashboardBanner extends StatefulWidget {
@@ -14,6 +16,14 @@ class DashboardBanner extends StatefulWidget {
 class _DashboardBannerState extends State<DashboardBanner> {
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+        mobileLayout: _buildDashboardBanner(18, 16, 25, 25),
+        tabletLayout: _buildDashboardBanner(18, 16, 25, 25),
+        desktopLayout: _buildDashboardBanner(18, 16, 25, 25));
+  }
+
+  Widget _buildDashboardBanner(double fontSizeUsername, double fontSizeDate,
+      double iconSizeAlert, double iconSizeSettings) {
     final dashData = widget.data;
 
     bool isNewActivities =
@@ -45,13 +55,14 @@ class _DashboardBannerState extends State<DashboardBanner> {
                   Text(
                       "Hello, ${dashData.isNotEmpty ? dashData['user']['username'] : 'Username'}",
                       style: TextStyle(
-                          fontSize: 20,
+                          fontSize: fontSizeUsername,
                           fontWeight: FontWeight.bold,
                           color: AppUtils.mainWhite(context))),
                   Text(
                       "Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
                       style: TextStyle(
-                          fontSize: 16, color: AppUtils.mainWhite(context))),
+                          fontSize: fontSizeDate,
+                          color: AppUtils.mainWhite(context))),
                 ],
               ),
               Spacer(),
@@ -62,7 +73,7 @@ class _DashboardBannerState extends State<DashboardBanner> {
                     children: [
                       Icon(
                         FluentIcons.alert_24_regular,
-                        size: 35,
+                        size: iconSizeAlert,
                         color: AppUtils.mainWhite(context),
                       ),
                       Positioned(
@@ -77,10 +88,12 @@ class _DashboardBannerState extends State<DashboardBanner> {
                     ],
                   ),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.go('/settings');
+                      },
                       icon: Icon(
                         FluentIcons.settings_24_regular,
-                        size: 30,
+                        size: iconSizeSettings,
                         color: AppUtils.mainWhite(context),
                       ))
                 ],

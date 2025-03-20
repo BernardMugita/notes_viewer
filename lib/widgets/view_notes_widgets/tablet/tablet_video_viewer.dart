@@ -37,7 +37,7 @@ class _TabletVideoViewerState extends State<TabletVideoViewer> {
     super.initState();
     final lesson = context.read<LessonsProvider>().lesson;
     final filePath =
-        '${AppUtils.$baseUrl}/${lesson['path']}/${widget.uploadType}/${widget.fileName}'
+        '${AppUtils.$serverDir}/${lesson['path']}/${widget.uploadType}/${widget.fileName}'
             .replaceAll(" ", "%20");
 
     videoPlayerController = VideoPlayerController.networkUrl(

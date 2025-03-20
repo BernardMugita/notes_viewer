@@ -45,11 +45,16 @@ class _MobileNotesState extends State<MobileNotes> {
     return Scaffold(
       key: _scaffoldKey, // Attach the global key to the Scaffold
       appBar: AppBar(
+        backgroundColor: AppUtils.mainBlue(context),
+        elevation: 3,
         leading: GestureDetector(
           onTap: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          child: const Icon(FluentIcons.re_order_24_regular),
+          child: Icon(
+            FluentIcons.re_order_24_regular,
+            color: AppUtils.mainWhite(context),
+          ),
         ),
       ),
       drawer: const ResponsiveNav(),
@@ -79,8 +84,8 @@ class _MobileNotesState extends State<MobileNotes> {
                         style: ButtonStyle(
                           padding:
                               WidgetStatePropertyAll(const EdgeInsets.all(10)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                          backgroundColor: WidgetStatePropertyAll(
+                              AppUtils.mainBlue(context)),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -112,7 +117,6 @@ class _MobileNotesState extends State<MobileNotes> {
                     ),
                 ],
               ),
-              const Gap(10),
               SizedBox(
                 width: double.infinity,
                 child: Row(
@@ -130,7 +134,8 @@ class _MobileNotesState extends State<MobileNotes> {
                           fillColor: AppUtils.mainWhite(context),
                           contentPadding: const EdgeInsets.all(5),
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppUtils.mainGrey(context)),
+                              borderSide:
+                                  BorderSide(color: AppUtils.mainGrey(context)),
                               borderRadius: BorderRadius.circular(5)),
                           hintText: "Search",
                           hintStyle: TextStyle(fontSize: 16),
@@ -439,10 +444,11 @@ class _MobileNotesState extends State<MobileNotes> {
                                             strokeWidth: 2.5,
                                           ),
                                         )
-                                      :  Text('Add Lesson',
+                                      : Text('Add Lesson',
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.mainWhite(context))),
+                                              color:
+                                                  AppUtils.mainWhite(context))),
                                 ),
                               );
                             })

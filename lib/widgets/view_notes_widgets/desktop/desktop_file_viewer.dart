@@ -4,7 +4,7 @@ import 'package:maktaba/widgets/view_notes_widgets/desktop/desktop_video_viewer.
 
 class DesktopFileViewer extends StatefulWidget {
   final String fileName;
-  final Function onPressed;
+  final Function(Duration duration) onPressed;
 
   const DesktopFileViewer({
     super.key,

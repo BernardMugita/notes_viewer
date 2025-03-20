@@ -35,7 +35,11 @@ class _SideNavigationState extends State<SideNavigation> {
   @override
   Widget build(BuildContext context) {
     final routeName = ModalRoute.of(context)?.settings.name;
-    final currentRoute = routeName != null ? routeName.split('/')[1] : '';
+    final currentRoute = routeName != null && routeName.contains('/')
+        ? routeName.split('/')[1]
+        : routeName!.startsWith('notes')
+            ? 'units'
+            : routeName;
 
     user = context.read<UserProvider>().user;
     final toggleProvider = context.watch<TogglesProvider>();
@@ -66,7 +70,8 @@ class _SideNavigationState extends State<SideNavigation> {
               ? SizedBox()
               : Text(
                   "Maktaba",
-                  style: TextStyle(color: AppUtils.mainWhite(context), fontSize: 20),
+                  style: TextStyle(
+                      color: AppUtils.mainWhite(context), fontSize: 20),
                 ),
           !isMinimized ? Spacer() : const Gap(40),
           Expanded(
@@ -220,7 +225,7 @@ class _SideNavigationState extends State<SideNavigation> {
                         Icon(FluentIcons.sign_out_24_regular,
                             color: AppUtils.mainBlack(context)),
                         const Gap(5),
-                         Text(
+                        Text(
                           'Logout',
                           style: TextStyle(
                               fontSize: 16, color: AppUtils.mainBlack(context)),
@@ -248,7 +253,7 @@ class _SideNavigationState extends State<SideNavigation> {
   Widget _buildNavItem(
     BuildContext context, {
     required String route,
-    required String currentRoute,
+    required String? currentRoute,
     required IconData icon,
     required String label,
   }) {

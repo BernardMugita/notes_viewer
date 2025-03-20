@@ -37,7 +37,7 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
         context.read<TogglesProvider>().deActivateSearchMode();
       },
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.only(top: 2.5, bottom: 2.5, left: 10),
         width: double.infinity,
         decoration: BoxDecoration(
             color: AppUtils.mainWhite(context),
@@ -46,10 +46,13 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
         child: Column(
           children: [
             Row(
+              spacing: 10,
               children: [
-                Text("${unit['code']}: ${unit['name']}",
+                Icon(FluentIcons.class_24_regular,
+                    size: 32, color: AppUtils.mainGrey(context)),
+                Text(AppUtils.toSentenceCase(unit['name']),
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: AppUtils.mainBlue(context),
                         fontWeight: FontWeight.bold)),
                 const Spacer(),
@@ -86,11 +89,13 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
                 spacing: 5,
                 children: [
                   Divider(
-                    color: AppUtils.mainBlueAccent(context),
+                    color: AppUtils.mainGrey(context),
                     indent: 10,
+                    endIndent: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    padding:
+                        const EdgeInsets.only(left: 10, right: 10, bottom: 5),
                     child: Column(children: [
                       _buildUnitHolderDetails(context, "Lessons",
                           unit['lessons'].length.toString()),
