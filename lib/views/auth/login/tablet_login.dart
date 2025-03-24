@@ -17,22 +17,21 @@ class TabletLogin extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            padding:
-                const EdgeInsets.only(top: 20, bottom: 20, left: 40, right: 40),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(context.read<ThemeProvider>().isDarkMode
-                    ? 'assets/images/banner-dark.png'
-                    : 'assets/images/mobile_banner.png'),
+          SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(
+                  top: 20, bottom: 20, left: 40, right: 40),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(context.read<ThemeProvider>().isDarkMode
+                      ? 'assets/images/banner-dark.png'
+                      : 'assets/images/mobile_banner.png'),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                const Expanded(
-                  flex: 1,
-                  child: Center(
+              child: Column(
+                children: [
+                  const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,40 +61,41 @@ class TabletLogin extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: DefaultTabController(
-                    length: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Gap(MediaQuery.of(context).size.height / 4),
-                        TabBar(
-                          labelColor: AppUtils.mainBlue(context),
-                          unselectedLabelColor: AppUtils.mainBlack(context),
-                          indicatorColor: Colors.blue,
-                          labelStyle: TextStyle(fontSize: 18),
-                          tabs: const [
-                            Tab(text: "Sign in"),
-                            Tab(text: "Sign up"),
-                          ],
-                        ),
-                        const Gap(20),
-                        Expanded(
-                          child: TabBarView(
-                            children: [
-                              SignInTab(),
-                              SignUpTab(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height,
+                    child: DefaultTabController(
+                      length: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Gap(MediaQuery.of(context).size.height / 4),
+                          TabBar(
+                            labelColor: AppUtils.mainBlue(context),
+                            unselectedLabelColor: AppUtils.mainBlack(context),
+                            indicatorColor: Colors.blue,
+                            labelStyle: TextStyle(fontSize: 18),
+                            tabs: const [
+                              Tab(text: "Sign in"),
+                              Tab(text: "Sign up"),
                             ],
                           ),
-                        )
-                      ],
+                          const Gap(20),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                SignInTab(),
+                                SignUpTab(),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           if (context.watch<AuthProvider>().success)

@@ -21,15 +21,17 @@ class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-        mobileLayout: _buildEmptyWidget(),
-        tabletLayout: _buildEmptyWidget(),
-        desktopLayout: _buildEmptyWidget());
+        mobileLayout: _buildEmptyWidget(0.35),
+        tabletLayout: _buildEmptyWidget(1),
+        desktopLayout: _buildEmptyWidget(0.35));
   }
 
-  Widget _buildEmptyWidget() {
+  Widget _buildEmptyWidget(
+    double heightDenomenator
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
-      height: MediaQuery.of(context).size.height * 0.35,
+      height: MediaQuery.of(context).size.height * heightDenomenator,
       decoration: BoxDecoration(
           color: AppUtils.mainWhite(context),
           borderRadius: BorderRadius.circular(5)),

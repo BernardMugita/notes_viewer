@@ -17,13 +17,13 @@ class _DashboardBannerState extends State<DashboardBanner> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-        mobileLayout: _buildDashboardBanner(18, 16, 25, 25),
-        tabletLayout: _buildDashboardBanner(18, 16, 25, 25),
-        desktopLayout: _buildDashboardBanner(18, 16, 25, 25));
+        mobileLayout: _buildDashboardBanner(18, 16, 25, 25, 4),
+        tabletLayout: _buildDashboardBanner(18, 16, 25, 25, 2),
+        desktopLayout: _buildDashboardBanner(18, 16, 25, 25, 4));
   }
 
   Widget _buildDashboardBanner(double fontSizeUsername, double fontSizeDate,
-      double iconSizeAlert, double iconSizeSettings) {
+      double iconSizeAlert, double iconSizeSettings, double heightDenomenator) {
     final dashData = widget.data;
 
     bool isNewActivities =
@@ -33,7 +33,7 @@ class _DashboardBannerState extends State<DashboardBanner> {
 
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height / 4,
+      height: MediaQuery.of(context).size.height / heightDenomenator,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),

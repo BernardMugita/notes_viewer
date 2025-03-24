@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity.dart';
 import 'package:provider/provider.dart';
@@ -9,36 +10,44 @@ class DesktopActivities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+        mobileLayout: _buildActivityItem(3.45),
+        tabletLayout: _buildActivityItem(0.75),
+        desktopLayout: _buildActivityItem(3.45));
+  }
+
+  Widget _buildActivityItem(double heightDenomenator) {
     return Consumer<DashboardProvider>(
-      builder: (BuildContext context, DashboardProvider dashboardProvider, _) {
+      builder: (BuildContext context, dashboardProvider, _) {
         Map activities = dashboardProvider.dashData['notifications'] ?? {};
 
-        List unreadActivities =
+        List readActivities =
             activities.isNotEmpty && activities['unread'].isNotEmpty
                 ? List.from(activities['unread'] as List)
                 : [];
 
-        unreadActivities.sort((a, b) {
-          return b['created_at'].compareTo(a['created_at']) ?? 0;
+        readActivities.sort((a, b) {
+          return b['created_at'].compareTo(a['created_at']);
         });
 
-        return unreadActivities.isEmpty
+        return readActivities.isEmpty
             ? EmptyWidget(
-                errorHeading: "No recent activities",
-                errorDescription: "There are no new activities today",
+                errorHeading: "No Activities Loaded",
+                errorDescription: "Activity history may be empty",
                 image: 'assets/images/empty_act.png',
               )
             : SizedBox(
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.35,
+                height: MediaQuery.of(context).size.height * heightDenomenator,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Column(
-                          children: unreadActivities.map((activity) {
-                        return Activity(activity: activity);
-                      }).toList())
+                        children: readActivities.map((activity) {
+                          return Activity(activity: activity);
+                        }).toList(),
+                      )
                     ],
                   ),
                 ),

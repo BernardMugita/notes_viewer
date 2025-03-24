@@ -4,9 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:maktaba/utils/app_utils.dart';
 
 class TabletCard extends StatefulWidget {
-  final double users;
+  final int users;
   final String material;
-  final double count;
+  final int count;
 
   const TabletCard(
       {super.key,
@@ -29,7 +29,7 @@ class _TabletCardState extends State<TabletCard> {
               borderRadius: BorderRadius.circular(5)),
           padding: const EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width / 3.5,
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.35,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

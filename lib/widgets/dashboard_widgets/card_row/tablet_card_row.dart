@@ -5,7 +5,7 @@ import 'package:maktaba/widgets/dashboard_widgets/card_row/tablet_card.dart';
 
 class TabletCardRow extends StatefulWidget {
   final Map user;
-  final double users;
+  final int users;
   final Map materialCount;
 
   const TabletCardRow(

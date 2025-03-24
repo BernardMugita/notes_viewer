@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
+import 'package:maktaba/responsive/responsive_layout.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,13 @@ class ActivityHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+        mobileLayout: _buildActivityItem(3.45),
+        tabletLayout: _buildActivityItem(0.75),
+        desktopLayout: _buildActivityItem(3.45));
+  }
+
+  Widget _buildActivityItem(double heightDenomenator) {
     return Consumer<DashboardProvider>(
       builder: (BuildContext context, dashboardProvider, _) {
         Map activities = dashboardProvider.dashData['notifications'] ?? {};
@@ -30,7 +38,7 @@ class ActivityHistory extends StatelessWidget {
               )
             : SizedBox(
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.35,
+                height: MediaQuery.of(context).size.height * heightDenomenator,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
