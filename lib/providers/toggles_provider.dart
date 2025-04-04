@@ -9,6 +9,7 @@ class TogglesProvider extends ChangeNotifier {
 
   List searchResults = [];
   bool showPassword = false;
+  bool showResetPassword = false;
   bool showCoursesDropDown = false;
   bool rememberSelection = false;
   bool showSearchBar = false;
@@ -34,6 +35,11 @@ class TogglesProvider extends ChangeNotifier {
 
   void togglePassword() {
     showPassword = !showPassword;
+    notifyListeners();
+  }
+
+  void toggleResetPassword() {
+    showResetPassword = !showResetPassword;
     notifyListeners();
   }
 

@@ -11,9 +11,9 @@ class ActivityHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-        mobileLayout: _buildActivityItem(3.45),
-        tabletLayout: _buildActivityItem(0.75),
-        desktopLayout: _buildActivityItem(3.45));
+        mobileLayout: _buildActivityItem(0.4),
+        tabletLayout: _buildActivityItem(0.4),
+        desktopLayout: _buildActivityItem(0.4));
   }
 
   Widget _buildActivityItem(double heightDenomenator) {

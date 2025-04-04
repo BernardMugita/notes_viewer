@@ -81,4 +81,41 @@ class AuthApi {
       };
     }
   }
+
+  Future<Map<String, dynamic>> requestOTP({required String email}) async {
+    try {
+      final String url = '${AppUtils.$baseUrl}/users/request_reset';
+
+      final requestOTPRequest = await http.post(Uri.parse(url),
+          body: jsonEncode(<String, String>{'email': email}));
+      return jsonDecode(requestOTPRequest.body) as Map<String, dynamic>;
+    } catch (e) {
+      return {
+        'error': 'Error requesting OTP: $e',
+        'statusCode': 500,
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> resetPassword(
+      {required String email,
+      required String otp,
+      required String password}) async {
+    try {
+      final String url = '${AppUtils.$baseUrl}/users/reset_password';
+
+      final resetPasswordRequest = await http.post(Uri.parse(url),
+          body: jsonEncode(<String, String>{
+            'email': email,
+            'otp': otp,
+            'password': password
+          }));
+      return jsonDecode(resetPasswordRequest.body) as Map<String, dynamic>;
+    } catch (e) {
+      return {
+        'error': 'Error reseting OTP: $e',
+        'statusCode': 500,
+      };
+    }
+  }
 }

@@ -9,6 +9,7 @@ import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/views/account/account_view.dart';
 import 'package:maktaba/views/auth/course/course_view.dart';
 import 'package:maktaba/views/auth/login/login_view.dart';
+import 'package:maktaba/views/auth/reset_password/change_password/change_password_view.dart';
 import 'package:maktaba/views/dashboard/dashboard_view.dart';
 import 'package:maktaba/views/notes/notes_view.dart';
 import 'package:maktaba/views/settings/settings_view.dart';
@@ -36,7 +37,11 @@ GoRouter createRouter(
     redirect: (BuildContext context, GoRouterState state) {
       if (authProvider.isLoading || toggleProvider.isLoading) return null;
 
-      if (!authProvider.isAuthenticated) return '/login';
+      if (!authProvider.isAuthenticated) {
+        return state.matchedLocation == '/reset_password'
+            ? '/reset_password'
+            : '/login';
+      }
       if (authProvider.isAuthenticated && state.matchedLocation == '/login') {
         return toggleProvider.rememberSelection ? '/dashboard' : '/course';
       }
@@ -51,6 +56,10 @@ GoRouter createRouter(
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginView(),
+      ),
+      GoRoute(
+        path: '/reset_password',
+        builder: (context, state) => const ChangePasswordView(),
       ),
       GoRoute(
         path: '/course',
@@ -68,31 +77,30 @@ GoRouter createRouter(
         path: '/dashboard',
         builder: (context, state) => DashboardView(),
       ),
-
-      // ✅ UNITS as a top-level route
       GoRoute(
         path: '/units',
         builder: (context, state) => const UnitsView(),
         routes: [
           GoRoute(
-            path: 'notes',
-            builder: (context, state) => const NotesView(),
-          ),
-          GoRoute(
-            path: 'notes/:lesson',
-            builder: (context, state) {
-              final lesson = state.pathParameters['lesson']!;
-              return StudyView(lesson: lesson);
-            },
-          ),
-          GoRoute(
-            path: 'notes/:lesson/:fileName',
-            builder: (context, state) {
-              final lesson = state.pathParameters['lesson']!;
-              final fileName = state.pathParameters['fileName']!;
-              return ViewNotesView(lesson: lesson, fileName: fileName);
-            },
-          ),
+              path: 'notes',
+              builder: (context, state) => const NotesView(),
+              routes: [
+                GoRoute(
+                  path: ':lesson',
+                  builder: (context, state) {
+                    final lesson = state.pathParameters['lesson']!;
+                    return StudyView(lesson: lesson);
+                  },
+                ),
+                GoRoute(
+                  path: ':lesson/:fileName',
+                  builder: (context, state) {
+                    final lesson = state.pathParameters['lesson']!;
+                    final fileName = state.pathParameters['fileName']!;
+                    return ViewNotesView(lesson: lesson, fileName: fileName);
+                  },
+                ),
+              ]),
         ],
       ),
     ],

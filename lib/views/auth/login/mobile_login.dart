@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
@@ -20,8 +21,8 @@ class MobileLogin extends StatelessWidget {
           children: [
             Container(
               height: MediaQuery.of(context).size.height,
-              padding:
-                  const EdgeInsets.only(top: 40, bottom: 20, left: 40, right: 40),
+              padding: const EdgeInsets.only(
+                  top: 40, bottom: 20, left: 40, right: 40),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
@@ -42,7 +43,8 @@ class MobileLogin extends StatelessWidget {
                           height: 100,
                           width: 100,
                           fit: BoxFit.contain,
-                          image: AssetImage('assets/images/alib-hd-shaddow.png')),
+                          image:
+                              AssetImage('assets/images/alib-hd-shaddow.png')),
                       Text(
                         "WELCOME",
                         style: TextStyle(
@@ -51,7 +53,7 @@ class MobileLogin extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "This platform was designed under the visionary leadership of Francis Flynn Chacha",
+                        "Arifu Library, a plattform built by students for students.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -107,8 +109,8 @@ class MobileLogin extends StatelessWidget {
               Positioned(
                 top: 20,
                 right: 20,
-                child:
-                    FailedWidget(message: context.watch<AuthProvider>().message),
+                child: FailedWidget(
+                    message: context.watch<AuthProvider>().message),
               )
           ],
         ),
@@ -233,6 +235,63 @@ class _SignInTabState extends State<SignInTab> {
               );
             },
           ),
+          const Gap(20),
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Divider(
+                color: AppUtils.mainBlue(context),
+              ),
+              Positioned(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppUtils.mainBlue(context)),
+                  child: Text(
+                    "Or",
+                    style: TextStyle(color: AppUtils.mainWhite(context)),
+                  ),
+                ),
+              )
+            ],
+          ),
+          const Gap(10),
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context),
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Forgot your Password?", style: TextStyle(fontSize: 14)),
+                TextButton(
+                  onPressed: () {
+                    if (context.mounted) {
+                      context.go('/reset_password');
+                    }
+                  },
+                  child: Text(
+                    "Reset Password",
+                    style: TextStyle(
+                        color: AppUtils.mainBlue(context),
+                        fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

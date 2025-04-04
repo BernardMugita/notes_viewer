@@ -50,7 +50,7 @@ class TabletLogin extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "This platform was designed under the visionary leadership of Francis Flynn Chacha",
+                          "Arifu Library, a plattform built by students for students.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,

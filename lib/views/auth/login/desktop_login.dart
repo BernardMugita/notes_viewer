@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
@@ -83,7 +84,7 @@ class DesktopLogin extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "This platform was designed under the visionary leadership of Francis Flynn Chacha",
+                          "Arifu Library, a plattform built by students for students.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -220,6 +221,48 @@ class _SignInTabState extends State<SignInTab> {
             );
           },
         ),
+        const Gap(20),
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Divider(
+              color: AppUtils.mainBlue(context),
+            ),
+            Positioned(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: AppUtils.mainBlue(context)),
+                child: Text(
+                  "Or",
+                  style: TextStyle(color: AppUtils.mainWhite(context)),
+                ),
+              ),
+            )
+          ],
+        ),
+        const Gap(10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Forgot your Password?"),
+            TextButton(
+              onPressed: () {
+                if (context.mounted) {
+                  context.go('/reset_password');
+                }
+              },
+              child: Text(
+                "Reset Password",
+                style: TextStyle(
+                    color: AppUtils.mainBlue(context),
+                    fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        )
       ],
     );
   }
@@ -270,6 +313,7 @@ class _SignUpTabState extends State<SignUpTab> {
   String? phoneError;
   String? regNoError;
   double _passwordStrength = 0.0;
+  
   final Map<String, bool> _passwordCriteria = {
     '8+ Characters': false,
     'Uppercase Letter': false,

@@ -230,4 +230,100 @@ class AuthProvider extends ChangeNotifier {
     // ignore: use_build_context_synchronously
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
+
+  // Request OTP request
+  Future<Map<String, dynamic>> requestResetPasswordOTP(String email) async {
+    isLoading = true;
+    success = false;
+    error = false;
+    notifyListeners();
+
+    try {
+      final requestResetOTPRequest = await authApi.requestOTP(email: email);
+
+      if (requestResetOTPRequest['status'] == "success") {
+        message =
+            'An OTP has been sent to your email, please check your email to reset your password.';
+        success = true;
+        isLoading = false;
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
+      } else {
+        error = true;
+        message = 'Request failed! Please try again.';
+        isLoading = false;
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
+      }
+    } catch (e) {
+      error = true;
+      isLoading = false;
+      message = 'Error: $e';
+      notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
+    }
+
+    return {};
+  }
+
+  // Reset password
+  Future<Map<String, dynamic>> resetPassword(
+      String email, String otp, String newPassword) async {
+    isLoading = true;
+    success = false;
+    error = false;
+    notifyListeners();
+
+    try {
+      final resetPasswordRequest = await authApi.resetPassword(
+          email: email, otp: otp, password: newPassword);
+
+      if (resetPasswordRequest['status'] == "success") {
+        message =
+            'Password changed successfully. Please login with your new password.';
+        success = true;
+        isLoading = false;
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          success = false;
+          message = '';
+          notifyListeners();
+        });
+      } else {
+        error = true;
+        message = 'Request failed! Please try again.';
+        isLoading = false;
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          error = false;
+          message = '';
+          notifyListeners();
+        });
+      }
+    } catch (e) {
+      error = true;
+      isLoading = false;
+      message = 'Error: $e';
+      notifyListeners();
+      Future.delayed(const Duration(seconds: 3), () {
+        error = false;
+        message = '';
+        notifyListeners();
+      });
+    }
+
+    return {};
+  }
 }

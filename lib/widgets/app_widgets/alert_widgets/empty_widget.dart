@@ -21,9 +21,9 @@ class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-        mobileLayout: _buildEmptyWidget(0.35),
-        tabletLayout: _buildEmptyWidget(1),
-        desktopLayout: _buildEmptyWidget(0.35));
+        mobileLayout: _buildEmptyWidget(0.4),
+        tabletLayout: _buildEmptyWidget(0.4),
+        desktopLayout: _buildEmptyWidget(0.4));
   }
 
   Widget _buildEmptyWidget(

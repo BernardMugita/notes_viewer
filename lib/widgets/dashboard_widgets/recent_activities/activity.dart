@@ -42,6 +42,8 @@ class _ActivityState extends State<Activity> {
     String uploadType = activity['type'] ?? 'notes';
     final unitId = activity['unit_id'];
 
+    print(uploadType);
+
     return Consumer3<TogglesProvider, DashboardProvider, LessonsProvider>(
       builder: (BuildContext context, toggleProvider, dashboardProvider,
           lessonProvider, _) {
@@ -153,7 +155,8 @@ class _ActivityState extends State<Activity> {
                                     ? Colors.purpleAccent.withOpacity(0.2)
                                     : uploadType == 'slides'
                                         ? Colors.amber.withOpacity(0.2)
-                                        : uploadType == 'recordings'
+                                        : uploadType == 'recordings' ||
+                                                uploadType == 'recording'
                                             ? AppUtils.mainBlue(context)
                                                 .withOpacity(0.2)
                                             : uploadType ==
@@ -167,7 +170,7 @@ class _ActivityState extends State<Activity> {
                                       ? FluentIcons.book_24_regular
                                       : uploadType == 'slides'
                                           ? FluentIcons.slide_content_24_regular
-                                          : uploadType == 'recordings'
+                                          : uploadType == 'recordings' || uploadType == 'recording'
                                               ? FluentIcons.video_24_regular
                                               : uploadType ==
                                                       "student_contributions"
@@ -179,7 +182,8 @@ class _ActivityState extends State<Activity> {
                                       ? Colors.purpleAccent
                                       : uploadType == 'slides'
                                           ? Colors.amber
-                                          : uploadType == 'recordings'
+                                          : uploadType == 'recordings' ||
+                                                  uploadType == 'recording'
                                               ? AppUtils.mainBlue(context)
                                               : uploadType ==
                                                       "student_contributions"
