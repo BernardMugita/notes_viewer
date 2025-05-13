@@ -18,7 +18,7 @@ class AppUtils {
     final isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-    return isDarkMode ? Colors.black : Color(0xFFf9f9ff);
+    return isDarkMode ? Colors.black : Color(0xFFFFFFFF);
   }
 
   static Color mainBlack(BuildContext context) {
@@ -26,6 +26,13 @@ class AppUtils {
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return isDarkMode ? Colors.white : Colors.black;
+  }
+
+  static Color backgroundPanel(BuildContext context) {
+    final isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
+    return isDarkMode ? const Color(0xFF181818) : const Color(0xFFf2f4f7);
   }
 
   static Color mainGrey(BuildContext context) {

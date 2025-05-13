@@ -264,10 +264,10 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                               errorDescription:
                                                   "There's no study material for this lesson",
                                               image: context
-                                                    .watch<ThemeProvider>()
-                                                    .isDarkMode
-                                                ? 'assets/images/404-dark.png'
-                                                : 'assets/images/404.png'),
+                                                      .watch<ThemeProvider>()
+                                                      .isDarkMode
+                                                  ? 'assets/images/404-dark.png'
+                                                  : 'assets/images/404.png'),
                                         ),
                                       )
                                     else
@@ -293,9 +293,10 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             return DesktopFile(
                                               slides: slides,
                                               notes: [],
-                                              fileName: (slide['file'] as String)
-                                                  .split('/')
-                                                  .last,
+                                              fileName:
+                                                  (slide['file'] as String)
+                                                      .split('/')
+                                                      .last,
                                               lesson: lesson['name'],
                                               material: slide,
                                               icon: FluentIcons
@@ -319,10 +320,10 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                             return DesktopRecording(
                                               contributions: contributions,
                                               recordings: [],
-                                              fileName:
-                                                  (contribution['file'] as String)
-                                                      .split('/')
-                                                      .last,
+                                              fileName: (contribution['file']
+                                                      as String)
+                                                  .split('/')
+                                                  .last,
                                               lesson: lesson['name'],
                                               material: contribution,
                                               icon: FluentIcons.play_24_filled,

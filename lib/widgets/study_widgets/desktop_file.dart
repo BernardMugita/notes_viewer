@@ -87,61 +87,68 @@ class _DesktopFileState extends State<DesktopFile> {
       },
       child: Listener(
         onPointerDown: onRightClick,
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-              color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                  color: isSelectedRecording && actionMode
-                      ? AppUtils.mainBlue(context)
-                      : AppUtils.mainGrey(context))),
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-          child: Row(
-            children: [
-              CircleAvatar(
-                  backgroundColor: fileExtension == 'pdf'
-                      ? AppUtils.mainRed(context).withOpacity(0.3)
-                      : fileExtension == 'docx'
-                          ? AppUtils.mainBlue(context).withOpacity(0.3)
-                          : fileExtension == 'xlxs'
-                              ? const Color.fromARGB(255, 100, 187, 0)
-                              : fileExtension == 'ppt'
-                                  ? Colors.orange.withOpacity(0.3)
-                                  : AppUtils.mainBlue(context).withOpacity(0.3),
-                  child: Icon(
-                    widget.icon,
-                    size: 20,
-                    color: fileExtension == 'pdf'
-                        ? AppUtils.mainRed(context)
-                        : fileExtension == 'docx'
-                            ? AppUtils.mainBlue(context)
-                            : fileExtension == 'xlxs'
-                                ? const Color.fromARGB(255, 100, 187, 0)
-                                : fileExtension == 'ppt'
-                                    ? Colors.orange
-                                    : AppUtils.mainBlue(context),
-                  )),
-              Gap(10),
-              SizedBox(
-                child: Text(widget.material['name'] ?? 'material',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: isSelectedRecording && actionMode
-                            ? AppUtils.mainBlue(context)
-                            : AppUtils.mainBlack(context),
-                        fontWeight: isSelectedRecording && actionMode
-                            ? FontWeight.bold
-                            : FontWeight.normal)),
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: AppUtils.mainWhite(context),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                      color: isSelectedRecording && actionMode
+                          ? AppUtils.mainBlue(context)
+                          : AppUtils.mainGrey(context))),
+              padding:
+                  const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                      backgroundColor: fileExtension == 'pdf'
+                          ? AppUtils.mainRed(context).withOpacity(0.3)
+                          : fileExtension == 'docx'
+                              ? AppUtils.mainBlue(context).withOpacity(0.3)
+                              : fileExtension == 'xlxs'
+                                  ? const Color.fromARGB(255, 100, 187, 0)
+                                  : fileExtension == 'ppt'
+                                      ? Colors.orange.withOpacity(0.3)
+                                      : AppUtils.mainBlue(context)
+                                          .withOpacity(0.3),
+                      child: Icon(
+                        widget.icon,
+                        size: 20,
+                        color: fileExtension == 'pdf'
+                            ? AppUtils.mainRed(context)
+                            : fileExtension == 'docx'
+                                ? AppUtils.mainBlue(context)
+                                : fileExtension == 'xlxs'
+                                    ? const Color.fromARGB(255, 100, 187, 0)
+                                    : fileExtension == 'ppt'
+                                        ? Colors.orange
+                                        : AppUtils.mainBlue(context),
+                      )),
+                  Gap(10),
+                  SizedBox(
+                    child: Text(widget.material['name'] ?? 'material',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: isSelectedRecording && actionMode
+                                ? AppUtils.mainBlue(context)
+                                : AppUtils.mainBlack(context),
+                            fontWeight: isSelectedRecording && actionMode
+                                ? FontWeight.bold
+                                : FontWeight.normal)),
+                  ),
+                ],
               ),
-              Spacer(),
-              if (user.isNotEmpty &&
-                  user['role'] == 'admin' &&
-                  isSelectedRecording &&
-                  actionMode)
-                SizedBox(
+            ),
+            if (user.isNotEmpty &&
+                user['role'] == 'admin' &&
+                isSelectedRecording &&
+                actionMode)
+              Positioned(
+                right: 10,
+                child: SizedBox(
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -203,8 +210,8 @@ class _DesktopFileState extends State<DesktopFile> {
                     ),
                   ),
                 ),
-            ],
-          ),
+              )
+          ],
         ),
       ),
     );

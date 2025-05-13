@@ -1,5 +1,5 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/dashboard_widgets/card_row/desktop_card.dart';
@@ -20,15 +20,35 @@ class _DesktopCardRowState extends State<DesktopCardRow> {
   Widget build(BuildContext context) {
     final user = context.read<UserProvider>().user;
 
-    return SizedBox(
-      width: double.infinity,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.4,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+          color: AppUtils.mainWhite(context),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: AppUtils.mainGrey(context)),
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: [
-          Text("Summary",
-              style: TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
-          Gap(10),
           Row(
+            spacing: 10,
+            children: [
+              Icon(FluentIcons.list_24_regular,
+                  color: AppUtils.mainBlue(context)),
+              Text("Summary",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: AppUtils.mainBlue(context),
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Divider(
+            color: AppUtils.mainGrey(context),
+          ),
+          Column(
+            spacing: 10,
             children: [
               if (user.isNotEmpty && user['role'] == 'admin')
                 DesktopCard(

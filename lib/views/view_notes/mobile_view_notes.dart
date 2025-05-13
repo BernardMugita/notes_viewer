@@ -43,14 +43,14 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
     final fileName = args?['fileName'] as String? ?? 'File';
     final lessonName = args?['lesson'] as String? ?? 'Lesson';
 
+    print(material);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppUtils.mainBlue(context),
         elevation: 3,
         leading: GestureDetector(
-          onTap: () {
-            
-          },
+          onTap: () {},
           child: Icon(
             FluentIcons.re_order_24_regular,
             color: AppUtils.mainWhite(context),

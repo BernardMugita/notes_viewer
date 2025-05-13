@@ -42,8 +42,6 @@ class _ActivityState extends State<Activity> {
     String uploadType = activity['type'] ?? 'notes';
     final unitId = activity['unit_id'];
 
-    print(uploadType);
-
     return Consumer3<TogglesProvider, DashboardProvider, LessonsProvider>(
       builder: (BuildContext context, toggleProvider, dashboardProvider,
           lessonProvider, _) {
@@ -82,6 +80,8 @@ class _ActivityState extends State<Activity> {
           margin: const EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
             color: AppUtils.mainWhite(context),
+            border:
+                Border(bottom: BorderSide(color: AppUtils.mainGrey(context))),
           ),
           child: Column(
             children: [
@@ -93,9 +93,18 @@ class _ActivityState extends State<Activity> {
                       context.read<UnitsProvider>().setUnitId(unitId);
                       context.go('/units/notes');
                     },
-                    child: Text(
-                      activity['title'] ?? 'Loading . . .',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Row(
+                      children: [
+                        Icon(
+                          FluentIcons.line_style_sketch_20_regular,
+                          color: AppUtils.mainBlue(context),
+                        ),
+                        Gap(10),
+                        Text(
+                          activity['title'] ?? 'Loading . . .',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                   GestureDetector(
@@ -170,7 +179,8 @@ class _ActivityState extends State<Activity> {
                                       ? FluentIcons.book_24_regular
                                       : uploadType == 'slides'
                                           ? FluentIcons.slide_content_24_regular
-                                          : uploadType == 'recordings' || uploadType == 'recording'
+                                          : uploadType == 'recordings' ||
+                                                  uploadType == 'recording'
                                               ? FluentIcons.video_24_regular
                                               : uploadType ==
                                                       "student_contributions"

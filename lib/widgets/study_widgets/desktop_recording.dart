@@ -90,108 +90,114 @@ class _DesktopRecordingState extends State<DesktopRecording> {
       },
       child: Listener(
         onPointerDown: onRightClick,
-        child: Container(
-            // width: double.infinity,
-            decoration: BoxDecoration(
-                color: AppUtils.mainWhite(context),
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                    color: isSelectedRecording && actionMode
-                        ? AppUtils.mainBlue(context)
-                        : AppUtils.mainGrey(context))),
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: AppUtils.mainBlueAccent(context),
-                  child: Icon(
-                    widget.icon,
-                    size: 20,
-                    color: AppUtils.mainBlue(context),
-                  ),
-                ),
-                Gap(10),
-                SizedBox(
-                    child: Text(widget.material['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: isSelectedRecording && actionMode
-                                ? AppUtils.mainBlue(context)
-                                : AppUtils.mainBlack(context),
-                            fontWeight: isSelectedRecording && actionMode
-                                ? FontWeight.bold
-                                : FontWeight.normal))),
-                Spacer(),
-                if (user.isNotEmpty &&
-                    user['role'] == 'admin' &&
-                    isSelectedRecording &&
-                    actionMode)
-                  SizedBox(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Row(
-                        children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isRightClicked = false;
-                                  // _showDialog(context,
-                                  //     courses: courses, token: tokenRef);
-                                });
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.mainGreen(context)),
-                                  shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)))),
-                              child: Row(
-                                children: [
-                                  Icon(FluentIcons.edit_24_regular,
-                                      color: AppUtils.mainWhite(context)),
-                                  const Gap(5),
-                                  Text("Edit",
-                                      style: TextStyle(
-                                          color: AppUtils.mainWhite(context))),
-                                ],
-                              )),
-                          Gap(5),
-                          ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isRightClicked = false;
-                                  _showDeleteDialog(context);
-                                });
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.mainRed(context)),
-                                  shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)))),
-                              child: Row(
-                                children: [
-                                  Icon(FluentIcons.delete_24_regular,
-                                      color: AppUtils.mainWhite(context)),
-                                  const Gap(5),
-                                  Text("Delete",
-                                      style: TextStyle(
-                                          color: AppUtils.mainWhite(context))),
-                                ],
-                              ))
-                        ],
+        child: Stack(
+          children: [
+            Container(
+                // width: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppUtils.mainWhite(context),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: isSelectedRecording && actionMode
+                            ? AppUtils.mainBlue(context)
+                            : AppUtils.mainGrey(context))),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppUtils.mainBlueAccent(context),
+                      child: Icon(
+                        widget.icon,
+                        size: 20,
+                        color: AppUtils.mainBlue(context),
                       ),
                     ),
+                    Gap(10),
+                    SizedBox(
+                        child: Text(widget.material['name'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: isSelectedRecording && actionMode
+                                    ? AppUtils.mainBlue(context)
+                                    : AppUtils.mainBlack(context),
+                                fontWeight: isSelectedRecording && actionMode
+                                    ? FontWeight.bold
+                                    : FontWeight.normal))),
+                  ],
+                )),
+            if (user.isNotEmpty &&
+                user['role'] == 'admin' &&
+                isSelectedRecording &&
+                actionMode)
+              Positioned(
+                right: 10,
+                child: SizedBox(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isRightClicked = false;
+                                // _showDialog(context,
+                                //     courses: courses, token: tokenRef);
+                              });
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    AppUtils.mainGreen(context)),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5)))),
+                            child: Row(
+                              children: [
+                                Icon(FluentIcons.edit_24_regular,
+                                    color: AppUtils.mainWhite(context)),
+                                const Gap(5),
+                                Text("Edit",
+                                    style: TextStyle(
+                                        color: AppUtils.mainWhite(context))),
+                              ],
+                            )),
+                        Gap(5),
+                        ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isRightClicked = false;
+                                _showDeleteDialog(context);
+                              });
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    AppUtils.mainRed(context)),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5)))),
+                            child: Row(
+                              children: [
+                                Icon(FluentIcons.delete_24_regular,
+                                    color: AppUtils.mainWhite(context)),
+                                const Gap(5),
+                                Text("Delete",
+                                    style: TextStyle(
+                                        color: AppUtils.mainWhite(context))),
+                              ],
+                            ))
+                      ],
+                    ),
                   ),
-              ],
-            )),
+                ),
+              )
+          ],
+        ),
       ),
     );
   }

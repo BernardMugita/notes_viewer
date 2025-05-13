@@ -10,7 +10,7 @@ import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/providers/uploads_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
-import 'package:maktaba/router/router.dart'; // Make sure to import this
+import 'package:maktaba/router/router.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/views/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
