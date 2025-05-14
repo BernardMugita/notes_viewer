@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
@@ -15,12 +17,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 class DesktopVideoViewer extends StatefulWidget {
   final String fileName;
   final String uploadType;
+  final Map<dynamic, dynamic> material;
   final Function(Duration duration) onPressed;
 
   const DesktopVideoViewer({
     super.key,
     required this.fileName,
     required this.uploadType,
+    required this.material,
     required this.onPressed,
   });
 
@@ -32,7 +36,41 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
   late VideoPlayerController videoPlayerController;
   late Future<void> _initializeVideoPlayerFuture;
   late VoidCallback _listener;
+  late DashboardProvider dashboardProvider;
+
   double _playbackSpeed = 1.0;
+
+  Map currentlyViewing = {};
+
+  Map<String, dynamic> user = {};
+
+  Duration remainingTime = const Duration(milliseconds: 0);
+
+  Duration fetchDuration(Duration videoDuration, Duration videoProgress) {
+    int timeInSeconds = 0;
+
+    timeInSeconds = videoDuration.inSeconds - videoProgress.inSeconds;
+
+    remainingTime = Duration(seconds: timeInSeconds);
+
+    return remainingTime;
+  }
+
+  void saveCurrentlyViewing(Map user, String materialName, String createdAt,
+      String type, String description, Duration duration) async {
+    currentlyViewing = {
+      "user_id": user['id'],
+      "name": materialName,
+      "created_at": createdAt,
+      "type": type,
+      "description": description,
+      "duration": duration.inSeconds,
+    };
+
+    print(currentlyViewing);
+
+    dashboardProvider.saveUsersRecentlyViewedMaterial(currentlyViewing);
+  }
 
   @override
   void initState() {
@@ -60,7 +98,25 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
+    fetchDuration(videoPlayerController.value.duration,
+        videoPlayerController.value.position);
+
+    saveCurrentlyViewing(
+        user,
+        widget.material['name'],
+        widget.material['created_at'],
+        widget.material['type'],
+        widget.material['description'],
+        remainingTime);
+
     videoPlayerController.removeListener(_listener);
     videoPlayerController.dispose();
     super.dispose();
@@ -395,16 +451,20 @@ class _FullScreenControlsState extends State<_FullScreenControls> {
                   IconButton(
                     icon: const Icon(Icons.fast_rewind, color: Colors.white),
                     onPressed: () {
-                      final newPosition = position - const Duration(seconds: 10);
+                      final newPosition =
+                          position - const Duration(seconds: 10);
                       widget.controller.seekTo(
-                        newPosition < Duration.zero ? Duration.zero : newPosition,
+                        newPosition < Duration.zero
+                            ? Duration.zero
+                            : newPosition,
                       );
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.fast_forward, color: Colors.white),
                     onPressed: () {
-                      final newPosition = position + const Duration(seconds: 10);
+                      final newPosition =
+                          position + const Duration(seconds: 10);
                       widget.controller.seekTo(
                         newPosition > duration ? duration : newPosition,
                       );
@@ -426,4 +486,3 @@ class _FullScreenControlsState extends State<_FullScreenControls> {
     return "$minutes:$seconds";
   }
 }
-

@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
-// import 'package:go_router/go_router.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/top_navigation.dart';
@@ -84,6 +83,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                     flex: 4,
                     child: DesktopFileViewer(
                         fileName: fileName,
+                        material: material,
                         onPressed: (Duration videoDuration) {
                           setState(() {
                             duration = videoDuration;

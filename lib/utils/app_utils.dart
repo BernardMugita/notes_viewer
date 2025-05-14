@@ -118,4 +118,10 @@ class AppUtils {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
+
+  static String formatDuration(Duration d) {
+    final minutes = d.inMinutes;
+    final seconds = d.inSeconds % 60;
+    return "$minutes minute${minutes != 1 ? 's' : ''} ${seconds.toString().padLeft(2, '0')} second${seconds != 1 ? 's' : ''} left";
+  }
 }

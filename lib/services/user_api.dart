@@ -22,6 +22,23 @@ class UserApi {
     }
   }
 
+  Future<Map<String, dynamic>> getUploader({required String userId}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final getUserRequest = await http.post(
+        Uri.parse('$url/users/get_user'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      return jsonDecode(getUserRequest.body);
+    } catch (e) {
+      throw Exception('Failed to get user details $e');
+    }
+  }
+
   Future<Map<String, dynamic>> editUser(
       {required String token,
       required String username,

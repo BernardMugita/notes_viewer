@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
@@ -10,7 +11,6 @@ import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 // import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
-import 'package:maktaba/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:maktaba/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
@@ -73,377 +73,481 @@ class _DesktopAccountState extends State<DesktopAccount> {
     course = context.watch<CoursesProvider>().course;
 
     return Scaffold(
+        backgroundColor: AppUtils.backgroundPanel(context),
         body: Flex(
             crossAxisAlignment: CrossAxisAlignment.start,
             direction: Axis.horizontal,
             children: [
-          isMinimized
-              ? Expanded(
-                  flex: 1,
-                  child: SideNavigation(),
-                )
-              : SizedBox(
-                  width: 80,
-                  child: SideNavigation(),
-                ),
-          Expanded(
-              flex: 6,
-              child: Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.05,
-                      right: MediaQuery.of(context).size.width * 0.05,
-                      top: 20,
-                      bottom: 20),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
-                      children: [
-                        // Consumer<TogglesProvider>(
-                        //     builder: (context, toggleProvider, _) {
-                        //   return toggleProvider.isBannerDismissed
-                        //       ? SizedBox()
-                        //       : MembershipBanner();
-                        // }),
-                        Row(
-                          children: [
-                            Text(
-                              "User Account",
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: AppUtils.mainBlue(context),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacer(),
-                            TopNavigation(
-                                isRecentActivities: context
-                                    .watch<DashboardProvider>()
-                                    .isNewActivities)
-                          ],
-                        ),
-                        const Gap(20),
-                        Flex(
-                          direction: Axis.horizontal,
+              isMinimized
+                  ? Expanded(
+                      flex: 1,
+                      child: SideNavigation(),
+                    )
+                  : SizedBox(
+                      width: 80,
+                      child: SideNavigation(),
+                    ),
+              Expanded(
+                  flex: 6,
+                  child: Padding(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.1,
+                          right: MediaQuery.of(context).size.width * 0.1,
+                          top: 20,
+                          bottom: 20),
+                      child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: Column(
+                            // Consumer<TogglesProvider>(
+                            //     builder: (context, toggleProvider, _) {
+                            //   return toggleProvider.isBannerDismissed
+                            //       ? SizedBox()
+                            //       : MembershipBanner();
+                            // }),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppUtils.mainBlue(context),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 100,
-                                    backgroundColor:
-                                        AppUtils.mainWhite(context),
-                                    child: Icon(
-                                      FluentIcons.person_24_regular,
-                                      size: 100,
-                                      color: AppUtils.mainGrey(context),
+                                  Text(
+                                    "User Account",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppUtils.mainWhite(context),
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Gap(40),
-                                  Consumer<TogglesProvider>(builder:
-                                      (context, toggleProvider, child) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        toggleProvider.toggleAccountView();
-                                      },
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Icon(FluentIcons
-                                                    .person_accounts_24_regular),
-                                                Gap(5),
-                                                Text("Account Details")
-                                              ],
-                                            ),
-                                            Gap(5),
-                                            Divider(
-                                              thickness: 0.5,
-                                              color: AppUtils.mainBlue(context),
-                                            ),
-                                            Gap(5),
-                                          ],
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Icon(
+                                            FluentIcons.alert_24_regular,
+                                            size: 25,
+                                            color: AppUtils.mainWhite(context),
+                                          ),
+                                          Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: CircleAvatar(
+                                                radius: 5,
+                                                backgroundColor: context
+                                                        .watch<
+                                                            DashboardProvider>()
+                                                        .isNewActivities
+                                                    ? AppUtils.mainRed(context)
+                                                    : AppUtils.mainGrey(
+                                                        context),
+                                              ))
+                                        ],
+                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            context.go('/settings');
+                                          },
+                                          icon: Icon(
+                                            FluentIcons.settings_24_regular,
+                                            size: 25,
+                                            color: AppUtils.mainWhite(context),
+                                          )),
+                                      Gap(10),
+                                      SizedBox(
+                                        height: 40,
+                                        child: VerticalDivider(
+                                          color: AppUtils.mainGrey(context),
                                         ),
                                       ),
-                                    );
-                                  }),
-                                  Consumer<TogglesProvider>(builder: (
-                                    context,
-                                    toggleProvider,
-                                    child,
-                                  ) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        toggleProvider.toggleMembershipView();
-                                      },
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Icon(FluentIcons
-                                                    .people_community_24_regular),
-                                                Gap(5),
-                                                Text("Account Memberships")
-                                              ],
+                                      Gap(10),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          if (context
+                                              .watch<UserProvider>()
+                                              .isLoading)
+                                            SizedBox(
+                                              width: 150,
+                                              child: LinearProgressIndicator(
+                                                minHeight: 1,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            )
+                                          else
+                                            Text(
+                                                user.isNotEmpty
+                                                    ? user['username']
+                                                    : 'Guest',
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: AppUtils.mainWhite(
+                                                        context),
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          if (context
+                                              .watch<UserProvider>()
+                                              .isLoading)
+                                            SizedBox(
+                                              width: 50,
+                                              child: LinearProgressIndicator(
+                                                minHeight: 1,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            )
+                                          else
+                                            SizedBox(
+                                              width: 150,
+                                              child: Text(
+                                                  user.isNotEmpty
+                                                      ? user['email']
+                                                      : 'guest@email.com',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontSize: 12,
+                                                      color: AppUtils.mainWhite(
+                                                          context))),
                                             ),
-                                            Gap(5),
-                                            Divider(
-                                              thickness: 0.5,
-                                              color: AppUtils.mainBlue(context),
-                                            ),
-                                            Gap(5),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                    );
-                                  })
+                                      Gap(10),
+                                      CircleAvatar(
+                                        child:
+                                            Icon(FluentIcons.person_24_regular),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
-                            Gap(40),
-                            Expanded(
-                                flex: 3,
-                                child: Consumer<TogglesProvider>(builder: (
-                                  context,
-                                  toggleProvider,
-                                  child,
-                                ) {
-                                  return Container(
-                                    padding: const EdgeInsets.all(20),
-                                    height: MediaQuery.of(context).size.height *
-                                        0.75,
-                                    decoration: BoxDecoration(
-                                      color: AppUtils.mainWhite(context),
-                                    ),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: toggleProvider.accountView
-                                            ? [
+                            const Gap(20),
+                            Flex(
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 100,
+                                        backgroundColor:
+                                            AppUtils.mainWhite(context),
+                                        child: Icon(
+                                          FluentIcons.person_24_regular,
+                                          size: 100,
+                                          color: AppUtils.mainGrey(context),
+                                        ),
+                                      ),
+                                      Gap(40),
+                                      Consumer<TogglesProvider>(builder:
+                                          (context, toggleProvider, child) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            toggleProvider.toggleAccountView();
+                                          },
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Column(
+                                              children: [
                                                 Row(
                                                   children: [
-                                                    Text("Account Details",
-                                                        style: TextStyle(
-                                                            fontSize: 18,
-                                                            color: AppUtils
-                                                                .mainBlue(
-                                                                    context),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                    Spacer(),
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        padding:
-                                                            WidgetStatePropertyAll(
-                                                                const EdgeInsets
-                                                                    .all(10)),
-                                                        backgroundColor:
-                                                            WidgetStatePropertyAll(
-                                                                AppUtils.mainBlue(
-                                                                    context)),
-                                                        shape:
-                                                            WidgetStatePropertyAll(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onPressed: () {
-                                                        _showDialog(
-                                                            context, user);
-                                                      },
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "Edit Account",
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: AppUtils
-                                                                  .mainWhite(
-                                                                      context),
-                                                            ),
-                                                          ),
-                                                          const Gap(5),
-                                                          Icon(
-                                                            FluentIcons
-                                                                .person_edit_24_regular,
-                                                            size: 14,
-                                                            color: AppUtils
-                                                                .mainWhite(
-                                                                    context),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                    Icon(FluentIcons
+                                                        .person_accounts_24_regular),
+                                                    Gap(5),
+                                                    Text("Account Details")
                                                   ],
                                                 ),
-                                                Gap(30),
-                                                _buildAccountDetails(context,
-                                                    title: 'Username',
-                                                    value: isLoading
-                                                        ? 'username'
-                                                        : user.isNotEmpty
-                                                            ? user['username']
-                                                            : 'Details not found'),
-                                                _buildAccountDetails(context,
-                                                    title: 'Email',
-                                                    value: isLoading
-                                                        ? 'email'
-                                                        : user.isNotEmpty
-                                                            ? user['email']
-                                                            : 'Details not found'),
-                                                _buildAccountDetails(context,
-                                                    title: 'Phone',
-                                                    value: isLoading
-                                                        ? 'phone'
-                                                        : user.isNotEmpty
-                                                            ? user['phone']
-                                                            : 'Details not found'),
-                                                _buildAccountDetails(context,
-                                                    title:
-                                                        'Registration number',
-                                                    value: isLoading
-                                                        ? 'reg_no'
-                                                        : user.isNotEmpty
-                                                            ? user['reg_no']
-                                                            : 'Details not found'),
-                                                _buildAccountDetails(context,
-                                                    title: 'Course',
-                                                    value: isLoading
-                                                        ? 'course'
-                                                        : course.isNotEmpty
-                                                            ? course['name']
-                                                            : 'Details not found'),
-                                                _buildAccountDetails(context,
-                                                    title: 'Date Joined',
-                                                    value: isLoading
-                                                        ? '0/0/2025'
-                                                        : user.isNotEmpty
-                                                            ? AppUtils
-                                                                .formatDate(user[
-                                                                    'created_at'])
-                                                            : 'Details not found'),
-                                                Spacer(),
-                                                Text("Account status:"),
                                                 Gap(5),
+                                                Divider(
+                                                  thickness: 0.5,
+                                                  color: AppUtils.mainBlue(
+                                                      context),
+                                                ),
+                                                Gap(5),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      Consumer<TogglesProvider>(builder: (
+                                        context,
+                                        toggleProvider,
+                                        child,
+                                      ) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            toggleProvider
+                                                .toggleMembershipView();
+                                          },
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Column(
+                                              children: [
                                                 Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
                                                   children: [
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 5,
-                                                              bottom: 5,
-                                                              left: 10,
-                                                              right: 10),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          color: const Color
-                                                              .fromARGB(
-                                                              87, 255, 25, 0)),
-                                                      child: Text(
-                                                        "Not verified",
-                                                        style: TextStyle(
-                                                            color: AppUtils
-                                                                .mainRed(
-                                                                    context)),
-                                                      ),
-                                                    ),
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        padding:
-                                                            WidgetStatePropertyAll(
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10,
-                                                                    right: 10,
-                                                                    top: 5,
-                                                                    bottom: 5)),
-                                                        backgroundColor:
-                                                            WidgetStatePropertyAll(
-                                                                AppUtils.mainBlue(
-                                                                    context)),
-                                                        shape:
-                                                            WidgetStatePropertyAll(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onPressed: () {},
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "Verify Account",
-                                                            style: TextStyle(
-                                                              color: AppUtils
-                                                                  .mainWhite(
-                                                                      context),
-                                                            ),
-                                                          ),
-                                                          const Gap(5),
-                                                          Icon(
-                                                            FluentIcons
-                                                                .checkmark_circle_24_filled,
-                                                            size: 16,
-                                                            color: AppUtils
-                                                                .mainWhite(
-                                                                    context),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
+                                                    Icon(FluentIcons
+                                                        .people_community_24_regular),
+                                                    Gap(5),
+                                                    Text("Account Memberships")
                                                   ],
                                                 ),
-                                                Gap(10),
-                                                Divider(),
                                                 Gap(5),
-                                                Text(
-                                                  "Acknowledgment",
-                                                  style: TextStyle(
-                                                      color: AppUtils.mainBlue(
-                                                          context)),
+                                                Divider(
+                                                  thickness: 0.5,
+                                                  color: AppUtils.mainBlue(
+                                                      context),
                                                 ),
                                                 Gap(5),
-                                                Text(
-                                                  "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                                  style: TextStyle(
-                                                      color: AppUtils.mainGrey(
-                                                          context)),
-                                                ),
-                                                Text("Powered by Labs")
-                                              ]
-                                            : toggleProvider.membershipView
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      })
+                                    ],
+                                  ),
+                                ),
+                                Gap(40),
+                                Expanded(
+                                    flex: 3,
+                                    child: Consumer<TogglesProvider>(builder: (
+                                      context,
+                                      toggleProvider,
+                                      child,
+                                    ) {
+                                      return Container(
+                                        padding: const EdgeInsets.all(20),
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        decoration: BoxDecoration(
+                                            color: AppUtils.mainWhite(context),
+                                            border: Border.all(
+                                                color:
+                                                    AppUtils.mainGrey(context)),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: toggleProvider.accountView
                                                 ? [
-                                                    Text("Account Membership",
-                                                        style: TextStyle(
-                                                            fontSize: 18,
-                                                            color: AppUtils
-                                                                .mainBlue(
-                                                                    context),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
+                                                    Row(
+                                                      children: [
+                                                        Text("Account Details",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: AppUtils
+                                                                    .mainBlue(
+                                                                        context),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                        Spacer(),
+                                                        ElevatedButton(
+                                                          style: ButtonStyle(
+                                                            padding:
+                                                                WidgetStatePropertyAll(
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        10)),
+                                                            backgroundColor:
+                                                                WidgetStatePropertyAll(
+                                                                    AppUtils.mainBlue(
+                                                                        context)),
+                                                            shape:
+                                                                WidgetStatePropertyAll(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            _showDialog(
+                                                                context, user);
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                "Edit Account",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: AppUtils
+                                                                      .mainWhite(
+                                                                          context),
+                                                                ),
+                                                              ),
+                                                              const Gap(5),
+                                                              Icon(
+                                                                FluentIcons
+                                                                    .person_edit_24_regular,
+                                                                size: 14,
+                                                                color: AppUtils
+                                                                    .mainWhite(
+                                                                        context),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                     Gap(30),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title: 'Username',
+                                                        value: isLoading
+                                                            ? 'username'
+                                                            : user.isNotEmpty
+                                                                ? user[
+                                                                    'username']
+                                                                : 'Details not found'),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title: 'Email',
+                                                        value: isLoading
+                                                            ? 'email'
+                                                            : user.isNotEmpty
+                                                                ? user['email']
+                                                                : 'Details not found'),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title: 'Phone',
+                                                        value: isLoading
+                                                            ? 'phone'
+                                                            : user.isNotEmpty
+                                                                ? user['phone']
+                                                                : 'Details not found'),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title:
+                                                            'Registration number',
+                                                        value: isLoading
+                                                            ? 'reg_no'
+                                                            : user.isNotEmpty
+                                                                ? user['reg_no']
+                                                                : 'Details not found'),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title: 'Course',
+                                                        value: isLoading
+                                                            ? 'course'
+                                                            : course.isNotEmpty
+                                                                ? course['name']
+                                                                : 'Details not found'),
+                                                    _buildAccountDetails(
+                                                        context,
+                                                        title: 'Date Joined',
+                                                        value: isLoading
+                                                            ? '0/0/2025'
+                                                            : user.isNotEmpty
+                                                                ? AppUtils
+                                                                    .formatDate(
+                                                                        user[
+                                                                            'created_at'])
+                                                                : 'Details not found'),
                                                     Spacer(),
+                                                    Text("Account status:"),
+                                                    Gap(5),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 5,
+                                                                  bottom: 5,
+                                                                  left: 10,
+                                                                  right: 10),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              color: const Color
+                                                                  .fromARGB(87,
+                                                                  255, 25, 0)),
+                                                          child: Text(
+                                                            "Not verified",
+                                                            style: TextStyle(
+                                                                color: AppUtils
+                                                                    .mainRed(
+                                                                        context)),
+                                                          ),
+                                                        ),
+                                                        ElevatedButton(
+                                                          style: ButtonStyle(
+                                                            padding:
+                                                                WidgetStatePropertyAll(
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10,
+                                                                        top: 5,
+                                                                        bottom:
+                                                                            5)),
+                                                            backgroundColor:
+                                                                WidgetStatePropertyAll(
+                                                                    AppUtils.mainBlue(
+                                                                        context)),
+                                                            shape:
+                                                                WidgetStatePropertyAll(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {},
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                "Verify Account",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: AppUtils
+                                                                      .mainWhite(
+                                                                          context),
+                                                                ),
+                                                              ),
+                                                              const Gap(5),
+                                                              Icon(
+                                                                FluentIcons
+                                                                    .checkmark_circle_24_filled,
+                                                                size: 16,
+                                                                color: AppUtils
+                                                                    .mainWhite(
+                                                                        context),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                     Gap(10),
-                                                    Divider(),
+                                                    Divider(
+                                                      color: AppUtils.mainGrey(
+                                                          context),
+                                                    ),
                                                     Gap(5),
                                                     Text(
                                                       "Acknowledgment",
@@ -462,28 +566,69 @@ class _DesktopAccountState extends State<DesktopAccount> {
                                                     ),
                                                     Text("Powered by Labs")
                                                   ]
-                                                : []),
-                                  );
-                                })),
-                            Expanded(
-                              flex: 2,
-                              child: SizedBox(),
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.75,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [PlatformDetails()],
-                                  ),
-                                ))
-                          ],
-                        )
-                      ])))
-        ]));
+                                                : toggleProvider.membershipView
+                                                    ? [
+                                                        Text(
+                                                            "Account Membership",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: AppUtils
+                                                                    .mainBlue(
+                                                                        context),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                        Gap(30),
+                                                        Spacer(),
+                                                        Gap(10),
+                                                        Divider(
+                                                          color:
+                                                              AppUtils.mainGrey(
+                                                                  context),
+                                                        ),
+                                                        Gap(5),
+                                                        Text(
+                                                          "Acknowledgment",
+                                                          style: TextStyle(
+                                                              color: AppUtils
+                                                                  .mainBlue(
+                                                                      context)),
+                                                        ),
+                                                        Gap(5),
+                                                        Text(
+                                                          "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
+                                                          style: TextStyle(
+                                                              color: AppUtils
+                                                                  .mainGrey(
+                                                                      context)),
+                                                        ),
+                                                        Text("Powered by Labs")
+                                                      ]
+                                                    : []),
+                                      );
+                                    })),
+                                Expanded(
+                                  flex: 2,
+                                  child: SizedBox(),
+                                ),
+                                Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.8,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [PlatformDetails()],
+                                      ),
+                                    ))
+                              ],
+                            )
+                          ])))
+            ]));
   }
 
   Widget _buildAccountDetails(BuildContext context,

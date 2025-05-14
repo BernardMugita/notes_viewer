@@ -18,7 +18,6 @@ import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
-import 'package:maktaba/widgets/app_widgets/navigation/top_navigation.dart';
 import 'package:maktaba/widgets/study_widgets/desktop_file.dart';
 import 'package:maktaba/widgets/study_widgets/desktop_recording.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +39,10 @@ class _DesktopStudyState extends State<DesktopStudy> {
   TextEditingController fileNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController uploadTypeController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
+  List allMaterial = [];
   List<String> form = [];
 
   // Removed notes, slides, recordings, contributions, and isMaterialsEmpty from state.
@@ -82,9 +83,27 @@ class _DesktopStudyState extends State<DesktopStudy> {
     }
   }
 
+  void _populateAllMaterial() {
+    final lesson = context.read<LessonsProvider>().lesson;
+    final materials = (lesson['materials'] as Map<String, dynamic>?) ?? {};
+
+    final notes = (materials['notes'] as List?) ?? [];
+    final slides = (materials['slides'] as List?) ?? [];
+    final recordings = (materials['recordings'] as List?) ?? [];
+    final contributions = (materials['contributions'] as List?) ?? [];
+
+    allMaterial = [
+      ...notes.cast<Map<String, dynamic>>(),
+      ...slides.cast<Map<String, dynamic>>(),
+      ...recordings.cast<Map<String, dynamic>>(),
+      ...contributions.cast<Map<String, dynamic>>(),
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
+    _populateAllMaterial();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
 
@@ -111,37 +130,31 @@ class _DesktopStudyState extends State<DesktopStudy> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _populateAllMaterial();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final lessonsProvider = context.watch<LessonsProvider>();
     final lesson = lessonsProvider.lesson;
     final user = context.watch<UserProvider>().user;
+    final isAdmin = user['role'] == 'admin';
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
 
-    // Compute the materials lists directly from the lesson data.
-    final List notes = (lesson.isNotEmpty && lesson['materials'] != null)
-        ? (lesson['materials']['notes'] ?? [])
-        : [];
-    final List slides = (lesson.isNotEmpty && lesson['materials'] != null)
-        ? (lesson['materials']['slides'] ?? [])
-        : [];
-    final List recordings = (lesson.isNotEmpty && lesson['materials'] != null)
-        ? (lesson['materials']['recordings'] ?? [])
-        : [];
-    final List contributions =
-        (lesson.isNotEmpty && lesson['materials'] != null)
-            ? (lesson['materials']['contributions'] ?? [])
-            : [];
+    bool isMaterialsEmpty = !lessonsProvider.isLoading && allMaterial.isEmpty;
 
-    // Compute the emptiness condition directly.
-    bool isMaterialsEmpty = !lessonsProvider.isLoading &&
-        notes.isEmpty &&
-        slides.isEmpty &&
-        recordings.isEmpty &&
-        contributions.isEmpty;
+    final children = [
+      for (int i = 0; i < allMaterial.length; i++)
+        _buildMaterialItem(allMaterial[i], i),
+    ];
 
-    return Consumer<LessonsProvider>(
-      builder: (BuildContext context, lessonsProvider, _) {
+    return Consumer2<LessonsProvider, TogglesProvider>(
+      builder: (BuildContext context, lessonsProvider, toggleProvider, _) {
         return Scaffold(
+          backgroundColor: AppUtils.backgroundPanel(context),
           body: Flex(
             direction: Axis.horizontal,
             children: [
@@ -158,8 +171,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
                 flex: 6,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.05,
-                      right: MediaQuery.of(context).size.width * 0.05,
+                      left: MediaQuery.of(context).size.width * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.1,
                       top: 20,
                       bottom: 20),
                   child: lessonsProvider.isLoading
@@ -168,42 +181,193 @@ class _DesktopStudyState extends State<DesktopStudy> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Units/Notes/${lesson['name']}",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppUtils.mainGrey(context),
-                                        fontWeight: FontWeight.bold,
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppUtils.mainBlue(context),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: TextField(
+                                      controller: searchController,
+                                      onChanged: (value) {
+                                        toggleProvider.searchAction(
+                                            searchController.text,
+                                            allMaterial,
+                                            'name');
+                                      },
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.all(12.5),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppUtils.mainWhite(context),
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppUtils.mainWhite(context),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        filled: false,
+                                        prefixIcon: Icon(
+                                          FluentIcons.search_24_regular,
+                                          color: AppUtils.mainWhite(context)
+                                              .withOpacity(0.8),
+                                        ),
+                                        hintText: "Search",
+                                        hintStyle: TextStyle(
+                                            fontSize: 16,
+                                            color: AppUtils.mainWhite(context)
+                                                .withOpacity(0.8)),
                                       ),
                                     ),
-                                    const Gap(5),
-                                    Text(
-                                      lesson['name'] ?? "Lesson name",
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        color: AppUtils.mainBlue(context),
-                                        fontWeight: FontWeight.bold,
+                                  ),
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Icon(
+                                            FluentIcons.alert_24_regular,
+                                            size: 25,
+                                            color: AppUtils.mainWhite(context),
+                                          ),
+                                          Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: CircleAvatar(
+                                                radius: 5,
+                                                backgroundColor: context
+                                                        .watch<
+                                                            DashboardProvider>()
+                                                        .isNewActivities
+                                                    ? AppUtils.mainRed(context)
+                                                    : AppUtils.mainGrey(
+                                                        context),
+                                              ))
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                TopNavigation(
-                                    isRecentActivities: context
-                                        .watch<DashboardProvider>()
-                                        .isNewActivities)
-                              ],
+                                      IconButton(
+                                          onPressed: () {
+                                            context.go('/settings');
+                                          },
+                                          icon: Icon(
+                                            FluentIcons.settings_24_regular,
+                                            size: 25,
+                                            color: AppUtils.mainWhite(context),
+                                          )),
+                                      Gap(10),
+                                      SizedBox(
+                                        height: 40,
+                                        child: VerticalDivider(
+                                          color: AppUtils.mainGrey(context),
+                                        ),
+                                      ),
+                                      Gap(10),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          if (context
+                                              .watch<UserProvider>()
+                                              .isLoading)
+                                            SizedBox(
+                                              width: 150,
+                                              child: LinearProgressIndicator(
+                                                minHeight: 1,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            )
+                                          else
+                                            Text(
+                                                user.isNotEmpty
+                                                    ? user['username']
+                                                    : 'Guest',
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: AppUtils.mainWhite(
+                                                        context),
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          if (context
+                                              .watch<UserProvider>()
+                                              .isLoading)
+                                            SizedBox(
+                                              width: 50,
+                                              child: LinearProgressIndicator(
+                                                minHeight: 1,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            )
+                                          else
+                                            SizedBox(
+                                              width: 150,
+                                              child: Text(
+                                                  user.isNotEmpty
+                                                      ? user['email']
+                                                      : 'guest@email.com',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontSize: 12,
+                                                      color: AppUtils.mainWhite(
+                                                          context))),
+                                            ),
+                                        ],
+                                      ),
+                                      Gap(10),
+                                      CircleAvatar(
+                                        child:
+                                            Icon(FluentIcons.person_24_regular),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
+                            Gap(20),
+                            if (!toggleProvider.searchMode)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Units/Notes/${lesson['name']}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.mainGrey(context),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Gap(5),
+                                  Text(
+                                    lesson['name'] ?? "Lesson name",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      color: AppUtils.mainBlue(context),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             const Gap(10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (user.isNotEmpty && user['role'] == 'admin')
+                                if (user.isNotEmpty &&
+                                    user['role'] == 'admin' &&
+                                    !toggleProvider.searchMode)
                                   SizedBox(
                                     width: 150,
                                     child: ElevatedButton(
@@ -246,11 +410,14 @@ class _DesktopStudyState extends State<DesktopStudy> {
                             ),
                             const Gap(20),
                             Expanded(
-                              child: SingleChildScrollView(
+                              child: SizedBox(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Study material",
+                                    Text(
+                                        !toggleProvider.searchMode
+                                            ? "Study material"
+                                            : "Search results for '${searchController.text}'",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: AppUtils.mainGrey(context),
@@ -271,65 +438,42 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                         ),
                                       )
                                     else
-                                      Column(
-                                        spacing: 5,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ...notes.map((note) {
-                                            return DesktopFile(
-                                              notes: notes,
-                                              slides: [],
-                                              fileName: (note['file'] as String)
-                                                  .split('/')
-                                                  .last,
-                                              lesson: lesson['name'],
-                                              material: note,
-                                              icon: FluentIcons
-                                                  .document_pdf_24_regular,
-                                            );
-                                          }).toList(),
-                                          ...slides.map((slide) {
-                                            return DesktopFile(
-                                              slides: slides,
-                                              notes: [],
-                                              fileName:
-                                                  (slide['file'] as String)
-                                                      .split('/')
-                                                      .last,
-                                              lesson: lesson['name'],
-                                              material: slide,
-                                              icon: FluentIcons
-                                                  .slide_layout_24_regular,
-                                            );
-                                          }).toList(),
-                                          ...recordings.map((recording) {
-                                            return DesktopRecording(
-                                              recordings: recordings,
-                                              contributions: [],
-                                              fileName:
-                                                  (recording['file'] as String)
-                                                      .split('/')
-                                                      .last,
-                                              lesson: lesson['name'],
-                                              material: recording,
-                                              icon: FluentIcons.play_24_filled,
-                                            );
-                                          }).toList(),
-                                          ...contributions.map((contribution) {
-                                            return DesktopRecording(
-                                              contributions: contributions,
-                                              recordings: [],
-                                              fileName: (contribution['file']
-                                                      as String)
-                                                  .split('/')
-                                                  .last,
-                                              lesson: lesson['name'],
-                                              material: contribution,
-                                              icon: FluentIcons.play_24_filled,
-                                            );
-                                          }).toList(),
-                                        ],
+                                      SizedBox(
+                                        height: isAdmin
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.65
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.7,
+                                        child: isAdmin
+                                            ? ReorderableListView(
+                                                clipBehavior: Clip.none,
+                                                onReorder:
+                                                    (oldIndex, newIndex) {
+                                                  setState(() {
+                                                    if (newIndex > oldIndex) {
+                                                      newIndex -= 1;
+                                                    }
+                                                    final item = allMaterial
+                                                        .removeAt(oldIndex);
+                                                    allMaterial.insert(
+                                                        newIndex, item);
+                                                  });
+                                                },
+                                                children: [
+                                                  for (int i = 0;
+                                                      i < allMaterial.length;
+                                                      i++)
+                                                    _buildMaterialItem(
+                                                        allMaterial[i], i),
+                                                ],
+                                              )
+                                            : ListView(
+                                                children: children,
+                                              ),
                                       ),
                                   ],
                                 ),
@@ -344,6 +488,49 @@ class _DesktopStudyState extends State<DesktopStudy> {
         );
       },
     );
+  }
+
+  Widget _buildMaterialItem(Map<String, dynamic> mat, int index) {
+    final type = mat['type'] as String;
+    final file = (mat['file'] as String).split('/').last;
+    final icon = _iconForType(type);
+
+    if (type == 'notes' || type == 'slides') {
+      return DesktopFile(
+        key: ValueKey(mat['id'] ?? index),
+        notes: type == 'notes' ? allMaterial : [],
+        slides: type == 'slides' ? allMaterial : [],
+        fileName: file,
+        lesson: context.read<LessonsProvider>().lesson['name'] as String,
+        material: mat,
+        icon: icon,
+      );
+    } else {
+      return DesktopRecording(
+        key: ValueKey(mat['id'] ?? index),
+        recordings: type == 'recordings' ? allMaterial : [],
+        contributions: type == 'contributions' ? allMaterial : [],
+        fileName: file,
+        lesson: context.read<LessonsProvider>().lesson['name'] as String,
+        material: mat,
+        icon: icon,
+      );
+    }
+  }
+
+  IconData _iconForType(String type) {
+    switch (type) {
+      case 'notes':
+        return FluentIcons.document_pdf_24_regular;
+      case 'slides':
+        return FluentIcons.slide_layout_24_regular;
+      case 'recordings':
+        return FluentIcons.play_24_filled;
+      case 'contributions':
+        return FluentIcons.person_24_regular;
+      default:
+        return FluentIcons.question_24_regular;
+    }
   }
 
   void _showDialog(BuildContext context) {

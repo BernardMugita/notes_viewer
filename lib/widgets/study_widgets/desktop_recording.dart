@@ -102,7 +102,8 @@ class _DesktopRecordingState extends State<DesktopRecording> {
                             ? AppUtils.mainBlue(context)
                             : AppUtils.mainGrey(context))),
                 padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                    left: 10, right: 10, top: 10, bottom: 10),
+                margin: const EdgeInsets.only(bottom: 5),
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -132,7 +133,8 @@ class _DesktopRecordingState extends State<DesktopRecording> {
                 isSelectedRecording &&
                 actionMode)
               Positioned(
-                right: 10,
+                right: 25,
+                top: 5,
                 child: SizedBox(
                   child: Container(
                     padding: const EdgeInsets.all(10),

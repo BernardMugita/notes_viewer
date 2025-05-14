@@ -76,8 +76,6 @@ class LessonsProvider extends ChangeNotifier {
       final getLessonRequest =
           await lessonApi.getLessons(token: token, lessonId: lessonId);
 
-      print(getLessonRequest);
-
       if (getLessonRequest['status'] == 'success') {
         success = true;
         lesson = getLessonRequest['lesson'];
@@ -91,7 +89,6 @@ class LessonsProvider extends ChangeNotifier {
       } else {
         error = true;
         message = "Error fetching lesson!";
-        print(message);
         isLoading = false;
         notifyListeners();
         Future.delayed(const Duration(seconds: 3), () {
@@ -103,7 +100,6 @@ class LessonsProvider extends ChangeNotifier {
     } catch (e) {
       error = true;
       message = "Error fetching lesson! $e";
-      print(message);
       isLoading = false;
       notifyListeners();
       Future.delayed(const Duration(seconds: 3), () {

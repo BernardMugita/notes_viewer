@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/units_widgets/desktop_unit_holder.dart';
 
@@ -60,15 +59,16 @@ class _DesktopSemesterHolderState extends State<DesktopSemesterHolder> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: sortedSemesters.map<Widget>((semester) {
           return Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(
+                  color: AppUtils.mainGrey(context),
+                )),
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                Text(
-                  "Semester $semester",
-                  style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
-                ),
-                Gap(20),
                 Column(
                   spacing: 5,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,6 +76,21 @@ class _DesktopSemesterHolderState extends State<DesktopSemesterHolder> {
                     return DesktopUnitHolder(unit: unit);
                   }).toList(),
                 ),
+                Positioned(
+                  top: -40,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    color: AppUtils.backgroundPanel(context),
+                    child: Text(
+                      "Semester $semester",
+                      style: TextStyle(
+                        color: AppUtils.mainGrey(context),
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           );

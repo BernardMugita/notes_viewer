@@ -132,7 +132,7 @@ class _ActivityState extends State<Activity> {
                 Column(
                   children: [
                     Divider(
-                      color: AppUtils.mainBlueAccent(context),
+                      color: AppUtils.mainGrey(context),
                       indent: 10,
                     ),
                     ListTile(

@@ -5,9 +5,11 @@ import 'package:maktaba/widgets/view_notes_widgets/desktop/desktop_video_viewer.
 class DesktopFileViewer extends StatefulWidget {
   final String fileName;
   final Function(Duration duration) onPressed;
+  final Map<dynamic, dynamic> material;
 
   const DesktopFileViewer({
     super.key,
+    required this.material,
     required this.fileName,
     required this.onPressed,
   });
@@ -29,6 +31,7 @@ class _DesktopFileViewerState extends State<DesktopFileViewer> {
         ? DesktopVideoViewer(
             fileName: widget.fileName,
             onPressed: widget.onPressed,
+            material: widget.material,
             uploadType: 'recordings',
           )
         : fileExtension == 'docx' ||
