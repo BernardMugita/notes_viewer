@@ -97,6 +97,7 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                         ? MediaQuery.of(context).size.width * 0.225
                         : MediaQuery.of(context).size.width * 0.3,
                     child: Text(
+                      overflow: TextOverflow.ellipsis,
                       currentlyViewing['description'],
                       style: TextStyle(fontSize: 16),
                     ),
