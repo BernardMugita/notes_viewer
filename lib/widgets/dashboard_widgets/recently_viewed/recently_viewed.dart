@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
@@ -111,8 +112,10 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                     ),
                   ),
                   Text(
-                    AppUtils.formatDuration(
-                        Duration(seconds: currentlyViewing['duration'])),
+                    currentlyViewing['type'] == "recordings"
+                        ? AppUtils.formatDuration(
+                            Duration(seconds: currentlyViewing['duration']))
+                        : "${currentlyViewing['pages'].toString()} pages remainings",
                     style: TextStyle(
                         fontSize: 16, color: AppUtils.mainGrey(context)),
                   ),
@@ -139,7 +142,29 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                         ),
                         Spacer(),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              String url = AppUtils.$serverDir;
+                              // print(url);
+                              String lessonName =
+                                  currentlyViewing['lesson_name'];
+                              Map lessonMaterial =
+                                  currentlyViewing['lesson_materials'];
+                              Map filteredMaterial =
+                                  (lessonMaterial[uploadType] as List)
+                                      .firstWhere((material) {
+                                return material['id'] ==
+                                    currentlyViewing['material_id'];
+                              });
+                              // print(filteredMaterial);
+                              context.go(
+                                  '/units/notes/$lessonName/${filteredMaterial['file'].toString().split('/').last}',
+                                  extra: {
+                                    "path": "$url/${filteredMaterial['file']}",
+                                    "material": filteredMaterial,
+                                    "featured_material":
+                                        lessonMaterial[uploadType],
+                                  });
+                            },
                             child: Text(
                               "Resume",
                               style: TextStyle(

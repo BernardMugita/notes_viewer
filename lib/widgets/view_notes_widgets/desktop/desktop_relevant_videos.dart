@@ -20,29 +20,35 @@ class _DesktopRelevantVideosState extends State<DesktopRelevantVideos> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
+          color: AppUtils.mainWhite(context),
           border: Border.all(color: AppUtils.mainGrey(context))),
       child: Row(
+        spacing: 10,
         children: [
           CircleAvatar(
-            child: Icon(FluentIcons.video_24_regular),
+            backgroundColor: AppUtils.backgroundPanel(context),
+            child: Icon(FluentIcons.video_24_regular,
+                color: AppUtils.mainBlack(context)),
           ),
-          Gap(10),
           SizedBox(
-            width: 150,
-            child: Text(
-              widget.material['name'],
-              style: TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  fontSize: 14,
-                  color: AppUtils.mainBlue(context),
-                  fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.material['name'],
+                  style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 14,
+                      color: AppUtils.mainBlue(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  AppUtils.formatDate(widget.material['created_at']),
+                  style: TextStyle(fontSize: 14),
+                )
+              ],
             ),
           ),
-          Spacer(),
-          Text(
-            "45 minutes",
-            style: TextStyle(fontSize: 14),
-          )
         ],
       ),
     );

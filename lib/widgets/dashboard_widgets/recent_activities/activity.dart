@@ -75,6 +75,12 @@ class _ActivityState extends State<Activity> {
           await lessonProvider.getLesson(tokenRef, activityLesson['id']);
         }
 
+        if (uploadType != '' &&
+            uploadType.isNotEmpty &&
+            uploadType == 'recording') {
+          uploadType = 'recordings';
+        }
+
         return Container(
           padding: const EdgeInsets.all(20),
           margin: const EdgeInsets.only(bottom: 5),
@@ -138,12 +144,14 @@ class _ActivityState extends State<Activity> {
                     ListTile(
                       onTap: () {
                         String url = AppUtils.$serverDir;
+                        // print(url);
                         Map lesson = lessonProvider.lesson;
                         Map filteredMaterial =
                             (lesson['materials'][uploadType] as List)
                                 .firstWhere((material) {
                           return material['id'] == activity['material_id'];
                         });
+                        // print(filteredMaterial);
                         context.go(
                             '/units/notes/${lesson['name']}/${filteredMaterial['file'].toString().split('/').last}',
                             extra: {

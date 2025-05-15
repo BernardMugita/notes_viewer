@@ -40,6 +40,7 @@ class _DesktopFileViewerState extends State<DesktopFileViewer> {
                 fileExtension == 'ppt'
             ? DesktopDocumentViewer(
                 fileName: widget.fileName,
+                material: widget.material,
                 uploadType: fileExtension == 'docx' ||
                         fileExtension == 'xlxs' ||
                         fileExtension == 'pdf'
