@@ -227,28 +227,8 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                         ),
                         child: Column(
                           children: [
-                            videoPlayerController.value.isInitialized
-                                ? Slider(
-                                    value: videoPlayerController
-                                        .value.position.inSeconds
-                                        .toDouble()
-                                        .clamp(
-                                            0.0,
-                                            videoPlayerController
-                                                .value.duration.inSeconds
-                                                .toDouble()),
-                                    max: videoPlayerController
-                                        .value.duration.inSeconds
-                                        .toDouble(),
-                                    onChanged: (value) {
-                                      videoPlayerController.seekTo(
-                                          Duration(seconds: value.toInt()));
-                                    },
-                                    activeColor: AppUtils.mainBlue(context),
-                                    inactiveColor: AppUtils.mainGrey(context),
-                                  )
-                                : const SizedBox(),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 IconButton(
                                   onPressed: () {
@@ -265,12 +245,39 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                const Gap(10),
                                 Text(
                                   "${formatDuration(videoPlayerController.value.position)}/${formatDuration(videoPlayerController.value.duration)}",
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                const Spacer(),
+                                videoPlayerController.value.isInitialized
+                                    ? SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        child: Slider(
+                                          value: videoPlayerController
+                                              .value.position.inSeconds
+                                              .toDouble()
+                                              .clamp(
+                                                  0.0,
+                                                  videoPlayerController
+                                                      .value.duration.inSeconds
+                                                      .toDouble()),
+                                          max: videoPlayerController
+                                              .value.duration.inSeconds
+                                              .toDouble(),
+                                          onChanged: (value) {
+                                            videoPlayerController.seekTo(
+                                                Duration(
+                                                    seconds: value.toInt()));
+                                          },
+                                          activeColor:
+                                              AppUtils.mainBlue(context),
+                                          inactiveColor:
+                                              AppUtils.mainGrey(context),
+                                        ),
+                                      )
+                                    : Spacer(),
                                 Row(
                                   children: [
                                     Text(
