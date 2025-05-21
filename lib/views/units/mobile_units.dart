@@ -70,6 +70,7 @@ class _MobileUnitsState extends State<MobileUnits> {
         return shouldExit ?? false;
       },
       child: Scaffold(
+        backgroundColor: AppUtils.backgroundPanel(context),
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),
@@ -98,81 +99,55 @@ class _MobileUnitsState extends State<MobileUnits> {
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 10,
+                  spacing: 20,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
+                      spacing: 20,
                       children: [
-                        Text(
-                          "Units",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: AppUtils.mainBlue(context),
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: searchController,
+                                  onChanged: (value) {
+                                    togglesProvider.searchAction(
+                                        searchController.text, units, 'name');
+                                  },
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(12.5),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppUtils.mainGrey(context),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppUtils.mainGrey(context),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    filled: false,
+                                    prefixIcon: Icon(
+                                      FluentIcons.search_24_regular,
+                                      color: AppUtils.mainGrey(context)
+                                          .withOpacity(0.8),
+                                    ),
+                                    hintText: "Search",
+                                    hintStyle: TextStyle(
+                                        fontSize: 16,
+                                        color: AppUtils.mainGrey(context)
+                                            .withOpacity(0.8)),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        if (user.isNotEmpty && user['role'] == 'admin')
-                          SizedBox(
-                            width: 120,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                  padding: WidgetStatePropertyAll(
-                                      const EdgeInsets.all(10)),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      AppUtils.mainBlue(context)),
-                                  shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)))),
-                              onPressed: () {
-                                _showDialog(context,
-                                    courses: courses, token: tokenRef);
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Add units",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppUtils.mainWhite(context))),
-                                  const Gap(5),
-                                  Icon(FluentIcons.class_24_regular,
-                                      size: 16,
-                                      color: AppUtils.mainWhite(context)),
-                                ],
-                              ),
-                            ),
-                          )
                       ],
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: searchController,
-                              onChanged: (value) {
-                                togglesProvider.searchAction(
-                                    searchController.text, units, 'name');
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(FluentIcons.search_24_regular),
-                                contentPadding: const EdgeInsets.all(5),
-                                filled: true,
-                                fillColor: AppUtils.mainWhite(context),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppUtils.mainGrey(context)),
-                                    borderRadius: BorderRadius.circular(5)),
-                                hintText: "Search",
-                                hintStyle: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     if (togglesProvider.searchMode)
                       SizedBox(
@@ -180,6 +155,36 @@ class _MobileUnitsState extends State<MobileUnits> {
                         child: Text(togglesProvider.searchResults.isEmpty
                             ? "No results found for '${searchController.text}'"
                             : "Search results for '${searchController.text}'"),
+                      ),
+                    if (user.isNotEmpty && user['role'] == 'admin')
+                      SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                  const EdgeInsets.all(10)),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  AppUtils.mainBlue(context)),
+                              shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)))),
+                          onPressed: () {
+                            _showDialog(context,
+                                courses: courses, token: tokenRef);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Add units",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.mainWhite(context))),
+                              const Gap(5),
+                              Icon(FluentIcons.class_24_regular,
+                                  size: 16, color: AppUtils.mainWhite(context)),
+                            ],
+                          ),
+                        ),
                       ),
                     Expanded(
                       child: SingleChildScrollView(

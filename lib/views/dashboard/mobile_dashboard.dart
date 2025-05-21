@@ -11,16 +11,24 @@ import 'package:maktaba/widgets/dashboard_widgets/card_row/mobile_card_row.dart'
 import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity_history.dart';
 import 'package:maktaba/widgets/dashboard_widgets/recent_activities/desktop_activities.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
+import 'package:maktaba/widgets/dashboard_widgets/recent_progress/recent_progress.dart';
 import 'package:provider/provider.dart';
 
-class MobileDashboard extends StatelessWidget {
-  MobileDashboard({super.key});
+class MobileDashboard extends StatefulWidget {
+  const MobileDashboard({super.key});
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  State<MobileDashboard> createState() => _MobileDashboardState();
+}
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+class _MobileDashboardState extends State<MobileDashboard>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
+    TabController controller = TabController(length: 2, vsync: this);
 
     return WillPopScope(
       onWillPop: () async {
@@ -32,6 +40,7 @@ class MobileDashboard extends StatelessWidget {
         return shouldExit ?? false;
       },
       child: Scaffold(
+        backgroundColor: AppUtils.backgroundPanel(context),
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),
@@ -64,10 +73,8 @@ class MobileDashboard extends StatelessWidget {
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    spacing: 10,
+                    spacing: 20,
                     children: [
-                      if (!togglesProvider.searchMode)
-                        DashboardBanner(data: dashData),
                       SizedBox(
                         width: double.infinity,
                         child: Row(
@@ -82,17 +89,30 @@ class MobileDashboard extends StatelessWidget {
                                       'title');
                                 },
                                 decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(5),
-                                  filled: true,
-                                  fillColor: AppUtils.mainWhite(context),
-                                  prefixIcon:
-                                      Icon(FluentIcons.search_24_regular),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: AppUtils.mainGrey(context)),
-                                      borderRadius: BorderRadius.circular(5)),
+                                  contentPadding: EdgeInsets.all(12.5),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppUtils.mainGrey(context),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppUtils.mainGrey(context),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  filled: false,
+                                  prefixIcon: Icon(
+                                    FluentIcons.search_24_regular,
+                                    color: AppUtils.mainGrey(context)
+                                        .withOpacity(0.8),
+                                  ),
                                   hintText: "Search",
-                                  hintStyle: const TextStyle(fontSize: 16),
+                                  hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: AppUtils.mainGrey(context)
+                                          .withOpacity(0.8)),
                                 ),
                               ),
                             ),
@@ -116,8 +136,10 @@ class MobileDashboard extends StatelessWidget {
                           ],
                         ),
                       if (!togglesProvider.searchMode)
+                        DashboardBanner(data: dashData),
+                      if (!togglesProvider.searchMode)
                         Column(
-                          spacing: 10,
+                          spacing: 20,
                           children: [
                             MobileCardRow(
                               user: dashData['user'] ?? {},
@@ -125,21 +147,67 @@ class MobileDashboard extends StatelessWidget {
                               materialCount: dashData['material_count'] ?? {},
                             ),
                             SizedBox(
-                              width: double.infinity,
-                              child: Text("Recent Activities",
-                                  style: TextStyle(
-                                      color: AppUtils.mainGrey(context)),
-                                  textAlign: TextAlign.left),
+                              // height: MediaQuery.of(context).size.height * 0.45,
+                              child: RecentProgress(),
                             ),
-                            const DesktopActivities(),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Text("Activity History",
-                                  style: TextStyle(
-                                      color: AppUtils.mainGrey(context)),
-                                  textAlign: TextAlign.left),
-                            ),
-                            const ActivityHistory()
+                            Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: AppUtils.mainWhite(context),
+                                    border: Border.all(
+                                      color: AppUtils.mainGrey(context),
+                                    )),
+                                child: Column(
+                                  spacing: 10,
+                                  children: [
+                                    TabBar(
+                                      indicatorWeight: 3,
+                                      dividerColor: AppUtils.mainGrey(context),
+                                      indicatorColor:
+                                          AppUtils.mainBlue(context),
+                                      // indicatorSize: TabBarIndicatorSize.tab,
+                                      labelColor: AppUtils.mainBlue(context),
+                                      labelStyle: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      unselectedLabelColor:
+                                          AppUtils.mainGrey(context),
+                                      controller: controller,
+                                      tabs: [
+                                        Tab(
+                                            child: Row(
+                                          spacing: 10,
+                                          children: [
+                                            Icon(FluentIcons.clock_24_regular),
+                                            Text("Recent Activities"),
+                                          ],
+                                        )),
+                                        Tab(
+                                            child: Row(
+                                          spacing: 10,
+                                          children: [
+                                            Icon(
+                                                FluentIcons.history_24_regular),
+                                            Text("Activity History"),
+                                          ],
+                                        )),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.325,
+                                      child: TabBarView(
+                                          controller: controller,
+                                          children: [
+                                            DesktopActivities(),
+                                            ActivityHistory(),
+                                          ]),
+                                    )
+                                  ],
+                                ))
                           ],
                         )
                     ],

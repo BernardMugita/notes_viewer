@@ -43,8 +43,6 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
     final fileName = args?['fileName'] as String? ?? 'File';
     final lessonName = args?['lesson'] as String? ?? 'Lesson';
 
-    print(material);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppUtils.mainBlue(context),
@@ -66,6 +64,7 @@ class _MobileViewNotesState extends State<MobileViewNotes> {
               children: [
                 MobileFileViewer(
                   fileName: fileName,
+                  material: material,
                   onPressed: (String videoDuration) {
                     setState(() {
                       duration = videoDuration;

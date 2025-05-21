@@ -58,6 +58,10 @@ class _DesktopFileState extends State<DesktopFile> {
 
     final user = context.read<UserProvider>().user;
 
+    int? index = (widget.key is ValueKey<int>)
+        ? (widget.key as ValueKey<int>).value
+        : null;
+
     Future<void> onRightClick(PointerDownEvent event) async {
       if (event.kind == PointerDeviceKind.mouse &&
           (event.buttons & kSecondaryMouseButton) != 0) {
@@ -99,10 +103,18 @@ class _DesktopFileState extends State<DesktopFile> {
                           ? AppUtils.mainBlue(context)
                           : AppUtils.mainGrey(context))),
               padding: const EdgeInsets.only(
-                  left: 10, right: 10, top: 10, bottom: 10),
+                  left: 15, right: 10, top: 10, bottom: 10),
               margin: const EdgeInsets.only(bottom: 5),
               child: Row(
+                spacing: 10,
                 children: [
+                  Text(
+                    "${index.toString()}.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppUtils.mainGrey(context)),
+                  ),
                   CircleAvatar(
                       backgroundColor: fileExtension == 'pdf'
                           ? AppUtils.mainRed(context).withOpacity(0.3)
@@ -127,7 +139,6 @@ class _DesktopFileState extends State<DesktopFile> {
                                         ? Colors.orange
                                         : AppUtils.mainBlue(context),
                       )),
-                  Gap(10),
                   SizedBox(
                     child: Text(widget.material['name'] ?? 'material',
                         textAlign: TextAlign.center,

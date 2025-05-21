@@ -131,7 +131,7 @@ class _DesktopUnitHolderState extends State<DesktopUnitHolder> {
                               ),
                             ),
                             Text(
-                              "${unit['name']}",
+                              "${unit['name'].toUpperCase()}",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: AppUtils.mainBlack(context),

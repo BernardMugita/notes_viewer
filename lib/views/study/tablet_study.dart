@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/uploads_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
@@ -29,18 +30,21 @@ class TabletStudy extends StatefulWidget {
 
 class _TabletStudyState extends State<TabletStudy> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   String tokenRef = '';
   String lessonIdRef = '';
   String unitIdRef = '';
   String lessonNameRef = '';
+  bool sortMode = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController uploadTypeController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
+  List allMaterial = [];
+  List originalMaterialList = [];
   List<String> form = [];
 
   FilePickerResult? result;
@@ -72,28 +76,69 @@ class _TabletStudyState extends State<TabletStudy> {
       });
     } catch (e) {
       print(e);
+      setState(() {
+        isUploading = false;
+      });
     }
+  }
+
+  void _populateAllMaterial() {
+    final lesson = context.read<LessonsProvider>().lesson;
+    final materials = (lesson['materials'] as List<dynamic>?) ?? [];
+
+    setState(() {
+      allMaterial = List.from(materials);
+      originalMaterialList = List.from(materials);
+    });
+  }
+
+  void addSort() async {
+    try {
+      final lessonProvider = context.read<LessonsProvider>();
+
+      await lessonProvider.updateLessonSort(
+        tokenRef,
+        lessonProvider.lesson['id'],
+        allMaterial,
+      );
+
+      await lessonProvider.getLesson(tokenRef, lessonProvider.lesson['id']);
+
+      setState(() {
+        _populateAllMaterial();
+        sortMode = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void resetToDefault() {
+    setState(() {
+      allMaterial = List.from(originalMaterialList);
+      sortMode = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    _populateAllMaterial();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
+      final userProvider = context.read<UserProvider>();
 
       final String token = authProvider.token ?? '';
       final state = GoRouter.of(context).state;
 
       final lessonId =
           state!.extra != null ? (state.extra as Map)['lesson_id'] : null;
-
       final unitId =
           state.extra != null ? (state.extra as Map)['unit_id'] : null;
-
       final lessonName =
           state.extra != null ? (state.extra as Map)['lesson_name'] : null;
 
-      if (lessonId.isNotEmpty) {
+      if (lessonId != null && lessonId.isNotEmpty) {
         lessonIdRef = lessonId;
         unitIdRef = unitId;
         lessonNameRef = lessonName;
@@ -101,163 +146,372 @@ class _TabletStudyState extends State<TabletStudy> {
 
       if (token.isNotEmpty) {
         tokenRef = token;
+        userProvider.fetchUserDetails(token);
       }
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _populateAllMaterial();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final lesson = context.watch<LessonsProvider>().lesson;
+    final lessonsProvider = context.watch<LessonsProvider>();
+    final lesson = lessonsProvider.lesson;
     final user = context.watch<UserProvider>().user;
+    final isAdmin = user['role'] == 'admin';
 
-    List notes = [];
-    List slides = [];
-    List recordings = [];
-    List contributions = [];
+    bool isMaterialsEmpty = !lessonsProvider.isLoading && allMaterial.isEmpty;
 
-    if (lesson.isNotEmpty && lesson['materials'] != null) {
-      setState(() {
-        notes = lesson['materials']['notes'] ?? [];
-        slides = lesson['materials']['slides'] ?? [];
-        recordings = lesson['materials']['recordings'] ?? [];
-        contributions = lesson['materials']['contributions'] ?? [];
-      });
-    } else {
-      print('Lesson or files are null');
-    }
+    final children = [
+      for (int i = 0; i < allMaterial.length; i++)
+        _buildMaterialItem(allMaterial[i], i),
+    ];
 
-    return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
-              _scaffoldKey.currentState?.openDrawer();
-            },
-            child: const Icon(FluentIcons.re_order_24_regular),
+    return Consumer2<LessonsProvider, TogglesProvider>(
+      builder: (BuildContext context, lessonsProvider, toggleProvider, _) {
+        return Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            backgroundColor: AppUtils.mainBlue(context),
+            elevation: 3,
+            leading: GestureDetector(
+              onTap: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+              child: Icon(
+                FluentIcons.re_order_24_regular,
+                color: AppUtils.mainWhite(context),
+              ),
+            ),
           ),
-        ),
-        drawer: const ResponsiveNav(),
-        body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 20,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      Text(
-                        lesson['name'] ?? "Lesson name",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: AppUtils.mainBlue(context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (user.isNotEmpty && user['role'] == 'admin')
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                                const EdgeInsets.all(20)),
-                            backgroundColor: WidgetStatePropertyAll(
-                                AppUtils.mainBlue(context)),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
+          drawer: const ResponsiveNav(),
+          backgroundColor: AppUtils.backgroundPanel(context),
+          body: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: lessonsProvider.isLoading
+                    ? LoadingAnimationWidget.newtonCradle(
+                        color: AppUtils.mainBlue(context), size: 100)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (!toggleProvider.searchMode)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Units/Notes/${lesson['name']}",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppUtils.mainGrey(context),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gap(5),
+                                Text(
+                                  "${lesson['name']} Notes",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: AppUtils.mainBlue(context),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          const Gap(10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (user.isNotEmpty &&
+                                  user['role'] == 'admin' &&
+                                  !toggleProvider.searchMode)
+                                Row(
+                                  spacing: 10,
+                                  children: [
+                                    if (!sortMode)
+                                      SizedBox(
+                                        width: 150,
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            padding: WidgetStatePropertyAll(
+                                                const EdgeInsets.all(20)),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppUtils.mainBlue(context)),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            _showDialog(context);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            spacing: 5,
+                                            children: [
+                                              Text(
+                                                "Upload file",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: AppUtils.mainWhite(
+                                                      context),
+                                                ),
+                                              ),
+                                              const Gap(5),
+                                              Icon(
+                                                FluentIcons.book_add_24_regular,
+                                                size: 16,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      SizedBox(
+                                        width: 180,
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            padding: WidgetStatePropertyAll(
+                                                const EdgeInsets.all(20)),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppUtils.mainRed(context)),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            resetToDefault();
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            spacing: 5,
+                                            children: [
+                                              Text(
+                                                "Reset to default",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: AppUtils.mainWhite(
+                                                      context),
+                                                ),
+                                              ),
+                                              const Gap(5),
+                                              Icon(
+                                                FluentIcons.book_add_24_regular,
+                                                size: 16,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    if (sortMode)
+                                      SizedBox(
+                                        width: 170,
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            padding: WidgetStatePropertyAll(
+                                                const EdgeInsets.all(20)),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppUtils.mainGreen(
+                                                        context)),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            addSort();
+                                          },
+                                          child: lessonsProvider.isSortLoading
+                                              ? SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                )
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  spacing: 5,
+                                                  children: [
+                                                    Text(
+                                                      "Save Changes",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            AppUtils.mainWhite(
+                                                                context),
+                                                      ),
+                                                    ),
+                                                    const Gap(5),
+                                                    Icon(
+                                                      FluentIcons
+                                                          .save_24_regular,
+                                                      size: 16,
+                                                      color: AppUtils.mainWhite(
+                                                          context),
+                                                    ),
+                                                  ],
+                                                ),
+                                        ),
+                                      )
+                                  ],
+                                ),
+                            ],
+                          ),
+                          const Gap(20),
+                          Expanded(
+                            child: SizedBox(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      !toggleProvider.searchMode
+                                          ? "Study material"
+                                          : "Search results for '${searchController.text}'",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppUtils.mainGrey(context),
+                                          fontWeight: FontWeight.bold)),
+                                  const Gap(20),
+                                  if (isMaterialsEmpty)
+                                    Expanded(
+                                      child: Center(
+                                        child: EmptyWidget(
+                                            errorHeading: "How Empty!",
+                                            errorDescription:
+                                                "There's no study material for this lesson",
+                                            image: context
+                                                    .watch<ThemeProvider>()
+                                                    .isDarkMode
+                                                ? 'assets/images/404-dark.png'
+                                                : 'assets/images/404.png'),
+                                      ),
+                                    )
+                                  else
+                                    SizedBox(
+                                      height: isAdmin
+                                          ? MediaQuery.of(context).size.height *
+                                              0.65
+                                          : MediaQuery.of(context).size.height *
+                                              0.7,
+                                      width: double.infinity,
+                                      child: isAdmin
+                                          ? ReorderableListView(
+                                              clipBehavior: Clip.none,
+                                              onReorder: (oldIndex, newIndex) {
+                                                setState(() {
+                                                  sortMode = true;
+                                                  if (newIndex > oldIndex) {
+                                                    newIndex -= 1;
+                                                  }
+                                                  final item = allMaterial
+                                                      .removeAt(oldIndex);
+                                                  allMaterial.insert(
+                                                      newIndex, item);
+                                                });
+                                              },
+                                              children: [
+                                                for (int i = 0;
+                                                    i < allMaterial.length;
+                                                    i++)
+                                                  _buildMaterialItem(
+                                                      allMaterial[i], i),
+                                              ],
+                                            )
+                                          : ListView(
+                                              children: children,
+                                            ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
-                          onPressed: () {
-                            _showDialog(context);
-                          },
-                          child: Icon(
-                            FluentIcons.book_add_24_regular,
-                            size: 16,
-                            color: AppUtils.mainWhite(context),
-                          ),
-                        ),
-                    ],
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Study material",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: AppUtils.mainGrey(context))),
-                          const Gap(20),
-                          if (lesson.isEmpty &&
-                              notes.isEmpty &&
-                              slides.isEmpty &&
-                              recordings.isEmpty &&
-                              contributions.isEmpty)
-                            EmptyWidget(
-                                errorHeading: "No study material available",
-                                errorDescription:
-                                    "There is no material available. Try again later",
-                                image: "assets/images/404.png")
-                          else
-                            Column(
-                              spacing: 5,
-                              children: [
-                                ...notes.map((note) {
-                                  return TabletFile(
-                                    notes: notes,
-                                    slides: [],
-                                    fileName: (note['file'] as String)
-                                        .split('/')
-                                        .last,
-                                    lesson: lesson['name'],
-                                    material: note,
-                                    icon: FluentIcons.document_pdf_24_regular,
-                                  );
-                                }),
-                                ...slides.map((slide) {
-                                  return TabletFile(
-                                    slides: slides,
-                                    notes: [],
-                                    fileName: (slide['file'] as String)
-                                        .split('/')
-                                        .last,
-                                    lesson: lesson['name'],
-                                    material: slide,
-                                    icon: FluentIcons.slide_layout_24_regular,
-                                  );
-                                }),
-                                ...recordings.map((recording) {
-                                  return TabletRecording(
-                                    recordings: recordings,
-                                    contributions: [],
-                                    fileName: (recording['file'] as String)
-                                        .split('/')
-                                        .last,
-                                    lesson: lesson['name'],
-                                    material: recording,
-                                    icon: FluentIcons.play_24_filled,
-                                  );
-                                }),
-                                ...contributions.map((contribution) {
-                                  return TabletRecording(
-                                    recordings: [],
-                                    contributions: contributions,
-                                    fileName: (contribution['file'] as String)
-                                        .split('/')
-                                        .last,
-                                    lesson: lesson['name'],
-                                    material: contribution,
-                                    icon: FluentIcons.play_24_filled,
-                                  );
-                                }),
-                              ],
-                            ),
                         ],
                       ),
-                    ),
-                  ),
-                ])));
+              ),
+              if (context.watch<LessonsProvider>().sortSuccess)
+                Positioned(
+                    top: 20,
+                    right: 20,
+                    child: SuccessWidget(
+                        message: context.watch<LessonsProvider>().sortMessage))
+              else if (context.watch<LessonsProvider>().sortError)
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: FailedWidget(
+                      message: context.watch<LessonsProvider>().sortMessage),
+                )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMaterialItem(Map<String, dynamic> mat, int index) {
+    final type = mat['type'] as String;
+    final file = (mat['file'] as String).split('/').last;
+    final icon = _iconForType(type);
+
+    if (type == 'notes' || type == 'slides') {
+      return TabletFile(
+        key: ValueKey(index),
+        notes: type == 'notes' ? allMaterial : [],
+        slides: type == 'slides' ? allMaterial : [],
+        fileName: file,
+        lesson: context.read<LessonsProvider>().lesson['name'] as String,
+        material: mat,
+        icon: icon,
+      );
+    } else {
+      return TabletRecording(
+        key: ValueKey(index),
+        recordings: type == 'recordings' ? allMaterial : [],
+        contributions: type == 'contributions' ? allMaterial : [],
+        fileName: file,
+        lesson: context.read<LessonsProvider>().lesson['name'] as String,
+        material: mat,
+        icon: icon,
+      );
+    }
+  }
+
+  IconData _iconForType(String type) {
+    switch (type) {
+      case 'notes':
+        return FluentIcons.document_pdf_24_regular;
+      case 'slides':
+        return FluentIcons.slide_layout_24_regular;
+      case 'recordings':
+        return FluentIcons.play_24_filled;
+      case 'contributions':
+        return FluentIcons.person_24_regular;
+      default:
+        return FluentIcons.question_24_regular;
+    }
   }
 
   void _showDialog(
@@ -277,8 +531,8 @@ class _TabletStudyState extends State<TabletStudy> {
                   width: MediaQuery.of(context).size.width,
                   height:
                       context.watch<TogglesProvider>().showUploadTypeDropdown
-                          ? MediaQuery.of(context).size.height
-                          : MediaQuery.of(context).size.height * 0.8,
+                          ? MediaQuery.of(context).size.height * 0.75
+                          : MediaQuery.of(context).size.height * 0.6,
                   decoration: BoxDecoration(
                     color: AppUtils.mainWhite(context),
                     borderRadius: BorderRadius.circular(5),
@@ -498,7 +752,7 @@ class _TabletStudyState extends State<TabletStudy> {
                                       : AppUtils.mainBlue(context),
                                 ),
                                 padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                    top: 20, bottom: 20, left: 10, right: 10)),
+                                    top: 10, bottom: 10, left: 10, right: 10)),
                               ),
                               child: uploadsProvider.isLoading
                                   ? const SizedBox(

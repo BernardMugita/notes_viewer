@@ -21,13 +21,15 @@ class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-        mobileLayout: _buildEmptyWidget(0.4),
-        tabletLayout: _buildEmptyWidget(0.4),
-        desktopLayout: _buildEmptyWidget(0.4));
+        mobileLayout: _buildEmptyWidget(0.4, 150, 150),
+        tabletLayout: _buildEmptyWidget(0.4, 200, 200),
+        desktopLayout: _buildEmptyWidget(0.4, 200, 200));
   }
 
   Widget _buildEmptyWidget(
-    double heightDenomenator
+    double heightDenomenator,
+    double imageHeight,
+    double imageWidth,
   ) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -47,8 +49,8 @@ class _EmptyWidgetState extends State<EmptyWidget> {
                       fontWeight: FontWeight.bold)),
               Image(
                   fit: BoxFit.contain,
-                  width: 200,
-                  height: 200,
+                  width: imageWidth,
+                  height: imageHeight,
                   image: AssetImage(widget.image)),
               Text(widget.errorDescription,
                   style: TextStyle(

@@ -53,33 +53,50 @@ class _MobileSemesterHolderState extends State<MobileSemesterHolder> {
     final groupedUnits = groupUnitsBySemester();
     final sortedSemesters = sortSemesters(groupedUnits);
 
-    return Column(
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: sortedSemesters.map<Widget>((semester) {
           return Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            child: Column(
-              spacing: 10,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+            decoration: BoxDecoration(
+                border: Border(
+                    top: BorderSide(
+              color: AppUtils.mainGrey(context),
+            ))),
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    "Semester $semester",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: AppUtils.mainGrey(context), fontSize: 16),
-                  ),
-                ),
                 Column(
-                  spacing: 10,
+                  spacing: 5,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: groupedUnits[semester]!.map<Widget>((unit) {
                     return MobileUnitHolder(unit: unit);
                   }).toList(),
                 ),
+                Positioned(
+                  top: -40,
+                  left: 10,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    color: AppUtils.backgroundPanel(context),
+                    child: Text(
+                      "Semester $semester",
+                      style: TextStyle(
+                        color: AppUtils.mainGrey(context),
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           );
-        }).toList());
+        }).toList(),
+      ),
+    );
   }
 }

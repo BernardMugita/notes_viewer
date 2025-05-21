@@ -34,6 +34,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
   String lessonIdRef = '';
   String unitIdRef = '';
   String lessonNameRef = '';
+  bool sortMode = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
@@ -43,10 +44,8 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
   List uploadTypes = ['notes', 'slides', 'recordings'];
   List allMaterial = [];
+  List originalMaterialList = [];
   List<String> form = [];
-
-  // Removed notes, slides, recordings, contributions, and isMaterialsEmpty from state.
-  // They will be computed directly in build.
 
   FilePickerResult? result;
   String? selectedFileName;
@@ -85,19 +84,40 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
   void _populateAllMaterial() {
     final lesson = context.read<LessonsProvider>().lesson;
-    final materials = (lesson['materials'] as Map<String, dynamic>?) ?? {};
+    final materials = (lesson['materials'] as List<dynamic>?) ?? [];
 
-    final notes = (materials['notes'] as List?) ?? [];
-    final slides = (materials['slides'] as List?) ?? [];
-    final recordings = (materials['recordings'] as List?) ?? [];
-    final contributions = (materials['contributions'] as List?) ?? [];
+    setState(() {
+      allMaterial = List.from(materials);
+      originalMaterialList = List.from(materials);
+    });
+  }
 
-    allMaterial = [
-      ...notes.cast<Map<String, dynamic>>(),
-      ...slides.cast<Map<String, dynamic>>(),
-      ...recordings.cast<Map<String, dynamic>>(),
-      ...contributions.cast<Map<String, dynamic>>(),
-    ];
+  void addSort() async {
+    try {
+      final lessonProvider = context.read<LessonsProvider>();
+
+      await lessonProvider.updateLessonSort(
+        tokenRef,
+        lessonProvider.lesson['id'],
+        allMaterial,
+      );
+
+      await lessonProvider.getLesson(tokenRef, lessonProvider.lesson['id']);
+
+      setState(() {
+        _populateAllMaterial();
+        sortMode = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void resetToDefault() {
+    setState(() {
+      allMaterial = List.from(originalMaterialList);
+      sortMode = false;
+    });
   }
 
   @override
@@ -155,334 +175,500 @@ class _DesktopStudyState extends State<DesktopStudy> {
       builder: (BuildContext context, lessonsProvider, toggleProvider, _) {
         return Scaffold(
           backgroundColor: AppUtils.backgroundPanel(context),
-          body: Flex(
-            direction: Axis.horizontal,
+          body: Stack(
             children: [
-              isMinimized
-                  ? Expanded(
-                      flex: 1,
-                      child: SideNavigation(),
-                    )
-                  : SizedBox(
-                      width: 80,
-                      child: SideNavigation(),
-                    ),
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.1,
-                      right: MediaQuery.of(context).size.width * 0.1,
-                      top: 20,
-                      bottom: 20),
-                  child: lessonsProvider.isLoading
-                      ? LoadingAnimationWidget.newtonCradle(
-                          color: AppUtils.mainBlue(context), size: 100)
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.mainBlue(context),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 5,
-                                    child: TextField(
-                                      controller: searchController,
-                                      onChanged: (value) {
-                                        toggleProvider.searchAction(
-                                            searchController.text,
-                                            allMaterial,
-                                            'name');
-                                      },
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.all(12.5),
-                                        enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppUtils.mainWhite(context),
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppUtils.mainWhite(context),
-                                            width: 2,
-                                          ),
-                                        ),
-                                        filled: false,
-                                        prefixIcon: Icon(
-                                          FluentIcons.search_24_regular,
-                                          color: AppUtils.mainWhite(context)
-                                              .withOpacity(0.8),
-                                        ),
-                                        hintText: "Search",
-                                        hintStyle: TextStyle(
-                                            fontSize: 16,
-                                            color: AppUtils.mainWhite(context)
-                                                .withOpacity(0.8)),
-                                      ),
-                                    ),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  isMinimized
+                      ? Expanded(
+                          flex: 1,
+                          child: SideNavigation(),
+                        )
+                      : SizedBox(
+                          width: 80,
+                          child: SideNavigation(),
+                        ),
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.1,
+                          right: MediaQuery.of(context).size.width * 0.1,
+                          top: 20,
+                          bottom: 20),
+                      child: lessonsProvider.isLoading
+                          ? LoadingAnimationWidget.newtonCradle(
+                              color: AppUtils.mainBlue(context), size: 100)
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppUtils.mainBlue(context),
                                   ),
-                                  Spacer(),
-                                  Row(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Row(
                                     children: [
-                                      Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Icon(
-                                            FluentIcons.alert_24_regular,
-                                            size: 25,
-                                            color: AppUtils.mainWhite(context),
-                                          ),
-                                          Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: CircleAvatar(
-                                                radius: 5,
-                                                backgroundColor: context
-                                                        .watch<
-                                                            DashboardProvider>()
-                                                        .isNewActivities
-                                                    ? AppUtils.mainRed(context)
-                                                    : AppUtils.mainGrey(
-                                                        context),
-                                              ))
-                                        ],
-                                      ),
-                                      IconButton(
-                                          onPressed: () {
-                                            context.go('/settings');
-                                          },
-                                          icon: Icon(
-                                            FluentIcons.settings_24_regular,
-                                            size: 25,
-                                            color: AppUtils.mainWhite(context),
-                                          )),
-                                      Gap(10),
                                       SizedBox(
-                                        height: 40,
-                                        child: VerticalDivider(
-                                          color: AppUtils.mainGrey(context),
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                5,
+                                        child: TextField(
+                                          controller: searchController,
+                                          onChanged: (value) {
+                                            toggleProvider.searchAction(
+                                                searchController.text,
+                                                allMaterial,
+                                                'name');
+                                          },
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.all(12.5),
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                                width: 2,
+                                              ),
+                                            ),
+                                            filled: false,
+                                            prefixIcon: Icon(
+                                              FluentIcons.search_24_regular,
+                                              color: AppUtils.mainWhite(context)
+                                                  .withOpacity(0.8),
+                                            ),
+                                            hintText: "Search",
+                                            hintStyle: TextStyle(
+                                                fontSize: 16,
+                                                color:
+                                                    AppUtils.mainWhite(context)
+                                                        .withOpacity(0.8)),
+                                          ),
                                         ),
                                       ),
-                                      Gap(10),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                      Spacer(),
+                                      Row(
                                         children: [
-                                          if (context
-                                              .watch<UserProvider>()
-                                              .isLoading)
-                                            SizedBox(
-                                              width: 150,
-                                              child: LinearProgressIndicator(
-                                                minHeight: 1,
+                                          Stack(
+                                            clipBehavior: Clip.none,
+                                            children: [
+                                              Icon(
+                                                FluentIcons.alert_24_regular,
+                                                size: 25,
                                                 color:
                                                     AppUtils.mainWhite(context),
                                               ),
-                                            )
-                                          else
-                                            Text(
-                                                user.isNotEmpty
-                                                    ? user['username']
-                                                    : 'Guest',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                    fontSize: 16,
+                                              Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: CircleAvatar(
+                                                    radius: 5,
+                                                    backgroundColor: context
+                                                            .watch<
+                                                                DashboardProvider>()
+                                                            .isNewActivities
+                                                        ? AppUtils.mainRed(
+                                                            context)
+                                                        : AppUtils.mainGrey(
+                                                            context),
+                                                  ))
+                                            ],
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                context.go('/settings');
+                                              },
+                                              icon: Icon(
+                                                FluentIcons.settings_24_regular,
+                                                size: 25,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                              )),
+                                          Gap(10),
+                                          SizedBox(
+                                            height: 40,
+                                            child: VerticalDivider(
+                                              color: AppUtils.mainGrey(context),
+                                            ),
+                                          ),
+                                          Gap(10),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              if (context
+                                                  .watch<UserProvider>()
+                                                  .isLoading)
+                                                SizedBox(
+                                                  width: 150,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    minHeight: 1,
                                                     color: AppUtils.mainWhite(
                                                         context),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          if (context
-                                              .watch<UserProvider>()
-                                              .isLoading)
-                                            SizedBox(
-                                              width: 50,
-                                              child: LinearProgressIndicator(
-                                                minHeight: 1,
-                                                color:
-                                                    AppUtils.mainWhite(context),
-                                              ),
-                                            )
-                                          else
-                                            SizedBox(
-                                              width: 150,
-                                              child: Text(
-                                                  user.isNotEmpty
-                                                      ? user['email']
-                                                      : 'guest@email.com',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      fontSize: 12,
-                                                      color: AppUtils.mainWhite(
-                                                          context))),
-                                            ),
+                                                  ),
+                                                )
+                                              else
+                                                Text(
+                                                    user.isNotEmpty
+                                                        ? user['username']
+                                                        : 'Guest',
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            AppUtils.mainWhite(
+                                                                context),
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                              if (context
+                                                  .watch<UserProvider>()
+                                                  .isLoading)
+                                                SizedBox(
+                                                  width: 50,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    minHeight: 1,
+                                                    color: AppUtils.mainWhite(
+                                                        context),
+                                                  ),
+                                                )
+                                              else
+                                                SizedBox(
+                                                  width: 150,
+                                                  child: Text(
+                                                      user.isNotEmpty
+                                                          ? user['email']
+                                                          : 'guest@email.com',
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      style: TextStyle(
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          fontSize: 12,
+                                                          color: AppUtils
+                                                              .mainWhite(
+                                                                  context))),
+                                                ),
+                                            ],
+                                          ),
+                                          Gap(10),
+                                          CircleAvatar(
+                                            child: Icon(
+                                                FluentIcons.person_24_regular),
+                                          ),
                                         ],
-                                      ),
-                                      Gap(10),
-                                      CircleAvatar(
-                                        child:
-                                            Icon(FluentIcons.person_24_regular),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            Gap(20),
-                            if (!toggleProvider.searchMode)
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Units/Notes/${lesson['name']}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppUtils.mainGrey(context),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                  Text(
-                                    lesson['name'] ?? "Lesson name",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      color: AppUtils.mainBlue(context),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            const Gap(10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (user.isNotEmpty &&
-                                    user['role'] == 'admin' &&
-                                    !toggleProvider.searchMode)
-                                  SizedBox(
-                                    width: 150,
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        padding: WidgetStatePropertyAll(
-                                            const EdgeInsets.all(20)),
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            AppUtils.mainBlue(context)),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
+                                ),
+                                Gap(20),
+                                if (!toggleProvider.searchMode)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Units/Notes/${lesson['name']}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppUtils.mainGrey(context),
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      onPressed: () {
-                                        _showDialog(context);
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Upload file",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  AppUtils.mainWhite(context),
-                                            ),
-                                          ),
-                                          const Gap(5),
-                                          Icon(
-                                            FluentIcons.book_add_24_regular,
-                                            size: 16,
-                                            color: AppUtils.mainWhite(context),
-                                          ),
-                                        ],
+                                      const Gap(5),
+                                      Text(
+                                        lesson['name'] ?? "Lesson name",
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          color: AppUtils.mainBlue(context),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                              ],
-                            ),
-                            const Gap(20),
-                            Expanded(
-                              child: SizedBox(
-                                child: Column(
+                                const Gap(10),
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        !toggleProvider.searchMode
-                                            ? "Study material"
-                                            : "Search results for '${searchController.text}'",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: AppUtils.mainGrey(context),
-                                            fontWeight: FontWeight.bold)),
-                                    const Gap(20),
-                                    if (isMaterialsEmpty)
-                                      Expanded(
-                                        child: Center(
-                                          child: EmptyWidget(
-                                              errorHeading: "How Empty!",
-                                              errorDescription:
-                                                  "There's no study material for this lesson",
-                                              image: context
-                                                      .watch<ThemeProvider>()
-                                                      .isDarkMode
-                                                  ? 'assets/images/404-dark.png'
-                                                  : 'assets/images/404.png'),
-                                        ),
-                                      )
-                                    else
-                                      SizedBox(
-                                        height: isAdmin
-                                            ? MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.65
-                                            : MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.7,
-                                        child: isAdmin
-                                            ? ReorderableListView(
-                                                clipBehavior: Clip.none,
-                                                onReorder:
-                                                    (oldIndex, newIndex) {
-                                                  setState(() {
-                                                    if (newIndex > oldIndex) {
-                                                      newIndex -= 1;
-                                                    }
-                                                    final item = allMaterial
-                                                        .removeAt(oldIndex);
-                                                    allMaterial.insert(
-                                                        newIndex, item);
-                                                  });
+                                    if (user.isNotEmpty &&
+                                        user['role'] == 'admin' &&
+                                        !toggleProvider.searchMode)
+                                      Row(
+                                        spacing: 10,
+                                        children: [
+                                          if (!sortMode)
+                                            SizedBox(
+                                              width: 150,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  padding:
+                                                      WidgetStatePropertyAll(
+                                                          const EdgeInsets.all(
+                                                              20)),
+                                                  backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppUtils.mainBlue(
+                                                              context)),
+                                                  shape: WidgetStatePropertyAll(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  _showDialog(context);
                                                 },
-                                                children: [
-                                                  for (int i = 0;
-                                                      i < allMaterial.length;
-                                                      i++)
-                                                    _buildMaterialItem(
-                                                        allMaterial[i], i),
-                                                ],
-                                              )
-                                            : ListView(
-                                                children: children,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  spacing: 5,
+                                                  children: [
+                                                    Text(
+                                                      "Upload file",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            AppUtils.mainWhite(
+                                                                context),
+                                                      ),
+                                                    ),
+                                                    const Gap(5),
+                                                    Icon(
+                                                      FluentIcons
+                                                          .book_add_24_regular,
+                                                      size: 16,
+                                                      color: AppUtils.mainWhite(
+                                                          context),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                            )
+                                          else
+                                            SizedBox(
+                                              width: 180,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  padding:
+                                                      WidgetStatePropertyAll(
+                                                          const EdgeInsets.all(
+                                                              20)),
+                                                  backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppUtils.mainRed(
+                                                              context)),
+                                                  shape: WidgetStatePropertyAll(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  resetToDefault();
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  spacing: 5,
+                                                  children: [
+                                                    Text(
+                                                      "Reset to default",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            AppUtils.mainWhite(
+                                                                context),
+                                                      ),
+                                                    ),
+                                                    const Gap(5),
+                                                    Icon(
+                                                      FluentIcons
+                                                          .book_add_24_regular,
+                                                      size: 16,
+                                                      color: AppUtils.mainWhite(
+                                                          context),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          if (sortMode)
+                                            SizedBox(
+                                              width: 170,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  padding:
+                                                      WidgetStatePropertyAll(
+                                                          const EdgeInsets.all(
+                                                              20)),
+                                                  backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppUtils.mainGreen(
+                                                              context)),
+                                                  shape: WidgetStatePropertyAll(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  addSort();
+                                                },
+                                                child: lessonsProvider
+                                                        .isSortLoading
+                                                    ? SizedBox(
+                                                        height: 20,
+                                                        width: 20,
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      )
+                                                    : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        spacing: 5,
+                                                        children: [
+                                                          Text(
+                                                            "Save Changes",
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: AppUtils
+                                                                  .mainWhite(
+                                                                      context),
+                                                            ),
+                                                          ),
+                                                          const Gap(5),
+                                                          Icon(
+                                                            FluentIcons
+                                                                .save_24_regular,
+                                                            size: 16,
+                                                            color: AppUtils
+                                                                .mainWhite(
+                                                                    context),
+                                                          ),
+                                                        ],
+                                                      ),
+                                              ),
+                                            )
+                                        ],
                                       ),
                                   ],
                                 ),
-                              ),
+                                const Gap(20),
+                                Expanded(
+                                  child: SizedBox(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            !toggleProvider.searchMode
+                                                ? "Study material"
+                                                : "Search results for '${searchController.text}'",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color:
+                                                    AppUtils.mainGrey(context),
+                                                fontWeight: FontWeight.bold)),
+                                        const Gap(20),
+                                        if (isMaterialsEmpty)
+                                          Expanded(
+                                            child: Center(
+                                              child: EmptyWidget(
+                                                  errorHeading: "How Empty!",
+                                                  errorDescription:
+                                                      "There's no study material for this lesson",
+                                                  image: context
+                                                          .watch<
+                                                              ThemeProvider>()
+                                                          .isDarkMode
+                                                      ? 'assets/images/404-dark.png'
+                                                      : 'assets/images/404.png'),
+                                            ),
+                                          )
+                                        else
+                                          SizedBox(
+                                            height: isAdmin
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.65
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.7,
+                                            width: double.infinity,
+                                            child: isAdmin
+                                                ? ReorderableListView(
+                                                    clipBehavior: Clip.none,
+                                                    onReorder:
+                                                        (oldIndex, newIndex) {
+                                                      setState(() {
+                                                        sortMode = true;
+                                                        if (newIndex >
+                                                            oldIndex) {
+                                                          newIndex -= 1;
+                                                        }
+                                                        final item = allMaterial
+                                                            .removeAt(oldIndex);
+                                                        allMaterial.insert(
+                                                            newIndex, item);
+                                                      });
+                                                    },
+                                                    children: [
+                                                      for (int i = 0;
+                                                          i <
+                                                              allMaterial
+                                                                  .length;
+                                                          i++)
+                                                        _buildMaterialItem(
+                                                            allMaterial[i], i),
+                                                    ],
+                                                  )
+                                                : ListView(
+                                                    children: children,
+                                                  ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                ),
+                    ),
+                  ),
+                ],
               ),
+              if (context.watch<LessonsProvider>().sortSuccess)
+                Positioned(
+                    top: 20,
+                    right: 20,
+                    child: SuccessWidget(
+                        message: context.watch<LessonsProvider>().sortMessage))
+              else if (context.watch<LessonsProvider>().sortError)
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: FailedWidget(
+                      message: context.watch<LessonsProvider>().sortMessage),
+                )
             ],
           ),
         );
@@ -497,7 +683,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
 
     if (type == 'notes' || type == 'slides') {
       return DesktopFile(
-        key: ValueKey(mat['id'] ?? index),
+        key: ValueKey(index),
         notes: type == 'notes' ? allMaterial : [],
         slides: type == 'slides' ? allMaterial : [],
         fileName: file,
@@ -507,7 +693,7 @@ class _DesktopStudyState extends State<DesktopStudy> {
       );
     } else {
       return DesktopRecording(
-        key: ValueKey(mat['id'] ?? index),
+        key: ValueKey(index),
         recordings: type == 'recordings' ? allMaterial : [],
         contributions: type == 'contributions' ? allMaterial : [],
         fileName: file,

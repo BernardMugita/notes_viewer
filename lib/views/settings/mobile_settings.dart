@@ -34,6 +34,7 @@ class _MobileSettingsState extends State<MobileSettings> {
         return shouldExit ?? false;
       },
       child: Scaffold(
+        backgroundColor: AppUtils.backgroundPanel(context),
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),

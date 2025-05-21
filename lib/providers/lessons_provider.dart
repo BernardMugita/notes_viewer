@@ -3,9 +3,13 @@ import 'package:maktaba/services/lesson_api.dart';
 
 class LessonsProvider extends ChangeNotifier {
   bool isLoading = false;
+  bool isSortLoading = false;
   bool success = false;
+  bool sortSuccess = false;
   bool error = false;
+  bool sortError = false;
   String message = '';
+  String sortMessage = '';
   bool uploadMode = false;
   List<dynamic> lessons = [];
   Map<String, dynamic> lesson = {};
@@ -201,6 +205,51 @@ class LessonsProvider extends ChangeNotifier {
       Future.delayed(const Duration(seconds: 3), () {
         error = false;
         message = '';
+        notifyListeners();
+      });
+    }
+
+    return {};
+  }
+
+  Future<Map<String, dynamic>> updateLessonSort(
+      String token, String lessonId, List sortedMaterial) async {
+    isSortLoading = true;
+    sortError = false;
+    sortMessage = '';
+    sortSuccess = false;
+    notifyListeners();
+    try {
+      final updateLessonSortRequest = await lessonApi.addLessonSort(
+          token: token, lessonId: lessonId, sortedMaterial: sortedMaterial);
+      if (updateLessonSortRequest['status'] == 'success') {
+        isSortLoading = false;
+        sortSuccess = true;
+        sortMessage = "Sort saved successfully";
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          sortSuccess = false;
+          sortMessage = '';
+          notifyListeners();
+        });
+      } else {
+        sortError = true;
+        isSortLoading = false;
+        sortMessage = "Sort failed to save";
+        notifyListeners();
+        Future.delayed(const Duration(seconds: 3), () {
+          sortError = false;
+          sortMessage = '';
+          notifyListeners();
+        });
+      }
+    } catch (e) {
+      sortError = true;
+      isSortLoading = false;
+      sortMessage = "Failed to update lesson sort $e";
+      Future.delayed(const Duration(seconds: 3), () {
+        sortError = false;
+        sortMessage = '';
         notifyListeners();
       });
     }

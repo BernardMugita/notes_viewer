@@ -166,7 +166,7 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
           Stack(
             children: [
               SizedBox(
-                // color: AppUtils.mainRed(context),
+                width: double.infinity,
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: FutureBuilder(
                   future: _initializeVideoPlayerFuture,
@@ -391,11 +391,16 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
   }
 }
 
-class FullScreenVideo extends StatelessWidget {
+class FullScreenVideo extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
 
   const FullScreenVideo({super.key, required this.videoPlayerController});
 
+  @override
+  State<FullScreenVideo> createState() => _FullScreenVideoState();
+}
+
+class _FullScreenVideoState extends State<FullScreenVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -405,24 +410,53 @@ class FullScreenVideo extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           children: [
             Center(
-              child: AspectRatio(
-                aspectRatio: videoPlayerController.value.aspectRatio,
-                child: VideoPlayer(videoPlayerController),
+              child: Listener(
+                onPointerDown: (PointerEvent event) {
+                  setState(() {
+                    widget.videoPlayerController.value.isPlaying
+                        ? widget.videoPlayerController.pause()
+                        : widget.videoPlayerController.play();
+                  });
+                },
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  clipBehavior: Clip.hardEdge,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: widget.videoPlayerController.value.size.width,
+                    height: widget.videoPlayerController.value.size.height,
+                    child: VideoPlayer(widget.videoPlayerController),
+                  ),
+                ),
               ),
             ),
-
-            // Back button (top-left corner)
-            Positioned(
-              top: 10,
-              left: 10,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-
-            // Controls
-            _FullScreenControls(controller: videoPlayerController),
+            // if (!widget.videoPlayerController.value.isPlaying)
+            //   Positioned(
+            //     top: 10,
+            //     left: 10,
+            //     right: 10,
+            //     child: Container(
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(5),
+            //         color: AppUtils.mainBlue(context).withOpacity(0.3),
+            //       ),
+            //       child: Row(
+            //         children: [
+            //           IconButton(
+            //             icon: const Icon(Icons.arrow_back, color: Colors.white),
+            //             onPressed: () => Navigator.of(context).pop(),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            if (!widget.videoPlayerController.value.isPlaying)
+              Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: _FullScreenControls(
+                      controller: widget.videoPlayerController)),
           ],
         ),
       ),
@@ -440,7 +474,7 @@ class _FullScreenControls extends StatefulWidget {
 }
 
 class _FullScreenControlsState extends State<_FullScreenControls> {
-  bool _showControls = true;
+  double _playbackSpeed = 1.0;
 
   @override
   void initState() {
@@ -460,77 +494,136 @@ class _FullScreenControlsState extends State<_FullScreenControls> {
 
   @override
   Widget build(BuildContext context) {
-    final isPlaying = widget.controller.value.isPlaying;
-    final position = widget.controller.value.position;
-    final duration = widget.controller.value.duration;
-
-    return GestureDetector(
-      onTap: () => setState(() => _showControls = !_showControls),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 300),
-        opacity: _showControls ? 1.0 : 0.0,
-        child: Container(
-          color: Colors.black54,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return Container(
+      padding: const EdgeInsets.all(10),
+      height: 80,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: AppUtils.mainBlue(context).withOpacity(0.3),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              VideoProgressIndicator(
-                widget.controller,
-                allowScrubbing: true,
-                colors: VideoProgressColors(
-                  playedColor: Colors.blue,
-                  backgroundColor: Colors.grey,
-                  bufferedColor: Colors.white,
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    widget.controller.value.isPlaying
+                        ? widget.controller.pause()
+                        : widget.controller.play();
+                  });
+                },
+                icon: Icon(
+                  widget.controller.value.isPlaying
+                      ? FluentIcons.pause_24_regular
+                      : FluentIcons.play_24_regular,
+                  color: Colors.white,
                 ),
               ),
+              Text(
+                "${formatDuration(widget.controller.value.position)}/${formatDuration(widget.controller.value.duration)}",
+                style: TextStyle(color: Colors.white),
+              ),
+              widget.controller.value.isInitialized
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      child: Slider(
+                        value: widget.controller.value.position.inSeconds
+                            .toDouble()
+                            .clamp(
+                                0.0,
+                                widget.controller.value.duration.inSeconds
+                                    .toDouble()),
+                        max: widget.controller.value.duration.inSeconds
+                            .toDouble(),
+                        onChanged: (value) {
+                          widget.controller
+                              .seekTo(Duration(seconds: value.toInt()));
+                        },
+                        activeColor: AppUtils.mainBlue(context),
+                        inactiveColor: AppUtils.mainGrey(context),
+                      ),
+                    )
+                  : Spacer(),
+              Spacer(),
               Row(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isPlaying
-                            ? widget.controller.pause()
-                            : widget.controller.play();
-                      });
-                    },
-                  ),
                   Text(
-                    "${formatDuration(position)} / ${formatDuration(duration)}",
-                    style: const TextStyle(color: Colors.white),
+                    "Playback Speed: ",
+                    style: TextStyle(color: Colors.white),
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.fast_rewind, color: Colors.white),
-                    onPressed: () {
-                      final newPosition =
-                          position - const Duration(seconds: 10);
-                      widget.controller.seekTo(
-                        newPosition < Duration.zero
-                            ? Duration.zero
-                            : newPosition,
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.fast_forward, color: Colors.white),
-                    onPressed: () {
-                      final newPosition =
-                          position + const Duration(seconds: 10);
-                      widget.controller.seekTo(
-                        newPosition > duration ? duration : newPosition,
-                      );
+                  DropdownButton<double>(
+                    focusColor: Colors.white,
+                    value: _playbackSpeed,
+                    items: [0.5, 1.0, 1.5, 2.0]
+                        .map((speed) => DropdownMenuItem<double>(
+                              value: speed,
+                              child: Text("${speed}x"),
+                            ))
+                        .toList(),
+                    onChanged: (newSpeed) {
+                      if (newSpeed != null) {
+                        setState(() {
+                          _playbackSpeed = newSpeed;
+                          widget.controller.setPlaybackSpeed(newSpeed);
+                        });
+                      }
                     },
                   ),
                 ],
               ),
+              const Gap(10),
+              IconButton(
+                onPressed: () {
+                  final currentPosition = widget.controller.value.position;
+                  final newPosition =
+                      currentPosition - const Duration(seconds: 10);
+                  widget.controller.seekTo(
+                    newPosition < Duration.zero ? Duration.zero : newPosition,
+                  );
+                },
+                icon: Icon(
+                  FluentIcons.skip_back_10_24_regular,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  final currentPosition = widget.controller.value.position;
+                  final duration = widget.controller.value.duration;
+                  final newPosition =
+                      currentPosition + const Duration(seconds: 10);
+                  widget.controller.seekTo(
+                    newPosition > duration ? duration : newPosition,
+                  );
+                },
+                icon: Icon(
+                  FluentIcons.skip_forward_10_24_regular,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                onPressed: () async {
+                  final wasPlaying = widget.controller.value.isPlaying;
+                  if (wasPlaying) {
+                    widget.controller.pause();
+                  }
+
+                  Navigator.of(context).pop();
+
+                  if (wasPlaying) {
+                    widget.controller.play();
+                  }
+                },
+                icon: Icon(
+                  FluentIcons.full_screen_minimize_24_regular,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

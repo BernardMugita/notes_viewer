@@ -213,7 +213,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                   Gap(10),
                                   Expanded(
                                       child:
-                                          DiscussionForum()), // 👈 Make this fill remaining space
+                                          DiscussionForum()),
                                 ],
                               ),
                             ),

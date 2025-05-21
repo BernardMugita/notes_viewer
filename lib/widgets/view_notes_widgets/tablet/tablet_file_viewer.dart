@@ -5,11 +5,13 @@ import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_video_viewer.da
 class TabletFileViewer extends StatefulWidget {
   final String fileName;
   final Function onPressed;
+  final Map<dynamic, dynamic> material;
 
   const TabletFileViewer({
     super.key,
     required this.fileName,
     required this.onPressed,
+    required this.material,
   });
 
   @override
@@ -24,6 +26,7 @@ class _TabletFileViewerState extends State<TabletFileViewer> {
     return fileExtension == 'mp4' || fileExtension == 'webm'
         ? TabletVideoViewer(
             fileName: widget.fileName,
+            material: widget.material,
             onPressed: widget.onPressed,
             uploadType: 'recordings',
           )
@@ -33,6 +36,7 @@ class _TabletFileViewerState extends State<TabletFileViewer> {
                 fileExtension == 'ppt'
             ? TabletDocumentViewer(
                 fileName: widget.fileName,
+                material: widget.material,
                 uploadType: fileExtension == 'docx' ||
                         fileExtension == 'xlxs' ||
                         fileExtension == 'pdf'

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/dashboard_widgets/card_row/mobile_card.dart';
 
@@ -24,34 +22,43 @@ class _MobileCardRowState extends State<MobileCardRow> {
   Widget build(BuildContext context) {
     final user = widget.user;
 
-    return SizedBox(
-      width: double.infinity,
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: AppUtils.mainGrey(context)),
+          color: AppUtils.mainWhite(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Summary",
-              style:
-                  TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
-          Gap(20),
-          SizedBox(
-            width: double.infinity,
-            child: Wrap(
-              spacing: 5,
-              runSpacing: 5,
-              children: [
-                if (user.isNotEmpty && user['role'] == 'admin')
-                  MobileCard(
-                    users: widget.users,
-                    material: "",
-                    count: 0,
-                  ),
-                for (var material in widget.materialCount.entries)
-                  MobileCard(
-                    users: 0,
-                    material: material.key,
-                    count: widget.materialCount[material.key],
-                  )
-              ],
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Text("Summary",
+                style:
+                    TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
+          ),
+          Divider(
+            color: AppUtils.mainGrey(context),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                spacing: 10,
+                children: [
+                  if (user.isNotEmpty && user['role'] == 'admin')
+                    MobileCard(
+                      users: widget.users,
+                      material: "",
+                      count: 0,
+                    ),
+                  for (var material in widget.materialCount.entries)
+                    MobileCard(
+                      users: 0,
+                      material: material.key,
+                      count: widget.materialCount[material.key],
+                    )
+                ],
+              ),
             ),
           ),
         ],

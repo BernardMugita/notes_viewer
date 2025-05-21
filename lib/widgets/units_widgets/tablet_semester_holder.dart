@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/units_widgets/tablet_unit_holder.dart';
 
@@ -13,6 +12,7 @@ class TabletSemesterHolder extends StatefulWidget {
 }
 
 class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
+  // Group units by their semester property
   Map<String, List<Map<String, dynamic>>> groupUnitsBySemester() {
     Map<String, List<Map<String, dynamic>>> groupedUnits = {};
 
@@ -53,29 +53,50 @@ class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
     final groupedUnits = groupUnitsBySemester();
     final sortedSemesters = sortSemesters(groupedUnits);
 
-    return Column(
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: sortedSemesters.map<Widget>(
-          (semester) {
-            return Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Column(
+        children: sortedSemesters.map<Widget>((semester) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+            decoration: BoxDecoration(
+                border: Border(
+                    top: BorderSide(
+              color: AppUtils.mainGrey(context),
+            ))),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Column(
+                  spacing: 5,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                  children: groupedUnits[semester]!.map<Widget>((unit) {
+                    return TabletUnitHolder(unit: unit);
+                  }).toList(),
+                ),
+                Positioned(
+                  top: -40,
+                  left: 10,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    color: AppUtils.backgroundPanel(context),
+                    child: Text(
                       "Semester $semester",
-                      style: TextStyle(color: AppUtils.mainGrey(context), fontSize: 18),
+                      style: TextStyle(
+                        color: AppUtils.mainGrey(context),
+                        fontSize: 18,
+                      ),
                     ),
-                    Gap(20),
-                    Column(
-                      spacing: 5,
-                      children: groupedUnits[semester]!.map<Widget>((unit) {
-                        return TabletUnitHolder(unit: unit);
-                      }).toList(),
-                    ),
-                  ],
-                ));
-          },
-        ).toList());
+                  ),
+                )
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 }

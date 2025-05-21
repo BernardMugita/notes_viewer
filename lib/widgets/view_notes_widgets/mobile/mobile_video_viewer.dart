@@ -3,8 +3,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
+import 'package:maktaba/providers/theme_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -12,12 +16,14 @@ class MobileVideoViewer extends StatefulWidget {
   final String fileName;
   final String uploadType;
   final Function onPressed;
+  final Map<dynamic, dynamic> material;
 
   const MobileVideoViewer({
     super.key,
     required this.fileName,
     required this.uploadType,
     required this.onPressed,
+    required this.material,
   });
 
   @override
@@ -27,14 +33,58 @@ class MobileVideoViewer extends StatefulWidget {
 class _MobileVideoViewerState extends State<MobileVideoViewer> {
   late VideoPlayerController videoPlayerController;
   late Future<void> _initializeVideoPlayerFuture;
+  late VoidCallback _listener;
+  late DashboardProvider dashboardProvider;
+  bool showVideoControls = false;
+  Map lesson = {};
+
   double _playbackSpeed = 1.0;
-  bool _showControls = true;
-  Timer? _hideTimer;
+
+  Map currentlyViewing = {};
+
+  Map<String, dynamic> user = {};
+
+  Duration remainingTime = const Duration(milliseconds: 0);
+
+  Duration fetchDuration(Duration videoDuration, Duration videoProgress) {
+    int timeInSeconds = 0;
+
+    timeInSeconds = videoDuration.inSeconds - videoProgress.inSeconds;
+
+    remainingTime = Duration(seconds: timeInSeconds);
+
+    return remainingTime;
+  }
+
+  void saveCurrentlyViewing(
+      Map user,
+      Map lesson,
+      String materialId,
+      String materialName,
+      String createdAt,
+      String type,
+      String description,
+      Duration duration) async {
+    currentlyViewing = {
+      "user_id": user['id'],
+      "lesson_name": lesson['name'],
+      "lesson_materials": lesson['materials'],
+      "material_id": materialId,
+      "name": materialName,
+      "created_at": createdAt,
+      "type": type,
+      "description": description,
+      "duration": duration.inSeconds,
+    };
+
+    dashboardProvider.saveUsersRecentlyViewedMaterial(currentlyViewing);
+  }
 
   @override
   void initState() {
     super.initState();
-    final lesson = context.read<LessonsProvider>().lesson;
+
+    lesson = context.read<LessonsProvider>().lesson;
     final filePath =
         '${AppUtils.$serverDir}/${lesson['path']}/${widget.uploadType}/${widget.fileName}'
             .replaceAll(" ", "%20");
@@ -45,43 +95,40 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
     );
 
     _initializeVideoPlayerFuture = videoPlayerController.initialize().then((_) {
-      widget.onPressed(formatDuration(videoPlayerController.value.duration));
-      
-      if (videoPlayerController.value.hasError) {
-        print(
-            "Video error description: ${videoPlayerController.value.errorDescription}");
-      }
-
+      widget.onPressed(videoPlayerController.value.duration);
       setState(() {});
     });
 
-    videoPlayerController.addListener(() {
-      setState(() {});
-    });
-
-    _startHideTimer();
+    _listener = () {
+      if (mounted) setState(() {});
+    };
+    videoPlayerController.addListener(_listener);
   }
 
-  void _startHideTimer() {
-    _hideTimer?.cancel();
-    _hideTimer = Timer(const Duration(seconds: 3), () {
-      setState(() {
-        _showControls = false;
-      });
-    });
-  }
-
-  void _onScreenTapped() {
-    setState(() {
-      _showControls = !_showControls;
-    });
-    if (_showControls) _startHideTimer();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
+    fetchDuration(videoPlayerController.value.duration,
+        videoPlayerController.value.position);
+
+    saveCurrentlyViewing(
+        user,
+        lesson,
+        widget.material['id'],
+        widget.material['name'],
+        widget.material['created_at'],
+        widget.material['type'],
+        widget.material['description'],
+        remainingTime);
+
+    videoPlayerController.removeListener(_listener);
     videoPlayerController.dispose();
-    _hideTimer?.cancel();
     super.dispose();
   }
 
@@ -127,126 +174,162 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
         const Gap(5),
         Divider(color: AppUtils.mainGrey(context)),
         const Gap(5),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: GestureDetector(
-            onTap: _onScreenTapped,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return AspectRatio(
-                        aspectRatio: videoPlayerController.value.aspectRatio,
-                        child: VideoPlayer(videoPlayerController),
-                      );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return Center(
-                        child: LoadingAnimationWidget.newtonCradle(
-                          color: AppUtils.mainBlue(context),
-                          size: 100,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: FutureBuilder(
+                future: _initializeVideoPlayerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Listener(
+                      onPointerDown: (PointerEvent event) {
+                        setState(() {
+                          videoPlayerController.value.isPlaying
+                              ? videoPlayerController.pause()
+                              : videoPlayerController.play();
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        clipBehavior: Clip.hardEdge,
+                        child: Container(
+                          color: Colors.transparent,
+                          width: videoPlayerController.value.size.width,
+                          height: videoPlayerController.value.size.height,
+                          child: VideoPlayer(videoPlayerController),
                         ),
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          "Playback Error",
-                          style: TextStyle(color: AppUtils.mainWhite(context)),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                if (_showControls)
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
+                      ),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: LoadingAnimationWidget.newtonCradle(
+                        color: AppUtils.mainBlue(context),
+                        size: 100,
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: EmptyWidget(
+                        errorHeading: "Playback Error",
+                        errorDescription:
+                            "Video playback failed, please try again",
+                        image: context.watch<ThemeProvider>().isDarkMode
+                            ? 'assets/images/404-dark.png'
+                            : 'assets/images/404.png',
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            !videoPlayerController.value.isPlaying
+                ? Positioned(
+                    left: 10,
+                    right: 10,
+                    bottom: 10,
                     child: Container(
-                      color: Colors.black.withOpacity(0.5),
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: AppUtils.mainBlue(context).withOpacity(0.3),
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          videoPlayerController.value.isInitialized
-                              ? Slider(
-                                  value: videoPlayerController
-                                      .value.position.inSeconds
-                                      .toDouble(),
-                                  max: videoPlayerController
-                                      .value.duration.inSeconds
-                                      .toDouble(),
-                                  onChanged: (value) {
-                                    videoPlayerController.seekTo(
-                                        Duration(seconds: value.toInt()));
-                                  },
-                                  activeColor: AppUtils.mainBlue(context),
-                                  inactiveColor: AppUtils.mainGrey(context),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        videoPlayerController.value.isPlaying
+                                            ? videoPlayerController.pause()
+                                            : videoPlayerController.play();
+                                      });
+                                    },
+                                    icon: Icon(
+                                      videoPlayerController.value.isPlaying
+                                          ? FluentIcons.pause_24_regular
+                                          : FluentIcons.play_24_regular,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${formatDuration(videoPlayerController.value.position)}/${formatDuration(videoPlayerController.value.duration)}",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              if (videoPlayerController.value.isInitialized)
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 4,
+                                  child: Slider(
+                                    value: videoPlayerController
+                                        .value.position.inSeconds
+                                        .toDouble()
+                                        .clamp(
+                                            0.0,
+                                            videoPlayerController
+                                                .value.duration.inSeconds
+                                                .toDouble()),
+                                    max: videoPlayerController
+                                        .value.duration.inSeconds
+                                        .toDouble(),
+                                    onChanged: (value) {
+                                      videoPlayerController.seekTo(
+                                          Duration(seconds: value.toInt()));
+                                    },
+                                    activeColor: AppUtils.mainBlue(context),
+                                    inactiveColor: AppUtils.mainGrey(context),
+                                  ),
                                 )
-                              : const SizedBox(),
-                          const Gap(10),
-                          Text(
-                            "${formatDuration(videoPlayerController.value.position)}/${formatDuration(videoPlayerController.value.duration)}",
-                            style: const TextStyle(color: Colors.white),
+                            ],
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (videoPlayerController.value.isPlaying) {
-                                      videoPlayerController.pause();
-                                    } else {
-                                      videoPlayerController.play();
-                                    }
-                                  });
-                                },
-                                child: Icon(
-                                  videoPlayerController.value.isPlaying
-                                      ? FluentIcons.pause_24_regular
-                                      : FluentIcons.play_24_regular,
-                                  color: Colors.white,
-                                ),
+                              Text(
+                                "Playback Speed: ",
+                                style: TextStyle(color: Colors.white),
                               ),
-                              const Spacer(),
-                              DropdownButtonHideUnderline(
-                                child: DropdownButton<double>(
-                                  value: _playbackSpeed,
-                                  dropdownColor: Colors.black,
-                                  style: const TextStyle(color: Colors.white),
-                                  icon: const Icon(Icons.arrow_drop_down,
-                                      color: Colors.white),
-                                  items: [0.5, 1.0, 1.5, 2.0, 2.5].map((speed) {
-                                    return DropdownMenuItem<double>(
-                                      value: speed,
-                                      child: Text("${speed}x"),
-                                    );
-                                  }).toList(),
-                                  onChanged: (newSpeed) {
-                                    if (newSpeed != null) {
-                                      setState(() {
-                                        _playbackSpeed = newSpeed;
-                                        videoPlayerController
-                                            .setPlaybackSpeed(newSpeed);
-                                      });
-                                    }
-                                  },
-                                ),
+                              DropdownButton<double>(
+                                focusColor: Colors.white,
+                                value: _playbackSpeed,
+                                items: [0.5, 1.0, 1.5, 2.0]
+                                    .map((speed) => DropdownMenuItem<double>(
+                                          value: speed,
+                                          child: Text("${speed}x"),
+                                        ))
+                                    .toList(),
+                                onChanged: (newSpeed) {
+                                  if (newSpeed != null) {
+                                    setState(() {
+                                      _playbackSpeed = newSpeed;
+                                      videoPlayerController
+                                          .setPlaybackSpeed(newSpeed);
+                                    });
+                                  }
+                                },
                               ),
                               IconButton(
                                 onPressed: () {
                                   final currentPosition =
                                       videoPlayerController.value.position;
+                                  final newPosition = currentPosition -
+                                      const Duration(seconds: 10);
                                   videoPlayerController.seekTo(
-                                    currentPosition -
-                                        const Duration(seconds: 10),
+                                    newPosition < Duration.zero
+                                        ? Duration.zero
+                                        : newPosition,
                                   );
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   FluentIcons.skip_back_10_24_regular,
                                   color: Colors.white,
                                 ),
@@ -255,41 +338,55 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
                                 onPressed: () {
                                   final currentPosition =
                                       videoPlayerController.value.position;
+                                  final duration =
+                                      videoPlayerController.value.duration;
+                                  final newPosition = currentPosition +
+                                      const Duration(seconds: 10);
                                   videoPlayerController.seekTo(
-                                    currentPosition +
-                                        const Duration(seconds: 10),
+                                    newPosition > duration
+                                        ? duration
+                                        : newPosition,
                                   );
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   FluentIcons.skip_forward_10_24_regular,
                                   color: Colors.white,
                                 ),
                               ),
                               IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
+                                onPressed: () async {
+                                  final wasPlaying =
+                                      videoPlayerController.value.isPlaying;
+                                  if (wasPlaying) {
+                                    videoPlayerController.pause();
+                                  }
+
+                                  await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          FullScreenVideoViewer(
-                                              controller:
-                                                  videoPlayerController),
+                                      builder: (context) => FullScreenVideo(
+                                        videoPlayerController:
+                                            videoPlayerController,
+                                      ),
                                     ),
                                   );
+
+                                  if (wasPlaying) {
+                                    videoPlayerController.play();
+                                  }
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   FluentIcons.full_screen_maximize_24_regular,
                                   color: Colors.white,
                                 ),
                               ),
                             ],
-                          ),
+                          )
                         ],
                       ),
                     ),
-                  ),
-              ],
-            ),
-          ),
+                  )
+                : SizedBox(),
+          ],
         ),
       ],
     );
@@ -303,32 +400,248 @@ class _MobileVideoViewerState extends State<MobileVideoViewer> {
   }
 }
 
-class FullScreenVideoViewer extends StatelessWidget {
-  final VideoPlayerController controller;
+class FullScreenVideo extends StatefulWidget {
+  final VideoPlayerController videoPlayerController;
 
-  const FullScreenVideoViewer({super.key, required this.controller});
+  const FullScreenVideo({super.key, required this.videoPlayerController});
 
+  @override
+  State<FullScreenVideo> createState() => _FullScreenVideoState();
+}
+
+class _FullScreenVideoState extends State<FullScreenVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            if (controller.value.isPlaying) {
-              controller.pause();
-            } else {
-              controller.play();
-            }
-          },
-          child: Center(
-            child: AspectRatio(
-              aspectRatio: controller.value.aspectRatio,
-              child: VideoPlayer(controller),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Center(
+              child: Listener(
+                onPointerDown: (PointerEvent event) {
+                  setState(() {
+                    widget.videoPlayerController.value.isPlaying
+                        ? widget.videoPlayerController.pause()
+                        : widget.videoPlayerController.play();
+                  });
+                },
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  clipBehavior: Clip.hardEdge,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: widget.videoPlayerController.value.size.width,
+                    height: widget.videoPlayerController.value.size.height,
+                    child: VideoPlayer(widget.videoPlayerController),
+                  ),
+                ),
+              ),
             ),
-          ),
+            // if (!widget.videoPlayerController.value.isPlaying)
+            //   Positioned(
+            //     top: 10,
+            //     left: 10,
+            //     right: 10,
+            //     child: Container(
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(5),
+            //         color: AppUtils.mainBlue(context).withOpacity(0.3),
+            //       ),
+            //       child: Row(
+            //         children: [
+            //           IconButton(
+            //             icon: const Icon(Icons.arrow_back, color: Colors.white),
+            //             onPressed: () => Navigator.of(context).pop(),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            if (!widget.videoPlayerController.value.isPlaying)
+              Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: _FullScreenControls(
+                      controller: widget.videoPlayerController)),
+          ],
         ),
       ),
     );
+  }
+}
+
+class _FullScreenControls extends StatefulWidget {
+  final VideoPlayerController controller;
+
+  const _FullScreenControls({required this.controller});
+
+  @override
+  State<_FullScreenControls> createState() => _FullScreenControlsState();
+}
+
+class _FullScreenControlsState extends State<_FullScreenControls> {
+  double _playbackSpeed = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onVideoUpdate);
+  }
+
+  void _onVideoUpdate() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onVideoUpdate);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: AppUtils.mainBlue(context).withOpacity(0.3),
+      ),
+      child: Column(
+        children: [
+          Row(
+            spacing: 10,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.controller.value.isPlaying
+                            ? widget.controller.pause()
+                            : widget.controller.play();
+                      });
+                    },
+                    icon: Icon(
+                      widget.controller.value.isPlaying
+                          ? FluentIcons.pause_24_regular
+                          : FluentIcons.play_24_regular,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    "${formatDuration(widget.controller.value.position)}/${formatDuration(widget.controller.value.duration)}",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              if (widget.controller.value.isInitialized)
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  child: Slider(
+                    value: widget.controller.value.position.inSeconds
+                        .toDouble()
+                        .clamp(
+                            0.0,
+                            widget.controller.value.duration.inSeconds
+                                .toDouble()),
+                    max: widget.controller.value.duration.inSeconds.toDouble(),
+                    onChanged: (value) {
+                      widget.controller
+                          .seekTo(Duration(seconds: value.toInt()));
+                    },
+                    activeColor: AppUtils.mainBlue(context),
+                    inactiveColor: AppUtils.mainGrey(context),
+                  ),
+                )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Playback Speed: ",
+                style: TextStyle(color: Colors.white),
+              ),
+              DropdownButton<double>(
+                focusColor: Colors.white,
+                value: _playbackSpeed,
+                items: [0.5, 1.0, 1.5, 2.0]
+                    .map((speed) => DropdownMenuItem<double>(
+                          value: speed,
+                          child: Text("${speed}x"),
+                        ))
+                    .toList(),
+                onChanged: (newSpeed) {
+                  if (newSpeed != null) {
+                    setState(() {
+                      _playbackSpeed = newSpeed;
+                      widget.controller.setPlaybackSpeed(newSpeed);
+                    });
+                  }
+                },
+              ),
+              IconButton(
+                onPressed: () {
+                  final currentPosition = widget.controller.value.position;
+                  final newPosition =
+                      currentPosition - const Duration(seconds: 10);
+                  widget.controller.seekTo(
+                    newPosition < Duration.zero ? Duration.zero : newPosition,
+                  );
+                },
+                icon: Icon(
+                  FluentIcons.skip_back_10_24_regular,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  final currentPosition = widget.controller.value.position;
+                  final duration = widget.controller.value.duration;
+                  final newPosition =
+                      currentPosition + const Duration(seconds: 10);
+                  widget.controller.seekTo(
+                    newPosition > duration ? duration : newPosition,
+                  );
+                },
+                icon: Icon(
+                  FluentIcons.skip_forward_10_24_regular,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                onPressed: () async {
+                  final wasPlaying = widget.controller.value.isPlaying;
+                  if (wasPlaying) {
+                    widget.controller.pause();
+                  }
+
+                  Navigator.of(context).pop();
+
+                  if (wasPlaying) {
+                    widget.controller.play();
+                  }
+                },
+                icon: Icon(
+                  FluentIcons.full_screen_maximize_24_regular,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  String formatDuration(Duration d) {
+    final twoDigits = (int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(d.inMinutes.remainder(60));
+    final seconds = twoDigits(d.inSeconds.remainder(60));
+    return "$minutes:$seconds";
   }
 }

@@ -43,7 +43,8 @@ class _MobileNotesState extends State<MobileNotes> {
     final toggleProvider = context.watch<TogglesProvider>();
 
     return Scaffold(
-      key: _scaffoldKey, // Attach the global key to the Scaffold
+      backgroundColor: AppUtils.backgroundPanel(context),
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: AppUtils.mainBlue(context),
         elevation: 3,
@@ -62,19 +63,53 @@ class _MobileNotesState extends State<MobileNotes> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
-            spacing: 10,
+            spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
+                spacing: 20,
                 children: [
-                  Text(
-                    "Notes",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppUtils.mainBlue(context),
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            onChanged: (value) {
+                              toggleProvider.searchAction(
+                                  searchController.text, lessons, 'name');
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(12.5),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainGrey(context),
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainGrey(context),
+                                  width: 2,
+                                ),
+                              ),
+                              filled: false,
+                              prefixIcon: Icon(
+                                FluentIcons.search_24_regular,
+                                color:
+                                    AppUtils.mainGrey(context).withOpacity(0.8),
+                              ),
+                              hintText: "Search",
+                              hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppUtils.mainGrey(context)
+                                      .withOpacity(0.8)),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   if (user.isNotEmpty && user['role'] == 'admin')
@@ -116,34 +151,6 @@ class _MobileNotesState extends State<MobileNotes> {
                       ),
                     ),
                 ],
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (value) {
-                          toggleProvider.searchAction(
-                              searchController.text, lessons, 'name');
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(FluentIcons.search_24_regular),
-                          filled: true,
-                          fillColor: AppUtils.mainWhite(context),
-                          contentPadding: const EdgeInsets.all(5),
-                          border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppUtils.mainGrey(context)),
-                              borderRadius: BorderRadius.circular(5)),
-                          hintText: "Search",
-                          hintStyle: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
               if (toggleProvider.searchMode)
                 SizedBox(

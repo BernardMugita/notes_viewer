@@ -29,13 +29,13 @@ class _TabletCardRowState extends State<TabletCardRow> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Summary",
-              style: TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
+              style:
+                  TextStyle(fontSize: 16, color: AppUtils.mainGrey(context))),
           Gap(10),
           SizedBox(
             width: double.infinity,
-            child: Wrap(
+            child: Column(
               spacing: 10,
-              runSpacing: 10,
               children: [
                 if (user.isNotEmpty && user['role'] == 'admin')
                   TabletCard(

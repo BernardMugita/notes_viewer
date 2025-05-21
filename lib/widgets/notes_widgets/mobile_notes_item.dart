@@ -38,26 +38,34 @@ class _MobileNotesItemState extends State<MobileNotesItem> {
         context.read<TogglesProvider>().deActivateSearchMode();
       },
       child: Container(
-          padding: const EdgeInsets.only(left: 10, top: 2.5, bottom: 2.5),
+          padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
-              color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                color: AppUtils.mainGrey(context),
-              )),
+            color: AppUtils.mainWhite(context),
+            borderRadius: BorderRadius.circular(5),
+          ),
           child: Column(
             children: [
               Row(
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(FluentIcons.book_24_regular,
-                        size: 32, color: AppUtils.mainGrey(context)),
+                    CircleAvatar(
+                      backgroundColor:
+                          AppUtils.mainBlue(context).withOpacity(0.3),
+                      child: Text(
+                        "${lesson['name'][0]}",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppUtils.mainWhite(context),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     SizedBox(
                         child: Text(AppUtils.toSentenceCase(lesson['name']),
                             style: TextStyle(
-                                color: AppUtils.mainBlue(context),
+                                color: AppUtils.mainBlack(context),
                                 overflow: TextOverflow.ellipsis,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold))),

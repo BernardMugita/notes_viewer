@@ -54,7 +54,7 @@ class _ActivityState extends State<Activity> {
         if (uploadType != '' &&
             uploadType.isNotEmpty &&
             uploadType == 'recordings') {
-          uploadType = uploadType.substring(0, uploadType.length - 1);
+          uploadType = 'recording';
         }
 
         final activityLesson = lessons.isNotEmpty
@@ -146,9 +146,8 @@ class _ActivityState extends State<Activity> {
                         String url = AppUtils.$serverDir;
                         // print(url);
                         Map lesson = lessonProvider.lesson;
-                        Map filteredMaterial =
-                            (lesson['materials'][uploadType] as List)
-                                .firstWhere((material) {
+                        Map filteredMaterial = (lesson['materials'] as List)
+                            .firstWhere((material) {
                           return material['id'] == activity['material_id'];
                         });
                         // print(filteredMaterial);
@@ -157,8 +156,7 @@ class _ActivityState extends State<Activity> {
                             extra: {
                               "path": "$url/${filteredMaterial['file']}",
                               "material": filteredMaterial,
-                              "featured_material": lesson['materials']
-                                  [uploadType],
+                              "featured_material": lesson['materials'],
                             });
                       },
                       contentPadding:

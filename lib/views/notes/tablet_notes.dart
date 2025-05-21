@@ -1,7 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
@@ -39,16 +41,23 @@ class _TabletNotesState extends State<TabletNotes> {
   Widget build(BuildContext context) {
     final lessons = context.watch<LessonsProvider>().lessons;
     final user = context.watch<UserProvider>().user;
+
     final toggleProvider = context.watch<TogglesProvider>();
 
     return Scaffold(
-      key: _scaffoldKey, // Attach the global key to the Scaffold
+      backgroundColor: AppUtils.backgroundPanel(context),
+      key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: AppUtils.mainBlue(context),
+        elevation: 3,
         leading: GestureDetector(
           onTap: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          child: const Icon(FluentIcons.re_order_24_regular),
+          child: Icon(
+            FluentIcons.re_order_24_regular,
+            color: AppUtils.mainWhite(context),
+          ),
         ),
       ),
       drawer: const ResponsiveNav(),
@@ -56,18 +65,150 @@ class _TabletNotesState extends State<TabletNotes> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
+            spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
+                spacing: 20,
                 children: [
-                  Text(
-                    "Notes",
-                    style: TextStyle(
-                      fontSize: 24,
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
                       color: AppUtils.mainBlue(context),
-                      fontWeight: FontWeight.bold,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          child: TextField(
+                            controller: searchController,
+                            onChanged: (value) {
+                              toggleProvider.searchAction(
+                                  searchController.text, lessons, 'name');
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(12.5),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainWhite(context),
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainWhite(context),
+                                  width: 2,
+                                ),
+                              ),
+                              filled: false,
+                              prefixIcon: Icon(
+                                FluentIcons.search_24_regular,
+                                color: AppUtils.mainWhite(context)
+                                    .withOpacity(0.8),
+                              ),
+                              hintText: "Search",
+                              hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: AppUtils.mainWhite(context)
+                                      .withOpacity(0.8)),
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  FluentIcons.alert_24_regular,
+                                  size: 25,
+                                  color: AppUtils.mainWhite(context),
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: CircleAvatar(
+                                      radius: 5,
+                                      backgroundColor: context
+                                              .watch<DashboardProvider>()
+                                              .isNewActivities
+                                          ? AppUtils.mainRed(context)
+                                          : AppUtils.mainGrey(context),
+                                    ))
+                              ],
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  context.go('/settings');
+                                },
+                                icon: Icon(
+                                  FluentIcons.settings_24_regular,
+                                  size: 25,
+                                  color: AppUtils.mainWhite(context),
+                                )),
+                            Gap(10),
+                            SizedBox(
+                              height: 40,
+                              child: VerticalDivider(
+                                color: AppUtils.mainGrey(context),
+                              ),
+                            ),
+                            Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                if (context.watch<UserProvider>().isLoading)
+                                  SizedBox(
+                                    width: 150,
+                                    child: LinearProgressIndicator(
+                                      minHeight: 1,
+                                      color: AppUtils.mainWhite(context),
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                      user.isNotEmpty
+                                          ? user['username']
+                                          : 'Guest',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppUtils.mainWhite(context),
+                                          fontWeight: FontWeight.bold)),
+                                if (context.watch<UserProvider>().isLoading)
+                                  SizedBox(
+                                    width: 50,
+                                    child: LinearProgressIndicator(
+                                      minHeight: 1,
+                                      color: AppUtils.mainWhite(context),
+                                    ),
+                                  )
+                                else
+                                  SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                        user.isNotEmpty
+                                            ? user['email']
+                                            : 'guest@email.com',
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                            overflow: TextOverflow.ellipsis,
+                                            fontSize: 12,
+                                            color:
+                                                AppUtils.mainWhite(context))),
+                                  ),
+                              ],
+                            ),
+                            Gap(10),
+                            CircleAvatar(
+                              child: Icon(FluentIcons.person_24_regular),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                   if (user.isNotEmpty && user['role'] == 'admin')
@@ -76,9 +217,9 @@ class _TabletNotesState extends State<TabletNotes> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           padding:
-                              WidgetStatePropertyAll(const EdgeInsets.all(10)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                              WidgetStatePropertyAll(const EdgeInsets.all(20)),
+                          backgroundColor: WidgetStatePropertyAll(
+                              AppUtils.mainBlue(context)),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -108,28 +249,8 @@ class _TabletNotesState extends State<TabletNotes> {
                         ),
                       ),
                     ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: (value) {
-                        toggleProvider.searchAction(
-                            searchController.text, lessons, 'name');
-                      },
-                      decoration:  InputDecoration(
-                        filled: true,
-                        fillColor: AppUtils.mainWhite(context),
-                        prefixIcon: Icon(FluentIcons.search_24_filled),
-                        contentPadding: EdgeInsets.all(5),
-                        border: OutlineInputBorder(),
-                        hintText: "Search",
-                        hintStyle: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
                 ],
               ),
-              Gap(10),
               if (toggleProvider.searchMode)
                 SizedBox(
                   width: double.infinity,
@@ -137,7 +258,6 @@ class _TabletNotesState extends State<TabletNotes> {
                       ? "No results found for '${searchController.text}'"
                       : "Search results for '${searchController.text}'"),
                 ),
-              Gap(10),
               SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height,
@@ -291,7 +411,7 @@ class _TabletNotesState extends State<TabletNotes> {
                                 .watch<TogglesProvider>()
                                 .showUploadTypeDropdown)
                               Container(
-                                padding: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(10),
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
@@ -430,10 +550,11 @@ class _TabletNotesState extends State<TabletNotes> {
                                             strokeWidth: 2.5,
                                           ),
                                         )
-                                      :  Text('Add Lesson',
+                                      : Text('Add Lesson',
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: AppUtils.mainWhite(context))),
+                                              color:
+                                                  AppUtils.mainWhite(context))),
                                 ),
                               );
                             })

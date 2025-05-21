@@ -70,4 +70,28 @@ class LessonApi {
       throw Exception('Failed to delete lesson $e');
     }
   }
+
+  Future<Map<String, dynamic>> addLessonSort(
+      {required String token,
+      required String lessonId,
+      required List sortedMaterial}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final sortMaterialsRequest = await http.post(
+        Uri.parse('$url/lessons/add_sort'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'lesson_id': lessonId,
+          'sort': sortedMaterial,
+        }),
+      );
+      return jsonDecode(sortMaterialsRequest.body);
+    } catch (e) {
+      throw Exception('Failed to sort lesson materials: $e');
+    }
+  }
 }

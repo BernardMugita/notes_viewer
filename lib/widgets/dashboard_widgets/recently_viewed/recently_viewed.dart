@@ -150,9 +150,8 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                                   currentlyViewing['lesson_name'];
                               Map lessonMaterial =
                                   currentlyViewing['lesson_materials'];
-                              Map filteredMaterial =
-                                  (lessonMaterial[uploadType] as List)
-                                      .firstWhere((material) {
+                              Map filteredMaterial = (lessonMaterial as List)
+                                  .firstWhere((material) {
                                 return material['id'] ==
                                     currentlyViewing['material_id'];
                               });
@@ -162,8 +161,7 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                                   extra: {
                                     "path": "$url/${filteredMaterial['file']}",
                                     "material": filteredMaterial,
-                                    "featured_material":
-                                        lessonMaterial[uploadType],
+                                    "featured_material": lessonMaterial,
                                   });
                             },
                             child: Text(

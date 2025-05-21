@@ -59,6 +59,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
               children: [
                 TabletFileViewer(
                   fileName: fileName,
+                  material: material,
                   onPressed: (String videoDuration) {
                     setState(() {
                       duration = videoDuration;
@@ -80,7 +81,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(material['name'] ?? 'Material Name',
-                          style:  TextStyle(
+                          style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: AppUtils.mainBlue(context))),
@@ -93,7 +94,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(lessonName,
-                            style:  TextStyle(
+                            style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppUtils.mainBlack(context))),
@@ -153,11 +154,9 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Videos",
                                 errorDescription: "No relevant videos found",
-                                image: context
-                                                  .watch<ThemeProvider>()
-                                                  .isDarkMode
-                                              ? 'assets/images/404-dark.png'
-                                              : 'assets/images/404.png')
+                                image: context.watch<ThemeProvider>().isDarkMode
+                                    ? 'assets/images/404-dark.png'
+                                    : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])
@@ -171,11 +170,9 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Documents",
                                 errorDescription: "No relevant documents found",
-                                image: context
-                                                  .watch<ThemeProvider>()
-                                                  .isDarkMode
-                                              ? 'assets/images/404-dark.png'
-                                              : 'assets/images/404.png')
+                                image: context.watch<ThemeProvider>().isDarkMode
+                                    ? 'assets/images/404-dark.png'
+                                    : 'assets/images/404.png')
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])

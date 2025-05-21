@@ -59,8 +59,6 @@ class _DesktopDocumentViewerState extends State<DesktopDocumentViewer> {
       "pages": pages,
     };
 
-    print(currentlyViewing);
-
     dashboardProvider.saveUsersRecentlyViewedMaterial(currentlyViewing);
   }
 

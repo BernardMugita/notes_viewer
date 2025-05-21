@@ -26,6 +26,7 @@ class _TabletSettingsState extends State<TabletSettings> {
 
     return Scaffold(
         key: _scaffoldKey,
+        backgroundColor: AppUtils.backgroundPanel(context),
         appBar: AppBar(
           leading: GestureDetector(
             onTap: () {

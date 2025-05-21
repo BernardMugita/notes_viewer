@@ -5,11 +5,13 @@ import 'package:maktaba/widgets/view_notes_widgets/mobile/mobile_video_viewer.da
 class MobileFileViewer extends StatefulWidget {
   final String fileName;
   final Function onPressed;
+  final Map<dynamic, dynamic> material;
 
   const MobileFileViewer({
     super.key,
     required this.fileName,
     required this.onPressed,
+    required this.material,
   });
 
   @override
@@ -24,6 +26,7 @@ class _MobileFileViewerState extends State<MobileFileViewer> {
     return fileExtension == 'mp4' || fileExtension == 'webm'
         ? MobileVideoViewer(
             fileName: widget.fileName,
+            material: widget.material,
             onPressed: widget.onPressed,
             uploadType: 'recordings',
           )
@@ -33,6 +36,7 @@ class _MobileFileViewerState extends State<MobileFileViewer> {
                 fileExtension == 'ppt'
             ? MobileDocumentViewer(
                 fileName: widget.fileName,
+                material: widget.material,
                 uploadType: fileExtension == 'docx' ||
                         fileExtension == 'xlxs' ||
                         fileExtension == 'pdf'

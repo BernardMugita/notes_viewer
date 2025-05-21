@@ -72,6 +72,7 @@ class _TabletAccountState extends State<TabletAccount> {
 
     return Scaffold(
         key: _scaffoldKey,
+        backgroundColor: AppUtils.backgroundPanel(context),
         appBar: AppBar(
           leading: GestureDetector(
             onTap: () {

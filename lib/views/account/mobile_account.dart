@@ -81,6 +81,7 @@ class _MobileAccountState extends State<MobileAccount> {
       },
       child: Scaffold(
         key: _scaffoldKey,
+        backgroundColor: AppUtils.backgroundPanel(context),
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),
           leading: GestureDetector(
