@@ -50,8 +50,6 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
 
     final user = context.watch<UserProvider>().user;
 
-    print(featuredMaterial);
-
     return Scaffold(
       backgroundColor: AppUtils.backgroundPanel(context),
       body: Padding(
@@ -211,9 +209,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                       height: 1,
                                       color: AppUtils.mainGrey(context)),
                                   Gap(10),
-                                  Expanded(
-                                      child:
-                                          DiscussionForum()),
+                                  Expanded(child: DiscussionForum()),
                                 ],
                               ),
                             ),

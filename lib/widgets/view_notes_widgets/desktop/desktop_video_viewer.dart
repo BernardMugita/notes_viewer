@@ -79,8 +79,6 @@ class _DesktopVideoViewerState extends State<DesktopVideoViewer> {
       "duration": duration.inSeconds,
     };
 
-    print(currentlyViewing);
-
     dashboardProvider.saveUsersRecentlyViewedMaterial(currentlyViewing);
   }
 

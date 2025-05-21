@@ -148,10 +148,10 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                               // print(url);
                               String lessonName =
                                   currentlyViewing['lesson_name'];
-                              Map lessonMaterial =
+                              List lessonMaterial =
                                   currentlyViewing['lesson_materials'];
-                              Map filteredMaterial = (lessonMaterial as List)
-                                  .firstWhere((material) {
+                              Map filteredMaterial =
+                                  lessonMaterial.firstWhere((material) {
                                 return material['id'] ==
                                     currentlyViewing['material_id'];
                               });

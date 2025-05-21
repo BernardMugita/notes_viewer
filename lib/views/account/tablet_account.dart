@@ -74,6 +74,7 @@ class _TabletAccountState extends State<TabletAccount> {
         key: _scaffoldKey,
         backgroundColor: AppUtils.backgroundPanel(context),
         appBar: AppBar(
+          backgroundColor: AppUtils.mainBlue(context),
           leading: GestureDetector(
             onTap: () {
               _scaffoldKey.currentState?.openDrawer();
