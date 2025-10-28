@@ -413,6 +413,7 @@ class _SignUpTabState extends State<SignUpTab> {
           fields['password']!,
           fields['phone']!,
           fields['regNo']!,
+          fields['regYear']!,
           'test.jpg');
     }
   }

@@ -6,6 +6,8 @@ import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
+import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:provider/provider.dart';
 
 class MobileCourse extends StatefulWidget {
@@ -57,166 +59,186 @@ class _MobileCourseState extends State<MobileCourse> {
     final authProvider = context.watch<AuthProvider>();
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  Text(
-                    "Select a course to continue",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                  Text("Select a course from the drop down below to continue",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-            Column(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SizedBox(
                   width: double.infinity,
-                  child: TextField(
-                    controller: courseController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: AppUtils.mainWhite(context),
-                      contentPadding: EdgeInsets.all(5),
-                      prefixIcon: const Icon(FluentIcons.book_24_regular),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          togglesProvider.toggleCoursesDropDown();
-                        },
-                        child: togglesProvider.showCoursesDropDown
-                            ? const Icon(FluentIcons.chevron_up_24_regular)
-                            : const Icon(FluentIcons.chevron_down_24_regular),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Select a course to continue",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                       ),
-                      labelText: 'Course name',
-                      border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 212, 212, 212))),
-                      focusColor: AppUtils.mainBlue(context),
-                    ),
+                      Text("Select a course from the drop down below to continue",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16)),
+                    ],
                   ),
                 ),
-                Gap(10),
-                if (context.watch<TogglesProvider>().showCoursesDropDown)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppUtils.mainWhite(context),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(255, 229, 229, 229),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: const Offset(0, 3),
-                          )
-                        ]),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: courses.map<Widget>((course) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              courseController.text = course['name'];
-                              selectedCourse = course;
-                              togglesProvider.toggleCoursesDropDown();
-                            });
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                course['name'],
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const Divider(
-                                color: Color.fromARGB(255, 209, 209, 209),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3.5,
-                  child: ElevatedButton(
-                    onPressed: authProvider.isLoading ||
-                            courseController.text.isEmpty
-                        ? null
-                        : () async {
-                            final token = await authProvider.getToken();
-                            if (token != null && selectedCourse.isNotEmpty) {
-                              authProvider.updateCourse(
-                                  token, selectedCourse['id']);
-                              if (mounted) {
-                                Future.delayed(const Duration(seconds: 3), () {
-                                  context.go('/dashboard');
-                                });
-                              }
-                            }
-                          },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        authProvider.isLoading
-                            ? AppUtils.mainGrey(context)
-                            : AppUtils.mainBlue(context),
-                      ),
-                      padding: WidgetStatePropertyAll(
-                          const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 20)),
-                    ),
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        :  Text(
-                            'Continue',
-                            style: TextStyle(
-                                fontSize: 16, color: AppUtils.mainWhite(context)),
-                          ),
-                  ),
-                ),
-                Gap(10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    Checkbox(
-                        value:
-                            context.watch<TogglesProvider>().rememberSelection,
-                        onChanged: (bool? toggle) {
-                          context
-                              .read<TogglesProvider>()
-                              .toggleRememberSelection();
-                        }),
-                    Gap(5),
-                    Text("Remember my selection? ",
-                        style: TextStyle(fontSize: 16)),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextField(
+                        controller: courseController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: AppUtils.mainWhite(context),
+                          contentPadding: EdgeInsets.all(5),
+                          prefixIcon: const Icon(FluentIcons.book_24_regular),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              togglesProvider.toggleCoursesDropDown();
+                            },
+                            child: togglesProvider.showCoursesDropDown
+                                ? const Icon(FluentIcons.chevron_up_24_regular)
+                                : const Icon(FluentIcons.chevron_down_24_regular),
+                          ),
+                          labelText: 'Course name',
+                          border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 212, 212, 212))),
+                          focusColor: AppUtils.mainBlue(context),
+                        ),
+                      ),
+                    ),
+                    Gap(10),
+                    if (context.watch<TogglesProvider>().showCoursesDropDown)
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width / 1.1,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: AppUtils.mainWhite(context),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(255, 229, 229, 229),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
+                              )
+                            ]),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: courses.map<Widget>((course) {
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  courseController.text = course['name'];
+                                  selectedCourse = course;
+                                  togglesProvider.toggleCoursesDropDown();
+                                });
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    course['name'],
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  const Divider(
+                                    color: Color.fromARGB(255, 209, 209, 209),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                   ],
-                )
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 3.5,
+                      child: ElevatedButton(
+                        onPressed: authProvider.isLoading ||
+                                courseController.text.isEmpty
+                            ? null
+                            : () async {
+                                final token = await authProvider.getToken();
+                                if (token != null && selectedCourse.isNotEmpty) {
+                                  await authProvider.updateCourse(
+                                      token, selectedCourse['id']);
+                                  if (mounted && authProvider.success) {
+                                    Future.delayed(const Duration(seconds: 3), () {
+                                      context.go('/dashboard');
+                                    });
+                                  }
+                                }
+                              },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            authProvider.isLoading
+                                ? AppUtils.mainGrey(context)
+                                : AppUtils.mainBlue(context),
+                          ),
+                          padding: WidgetStatePropertyAll(
+                              const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20)),
+                        ),
+                        child: authProvider.isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : Text(
+                                'Continue',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppUtils.mainWhite(context)),
+                              ),
+                      ),
+                    ),
+                    Gap(10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                            value:
+                                context.watch<TogglesProvider>().rememberSelection,
+                            onChanged: (bool? toggle) {
+                              context
+                                  .read<TogglesProvider>()
+                                  .toggleRememberSelection();
+                            }),
+                        Gap(5),
+                        Text("Remember my selection? ",
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          if (context.watch<AuthProvider>().success)
+            Positioned(
+                top: 20,
+                right: 20,
+                left: 20,
+                child: SuccessWidget(
+                    message: context.watch<AuthProvider>().message))
+          else if (context.watch<AuthProvider>().error)
+            Positioned(
+              top: 20,
+              right: 20,
+              left: 20,
+              child: FailedWidget(
+                  message: context.watch<AuthProvider>().message),
+            )
+        ],
       ),
     );
   }

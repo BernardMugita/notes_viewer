@@ -13,6 +13,7 @@ import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/uploads_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -402,11 +403,7 @@ class _MobileStudyState extends State<MobileStudy> {
                                             errorHeading: "How Empty!",
                                             errorDescription:
                                                 "There's no study material for this lesson",
-                                            image: context
-                                                    .watch<ThemeProvider>()
-                                                    .isDarkMode
-                                                ? 'assets/images/404-dark.png'
-                                                : 'assets/images/404.png'),
+                                            type: EmptyWidgetType.notes),
                                       ),
                                     )
                                   else

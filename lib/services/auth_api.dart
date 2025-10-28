@@ -38,6 +38,7 @@ class AuthApi {
       required String password,
       required String phone,
       required String regNo,
+      required String regYear,
       required String image}) async {
     try {
       final String url = '${AppUtils.$baseUrl}/users/create';
@@ -49,6 +50,7 @@ class AuthApi {
             'password': password,
             'phone': phone,
             'reg_no': regNo,
+            'reg_year': regYear,
             'img': image
           }));
       return jsonDecode(signUpRequest.body) as Map<String, dynamic>;

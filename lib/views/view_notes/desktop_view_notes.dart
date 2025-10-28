@@ -7,6 +7,7 @@ import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/view_notes_widgets/desktop/desktop_file_viewer.dart';
 import 'package:maktaba/widgets/view_notes_widgets/desktop/desktop_relevant_documents.dart';
@@ -332,7 +333,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                                 errorHeading: "No videos",
                                                 errorDescription:
                                                     "No relevant videos found",
-                                                image: 'assets/images/404.png'))
+                                                type: EmptyWidgetType.notes))
                                         : SizedBox(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -364,7 +365,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                                 errorHeading: "No Documents",
                                                 errorDescription:
                                                     "No relevant documents found",
-                                                image: 'assets/images/404.png'),
+                                                type: EmptyWidgetType.notes),
                                           )
                                         : Column(
                                             children: featuredMaterial.isEmpty

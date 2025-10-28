@@ -41,7 +41,7 @@ class _SuccessWidgetState extends State<SuccessWidget>
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      mobileLayout: _buildSuccessWidget(0.8, 14, 5, 5),
+      mobileLayout: _buildSuccessWidget(0.8, 12, 5, 5),
       tabletLayout: _buildSuccessWidget(0.25, 16, 20, 10),
       desktopLayout: _buildSuccessWidget(0.25, 16, 10, 30),
     );

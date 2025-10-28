@@ -8,6 +8,7 @@ import 'package:maktaba/providers/lessons_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -217,9 +218,7 @@ class _TabletVideoViewerState extends State<TabletVideoViewer> {
                         errorHeading: "Playback Error",
                         errorDescription:
                             "Video playback failed, please try again",
-                        image: context.watch<ThemeProvider>().isDarkMode
-                            ? 'assets/images/404-dark.png'
-                            : 'assets/images/404.png',
+                        type: EmptyWidgetType.recordings,
                       ),
                     );
                   }

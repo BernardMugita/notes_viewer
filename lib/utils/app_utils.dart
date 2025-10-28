@@ -65,9 +65,13 @@ class AppUtils {
     return const Color(0xFFf9f9ff);
   }
 
-  static const String $baseUrl = 'http://127.0.0.1:8000/r1server';
+  // static const String $appUrl = 'https://philanthropically-farsighted-malik.ngrok-free.dev';
+  // static const String $appUrl = 'https://r1-server.arifulib.co.ke';
+  static const String $appUrl = 'http://127.0.0.1:8000';
 
-  static const String $serverDir = 'http://127.0.0.1:8000';
+  static const String $baseUrl = '${$appUrl}/r1server';
+
+  static const String $serverDir = $appUrl;
 
   static String formatDate(String dateTime) {
     DateTime parsedDate = DateTime.parse(dateTime);

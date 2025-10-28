@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/responsive/responsive_layout.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/dashboard_widgets/recent_activities/activity.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class DesktopActivities extends StatelessWidget {
     return ResponsiveLayout(
         mobileLayout: _buildActivityItem(0.4),
         tabletLayout: _buildActivityItem(0.4),
-        desktopLayout: _buildActivityItem(0.4));
+        desktopLayout: _buildActivityItem(0.7));
   }
 
   Widget _buildActivityItem(double heightDenomenator) {
@@ -34,7 +35,7 @@ class DesktopActivities extends StatelessWidget {
             ? EmptyWidget(
                 errorHeading: "No Activities Loaded",
                 errorDescription: "Activity history may be empty",
-                image: 'assets/images/empty_act.png',
+                type: EmptyWidgetType.activities,
               )
             : SizedBox(
                 width: double.infinity,

@@ -11,6 +11,7 @@ import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
@@ -303,11 +304,8 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                               "Empty List of Lessons!",
                                           errorDescription:
                                               "No lessons uploaded for this unit.",
-                                          image: context
-                                                  .watch<ThemeProvider>()
-                                                  .isDarkMode
-                                              ? 'assets/images/404-dark.png'
-                                              : 'assets/images/404.png')
+                                          type: EmptyWidgetType.notes,
+                                        )
                                       : ListView.builder(
                                           itemCount: toggleProvider
                                                   .searchResults.isNotEmpty

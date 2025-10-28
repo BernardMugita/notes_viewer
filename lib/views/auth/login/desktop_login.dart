@@ -30,45 +30,57 @@ class DesktopLogin extends StatelessWidget {
               ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 1,
-                  child: DefaultTabController(
-                    length: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Gap(MediaQuery.of(context).size.height / 4),
-                        TabBar(
-                          labelColor: AppUtils.mainBlue(context),
-                          unselectedLabelColor: AppUtils.mainBlack(context),
-                          indicatorColor: Colors.blue,
-                          labelStyle: const TextStyle(fontSize: 18),
-                          tabs: const [
-                            Tab(text: "Sign in"),
-                            Tab(text: "Sign up"),
+                  child: Container(
+                    // color: Colors.red, // Remove this after testing
+                    height: MediaQuery.of(context).size.height,
+                    child: Center(
+                      // Added Center widget
+                      child: DefaultTabController(
+                        length: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min, // Added this
+                          children: [
+                            TabBar(
+                              labelColor: AppUtils.mainBlue(context),
+                              unselectedLabelColor: AppUtils.mainBlack(context),
+                              indicatorColor: Colors.blue,
+                              labelStyle: const TextStyle(fontSize: 18),
+                              tabs: const [
+                                Tab(text: "Sign in"),
+                                Tab(text: "Sign up"),
+                              ],
+                            ),
+                            const Gap(20),
+                            SizedBox(
+                              // Changed from Expanded to SizedBox with fixed height
+                              height: MediaQuery.of(context).size.height /
+                                  2.5, // Adjust this height as needed
+                              child: TabBarView(
+                                children: [
+                                  const SignInTab(),
+                                  const SignUpTab(),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                        const Gap(20),
-                        Expanded(
-                          child: TabBarView(
-                            children: [
-                              const SignInTab(),
-                              const SignUpTab(),
-                            ],
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
                 ),
                 const Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min, // Added this
                       children: [
                         Image(
                             height: 200,
@@ -132,6 +144,7 @@ class _SignInTabState extends State<SignInTab> {
   String? passwordError;
 
   void _clearEmailError() => setState(() => emailError = null);
+
   void _clearPasswordError() => setState(() => passwordError = null);
 
   @override
@@ -306,14 +319,16 @@ class _SignUpTabState extends State<SignUpTab> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController regNoController = TextEditingController();
+  final TextEditingController regYearController = TextEditingController();
 
   String? usernameError;
   String? emailError;
   String? passwordError;
   String? phoneError;
   String? regNoError;
+  String? regYearError;
   double _passwordStrength = 0.0;
-  
+
   final Map<String, bool> _passwordCriteria = {
     '8+ Characters': false,
     'Uppercase Letter': false,
@@ -355,6 +370,9 @@ class _SignUpTabState extends State<SignUpTab> {
         case 'regNo':
           regNoError = null;
           break;
+        case 'regYear':
+          regNoError = null;
+          break;
       }
     });
   }
@@ -391,6 +409,7 @@ class _SignUpTabState extends State<SignUpTab> {
       'password': passwordController.text.trim(),
       'phone': phoneController.text.trim(),
       'regNo': regNoController.text.trim(),
+      'regYear': regYearController.text.trim(),
     };
 
     setState(() {
@@ -428,6 +447,67 @@ class _SignUpTabState extends State<SignUpTab> {
     if (fields['regNo']!.isEmpty) {
       setState(() => regNoError = 'Registration number required');
       isValid = false;
+    } else {
+      // Validate registration number format: CODE/Student_number/reg_year
+      List<String> regNoParts = fields['regNo']!.split('/');
+
+      if (regNoParts.length != 3) {
+        setState(() =>
+            regNoError = 'Invalid format. Expected: H31/Student_number/year');
+        isValid = false;
+      } else {
+        String code = regNoParts[0];
+        String studentNumber = regNoParts[1];
+        String regYearFromRegNo = regNoParts[2];
+
+        // Validate code is H31
+        if (code != 'H31') {
+          setState(
+              () => regNoError = 'Registration number must start with H31');
+          isValid = false;
+        }
+        // Validate student number is not empty and is numeric
+        else if (studentNumber.isEmpty || int.tryParse(studentNumber) == null) {
+          setState(() => regNoError = 'Invalid student number');
+          isValid = false;
+        }
+        // Validate year is either 2024 or 2025
+        else if (regYearFromRegNo != '2024' && regYearFromRegNo != '2025') {
+          setState(() =>
+              regNoError = 'Registration year must be either 2024 or 2025');
+          isValid = false;
+        }
+        // Check if reg_year matches the year in reg_no
+        else if (fields['regYear']!.isNotEmpty &&
+            fields['regYear'] != regYearFromRegNo) {
+          setState(() => regNoError =
+              'Registration year does not match the year in registration number');
+          isValid = false;
+        }
+      }
+    }
+
+    if (fields['regYear']!.isEmpty) {
+      setState(() => regYearError = 'Registration year required');
+      isValid = false;
+    } else if (fields['regYear'] != '2024' && fields['regYear'] != '2025') {
+      setState(
+          () => regYearError = 'Registration year must be either 2024 or 2025');
+      isValid = false;
+    } else {
+      if (fields['regNo']!.isNotEmpty) {
+        List<String> regNoParts = fields['regNo']!.split('/');
+
+        if (regNoParts.length == 3) {
+          String regYearFromRegNo = regNoParts[2];
+
+          if (fields['regYear'] != regYearFromRegNo) {
+            setState(() => regYearError =
+                'Registration year does not match the year in registration number');
+            isValid = false;
+          }
+        }
+      }
     }
 
     if (fields['password']!.isEmpty) {
@@ -445,93 +525,127 @@ class _SignUpTabState extends State<SignUpTab> {
           fields['password']!,
           fields['phone']!,
           fields['regNo']!,
+          fields['regYear']!,
           'test.jpg');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text("Use your Registration Number to create an account"),
-        const Gap(10),
-        TextField(
-          cursorColor: AppUtils.mainBlue(context),
-          controller: usernameController,
-          decoration: _inputDecoration(
-            label: 'Username',
-            error: usernameError,
-            icon: FluentIcons.person_24_regular,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text("Use your Registration Number to create an account"),
+          const Gap(10),
+          Wrap(
+            spacing: 10, // Horizontal space between items
+            runSpacing: 10, // Vertical space between rows
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: usernameController,
+                  decoration: _inputDecoration(
+                    label: 'Username',
+                    error: usernameError,
+                    icon: FluentIcons.person_24_regular,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: emailController,
+                  decoration: _inputDecoration(
+                    label: 'Email',
+                    error: emailError,
+                    icon: FluentIcons.book_24_regular,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: _inputDecoration(
+                    label: 'Phone Number',
+                    error: phoneError,
+                    icon: FluentIcons.clipboard_24_regular,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: regNoController,
+                  decoration: _inputDecoration(
+                    label: 'Registration Number',
+                    error: regNoError,
+                    icon: FluentIcons.mail_24_regular,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: regYearController,
+                  decoration: _inputDecoration(
+                    label: 'Registration Year',
+                    error: regYearError,
+                    icon: FluentIcons.mail_24_regular,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: TextField(
+                  cursorColor: AppUtils.mainBlue(context),
+                  controller: passwordController,
+                  obscureText: !context.watch<TogglesProvider>().showPassword,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
+                    floatingLabelStyle:
+                        TextStyle(color: AppUtils.mainBlack(context)),
+                    suffixIcon: GestureDetector(
+                      onTap: () =>
+                          context.read<TogglesProvider>().togglePassword(),
+                      child: Icon(context.watch<TogglesProvider>().showPassword
+                          ? FluentIcons.eye_24_regular
+                          : FluentIcons.eye_off_24_regular),
+                    ),
+                    labelText: 'Password',
+                    errorText: passwordError,
+                    border: _errorBorder(passwordError),
+                    focusedBorder: _focusedBorder(passwordError),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        const Gap(10),
-        TextField(
-          cursorColor: AppUtils.mainBlue(context),
-          controller: emailController,
-          decoration: _inputDecoration(
-            label: 'Email',
-            error: emailError,
-            icon: FluentIcons.book_24_regular,
+          const Gap(10),
+          _buildPasswordStrengthIndicator(),
+          const Gap(10),
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, _) {
+              return ElevatedButton(
+                onPressed: authProvider.isLoading ? null : _validateAndSubmit,
+                style: _buttonStyle(authProvider.isLoading),
+                child: authProvider.isLoading
+                    ? _loadingIndicator()
+                    : const Text('Sign Up',
+                        style: TextStyle(color: Colors.white)),
+              );
+            },
           ),
-        ),
-        const Gap(10),
-        TextField(
-          cursorColor: AppUtils.mainBlue(context),
-          controller: phoneController,
-          keyboardType: TextInputType.phone,
-          decoration: _inputDecoration(
-            label: 'Phone Number',
-            error: phoneError,
-            icon: FluentIcons.clipboard_24_regular,
-          ),
-        ),
-        const Gap(20),
-        TextField(
-          cursorColor: AppUtils.mainBlue(context),
-          controller: regNoController,
-          decoration: _inputDecoration(
-            label: 'Registration Number',
-            error: regNoError,
-            icon: FluentIcons.mail_24_regular,
-          ),
-        ),
-        const Gap(20),
-        TextField(
-          cursorColor: AppUtils.mainBlue(context),
-          controller: passwordController,
-          obscureText: !context.watch<TogglesProvider>().showPassword,
-          decoration: InputDecoration(
-            prefixIcon: const Icon(FluentIcons.lock_closed_24_regular),
-            floatingLabelStyle: TextStyle(color: AppUtils.mainBlack(context)),
-            suffixIcon: GestureDetector(
-              onTap: () => context.read<TogglesProvider>().togglePassword(),
-              child: Icon(context.watch<TogglesProvider>().showPassword
-                  ? FluentIcons.eye_24_regular
-                  : FluentIcons.eye_off_24_regular),
-            ),
-            labelText: 'Password',
-            errorText: passwordError,
-            border: _errorBorder(passwordError),
-            focusedBorder: _focusedBorder(passwordError),
-          ),
-        ),
-        const Gap(10),
-        _buildPasswordStrengthIndicator(),
-        const Gap(10),
-        Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
-            return ElevatedButton(
-              onPressed: authProvider.isLoading ? null : _validateAndSubmit,
-              style: _buttonStyle(authProvider.isLoading),
-              child: authProvider.isLoading
-                  ? _loadingIndicator()
-                  : const Text('Sign Up',
-                      style: TextStyle(color: Colors.white)),
-            );
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 

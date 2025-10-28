@@ -66,7 +66,7 @@ class AuthProvider extends ChangeNotifier {
 
   // Register user and save token
   Future<Map<String, dynamic>> register(String username, String email,
-      String password, String phone, String regNo, String image) async {
+      String password, String phone, String regNo, String regYear, String image) async {
     isLoading = true;
     success = false;
     error = false;
@@ -79,6 +79,7 @@ class AuthProvider extends ChangeNotifier {
         password: password,
         phone: phone,
         regNo: regNo,
+        regYear: regYear,
         image: image,
       );
 
@@ -167,6 +168,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       final updateCourseRequest =
           await authApi.updateStudentCourse(token: token, courseId: courseId);
+      
+      print(updateCourseRequest);
 
       if (updateCourseRequest['status'] == "success") {
         message = 'Course updated successfully';
@@ -180,7 +183,7 @@ class AuthProvider extends ChangeNotifier {
         });
       } else {
         error = true;
-        message = 'Course update failed';
+        message = updateCourseRequest['error'] ?? 'Course update failed';
         isLoading = false;
         notifyListeners();
         Future.delayed(const Duration(seconds: 3), () {

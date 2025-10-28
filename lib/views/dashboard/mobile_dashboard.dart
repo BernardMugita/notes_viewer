@@ -179,7 +179,9 @@ class _MobileDashboardState extends State<MobileDashboard>
                                           spacing: 10,
                                           children: [
                                             Icon(FluentIcons.clock_24_regular),
-                                            Text("Recent Activities"),
+                                            Text("Recent Activities", style: TextStyle(
+                                              fontSize: 12
+                                            ),),
                                           ],
                                         )),
                                         Tab(
@@ -188,7 +190,9 @@ class _MobileDashboardState extends State<MobileDashboard>
                                           children: [
                                             Icon(
                                                 FluentIcons.history_24_regular),
-                                            Text("Activity History"),
+                                            Text("Activity History", style: TextStyle(
+                                                fontSize: 12
+                                            )),
                                           ],
                                         )),
                                       ],
@@ -197,8 +201,7 @@ class _MobileDashboardState extends State<MobileDashboard>
                                       padding: EdgeInsets.all(5),
                                       decoration: BoxDecoration(),
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              0.325,
+                                          MediaQuery.of(context).size.height / 2.5,
                                       child: TabBarView(
                                           controller: controller,
                                           children: [

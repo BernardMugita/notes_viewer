@@ -343,7 +343,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                   height: togglesProvider.showCoursesDropDown
                       ? MediaQuery.of(context).size.height * 0.65
                       : togglesProvider.showSemesterDropDown
-                          ? MediaQuery.of(context).size.height * 0.7
+                          ? MediaQuery.of(context).size.height * 0.75
                           : MediaQuery.of(context).size.height * 0.45,
                   decoration: BoxDecoration(
                     color: AppUtils.mainWhite(context),
@@ -627,7 +627,7 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                                       unitProvider.fetchUserUnits(token);
                                       Future.delayed(const Duration(seconds: 2),
                                           () {
-                                        Navigator.of(dialogContext).pop();
+                                        context.pop();
                                       });
                                     }
                                   },

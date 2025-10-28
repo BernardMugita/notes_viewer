@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_file_viewer.dart';
 import 'package:maktaba/widgets/view_notes_widgets/tablet/tablet_relevant_documents.dart';
@@ -154,9 +155,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Videos",
                                 errorDescription: "No relevant videos found",
-                                image: context.watch<ThemeProvider>().isDarkMode
-                                    ? 'assets/images/404-dark.png'
-                                    : 'assets/images/404.png')
+                            type: EmptyWidgetType.notes)
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])
@@ -170,9 +169,7 @@ class _TabletViewNotesState extends State<TabletViewNotes> {
                             ? EmptyWidget(
                                 errorHeading: "No Documents",
                                 errorDescription: "No relevant documents found",
-                                image: context.watch<ThemeProvider>().isDarkMode
-                                    ? 'assets/images/404-dark.png'
-                                    : 'assets/images/404.png')
+                            type: EmptyWidgetType.notes)
                             : Column(
                                 children: featuredMaterial
                                     .where((mat) => mat['id'] != material['id'])

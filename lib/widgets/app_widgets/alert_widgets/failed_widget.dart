@@ -41,7 +41,7 @@ class _FailedWidgetState extends State<FailedWidget>
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      mobileLayout: _buildFailedWidget(0.8, 14, 5, 5),
+      mobileLayout: _buildFailedWidget(0.8, 12, 5, 5),
       tabletLayout: _buildFailedWidget(0.25, 16, 20, 10),
       desktopLayout: _buildFailedWidget(0.25, 16, 10, 30),
     );

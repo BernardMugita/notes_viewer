@@ -10,6 +10,7 @@ import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/responsive/responsive_layout.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/utils/enums.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +62,7 @@ class _SearchResultsState extends State<SearchResults> {
       return EmptyWidget(
         errorHeading: "Empty Results",
         errorDescription: "No matches found for '${widget.query}'",
-        image: emptyImage,
+          type: EmptyWidgetType.notes
       );
     }
 
