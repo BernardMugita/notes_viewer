@@ -599,8 +599,8 @@ class _TabletUnitsState extends State<TabletUnits> {
                           child: ElevatedButton(
                             onPressed: unitProvider.isLoading
                                 ? null
-                                : () {
-                                    unitProvider.addUnit(
+                                : () async {
+                                    final success = await unitProvider.addUnit(
                                         token,
                                         nameController.text,
                                         'anat.png',
@@ -609,11 +609,8 @@ class _TabletUnitsState extends State<TabletUnits> {
                                         [],
                                         [],
                                         semesterController.text);
-                                    if (unitProvider.success) {
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        Navigator.of(dialogContext).pop();
-                                      });
+                                    if (success) {
+                                      Navigator.of(dialogContext).pop();
                                     }
                                   },
                             style: ButtonStyle(

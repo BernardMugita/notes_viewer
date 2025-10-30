@@ -21,7 +21,7 @@ class LessonsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> createNewLesson(
+  Future<bool> createNewLesson(
       String token, String name, String unitId) async {
     isLoading = true;
     success = false;
@@ -37,36 +37,23 @@ class LessonsProvider extends ChangeNotifier {
         success = true;
         message = "Lesson added successfully!";
         isLoading = false;
+        await getAllLesson(token, unitId);
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
+        return true;
       } else {
         error = true;
         message = "Error adding lesson!";
         isLoading = false;
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
+        return false;
       }
     } catch (e) {
       error = true;
       message = "Error adding lesson! $e";
       isLoading = false;
       notifyListeners();
-      Future.delayed(const Duration(seconds: 3), () {
-        error = false;
-        message = '';
-        notifyListeners();
-      });
+      return false;
     }
-
-    return {};
   }
 
   Future<Map<String, dynamic>> getLesson(String token, String lessonId) async {
@@ -85,32 +72,17 @@ class LessonsProvider extends ChangeNotifier {
         lesson = getLessonRequest['lesson'];
         isLoading = false;
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
       } else {
         error = true;
         message = "Error fetching lesson!";
         isLoading = false;
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
       }
     } catch (e) {
       error = true;
       message = "Error fetching lesson! $e";
       isLoading = false;
       notifyListeners();
-      Future.delayed(const Duration(seconds: 3), () {
-        error = false;
-        message = '';
-        notifyListeners();
-      });
     }
 
     return {};
@@ -133,32 +105,17 @@ class LessonsProvider extends ChangeNotifier {
         lessons = getAllLessonsRequest['lessons'];
         isLoading = false;
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
       } else {
         error = true;
         message = "Error fetching lesson!";
         isLoading = false;
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
       }
     } catch (e) {
       error = true;
       message = "Error fetching lesson! $e";
       isLoading = false;
       notifyListeners();
-      Future.delayed(const Duration(seconds: 3), () {
-        error = false;
-        message = '';
-        notifyListeners();
-      });
     }
 
     return {};
@@ -181,32 +138,17 @@ class LessonsProvider extends ChangeNotifier {
         // units = deleteRequest['units'];
         message = "Lesson deleted successfully";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
       } else {
         error = true;
         isLoading = false;
         message = "Failed to delete lesson";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
       }
     } catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to delete lesson $e";
       notifyListeners();
-      Future.delayed(const Duration(seconds: 3), () {
-        error = false;
-        message = '';
-        notifyListeners();
-      });
     }
 
     return {};
@@ -227,31 +169,16 @@ class LessonsProvider extends ChangeNotifier {
         sortSuccess = true;
         sortMessage = "Sort saved successfully";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          sortSuccess = false;
-          sortMessage = '';
-          notifyListeners();
-        });
       } else {
         sortError = true;
         isSortLoading = false;
         sortMessage = "Sort failed to save";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          sortError = false;
-          sortMessage = '';
-          notifyListeners();
-        });
       }
     } catch (e) {
       sortError = true;
       isSortLoading = false;
       sortMessage = "Failed to update lesson sort $e";
-      Future.delayed(const Duration(seconds: 3), () {
-        sortError = false;
-        sortMessage = '';
-        notifyListeners();
-      });
     }
 
     return {};

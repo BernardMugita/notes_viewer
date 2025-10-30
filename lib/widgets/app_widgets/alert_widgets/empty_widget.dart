@@ -25,51 +25,54 @@ class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      mobileLayout: _buildEmptyWidget(0.4, 150),
-      tabletLayout: _buildEmptyWidget(0.4, 200),
-      desktopLayout: _buildEmptyWidget(0.4, 200),
+      mobileLayout: _buildEmptyWidget(150),
+      tabletLayout: _buildEmptyWidget(200),
+      desktopLayout: _buildEmptyWidget(200),
     );
   }
 
-  Widget _buildEmptyWidget(double heightDenomenator, double size) {
+  Widget _buildEmptyWidget(double size) {
     return Container(
       padding: const EdgeInsets.all(20),
-      height: MediaQuery.of(context).size.height * heightDenomenator,
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              widget.errorHeading,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.deepOrange,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Poppins',
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.errorHeading,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.deepOrange,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: size,
-              height: size,
-              child: CustomPaint(
-                painter: EmptyStatePainter(type: widget.type),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: size,
+                height: size,
+                child: CustomPaint(
+                  painter: EmptyStatePainter(type: widget.type),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              widget.errorDescription,
-              style: const TextStyle(
-                fontSize: 16,
-                fontFamily: 'Poppins',
+              const SizedBox(height: 20),
+              Text(
+                widget.errorDescription,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

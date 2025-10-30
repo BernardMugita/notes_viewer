@@ -10,8 +10,8 @@ class UploadsProvider extends ChangeNotifier {
 
   UploadApi uploadApi = UploadApi();
 
-  Future<Map<String, dynamic>> uploadNewFile(
-      String token, PlatformFile file, String form) async {
+  Future<bool> uploadNewFile(
+      String token, PlatformFile file, Map<String, String> form) async {
     isLoading = true;
     success = false;
     error = false;
@@ -26,35 +26,21 @@ class UploadsProvider extends ChangeNotifier {
         success = true;
         message = "File uploaded successfully";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
+        return true;
       } else {
         isLoading = false;
         error = true;
         message = "Failed to upload file";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
+        return false;
       }
     } catch (e) {
       isLoading = false;
       error = true;
       message = "Failed to upload file $e";
       notifyListeners();
-      Future.delayed(const Duration(seconds: 3), () {
-        error = false;
-        message = '';
-        notifyListeners();
-      });
+      return false;
     }
-
-    return {};
   }
 
   Future<Map<String, dynamic>> deleteUploadedMaterial(
@@ -74,21 +60,11 @@ class UploadsProvider extends ChangeNotifier {
         success = true;
         message = "File deleted successfully";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          success = false;
-          message = '';
-          notifyListeners();
-        });
       } else {
         isLoading = false;
         error = true;
         message = "Failed to upload file";
         notifyListeners();
-        Future.delayed(const Duration(seconds: 3), () {
-          error = false;
-          message = '';
-          notifyListeners();
-        });
       }
     } catch (e) {
       isLoading = false;

@@ -46,7 +46,6 @@ class _MobileStudyState extends State<MobileStudy> {
   List uploadTypes = ['notes', 'slides', 'recordings'];
   List allMaterial = [];
   List originalMaterialList = [];
-  List<String> form = [];
 
   FilePickerResult? result;
   String? selectedFileName;
@@ -713,29 +712,27 @@ class _MobileStudyState extends State<MobileStudy> {
                             child: ElevatedButton(
                               onPressed: uploadsProvider.isLoading
                                   ? null
-                                  : () {
-                                      form = [
-                                        nameController.text,
-                                        unitIdRef,
-                                        lessonIdRef,
-                                        descriptionController.text,
-                                        '7.30',
-                                        uploadTypeController.text
-                                      ];
+                                  : () async {
+                                      final Map<String, String> form = {
+                                        'name': nameController.text,
+                                        'unit_id': unitIdRef,
+                                        'lesson_id': lessonIdRef,
+                                        'description':
+                                            descriptionController.text,
+                                        'duration': '7.30',
+                                        'type': uploadTypeController.text
+                                      };
 
-                                      uploadsProvider.uploadNewFile(
+                                      final success = await uploadsProvider.uploadNewFile(
                                           tokenRef,
                                           selectedFile!,
-                                          form
-                                              .toString()
-                                              .replaceAll(']', '')
-                                              .replaceAll('[', ''));
+                                          form);
 
-                                      if (uploadsProvider.success) {
+                                      if (success) {
                                         context
                                             .read<LessonsProvider>()
                                             .getLesson(tokenRef, lessonIdRef);
-                                        Navigator.pop(context);
+                                        Navigator.of(dialogContext).pop();
                                       }
                                     },
                               style: ButtonStyle(

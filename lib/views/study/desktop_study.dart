@@ -924,29 +924,26 @@ class _DesktopStudyState extends State<DesktopStudy> {
                                 onPressed: uploadsProvider.isLoading ||
                                         isUploading
                                     ? null
-                                    : () {
-                                        form = [
-                                          nameController.text,
-                                          unitIdRef,
-                                          lessonIdRef,
-                                          descriptionController.text,
-                                          '7.30',
-                                          uploadTypeController.text
-                                        ];
+                                    : () async {
+                                        final Map<String, String> form = {
+                                          'name': nameController.text,
+                                          'unit_id': unitIdRef,
+                                          'lesson_id': lessonIdRef,
+                                          'description': descriptionController.text,
+                                          'duration': '7.30',
+                                          'type': uploadTypeController.text
+                                        };
 
-                                        uploadsProvider.uploadNewFile(
+                                        final success = await uploadsProvider.uploadNewFile(
                                             tokenRef,
                                             selectedFile!,
-                                            form
-                                                .toString()
-                                                .replaceAll(']', '')
-                                                .replaceAll('[', ''));
+                                            form);
 
-                                        if (uploadsProvider.success) {
+                                        if (success) {
                                           context
                                               .read<LessonsProvider>()
                                               .getLesson(tokenRef, lessonIdRef);
-                                          Navigator.pop(context);
+                                          Navigator.of(dialogContext).pop();
                                         }
                                       },
                                 style: ButtonStyle(

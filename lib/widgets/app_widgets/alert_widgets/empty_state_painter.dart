@@ -39,7 +39,7 @@ class EmptyStatePainter extends CustomPainter {
 
   void _drawNotesEmpty(
       Canvas canvas, Size size, double centerX, double centerY) {
-    final scale = size.width / 400;
+    final scale = size.width / 800;
 
     // Main document
     final docPaint = Paint()
@@ -162,7 +162,7 @@ class EmptyStatePainter extends CustomPainter {
     );
 
     // Bell clapper
-    canvas.drawCircle(Offset(centerX, centerY + 10 * scale), 5 * scale,
+    canvas.drawCircle(Offset(centerX, centerY + 10 * scale), 2 * scale,
         Paint()..color = const Color(0xFF3B82F6));
 
     // Diagonal slash
@@ -179,7 +179,7 @@ class EmptyStatePainter extends CustomPainter {
 
   void _drawRecordingsEmpty(
       Canvas canvas, Size size, double centerX, double centerY) {
-    final scale = size.width / 400;
+    final scale = size.width / 800;
 
     // Microphone
     final micPaint = Paint()
@@ -232,7 +232,7 @@ class EmptyStatePainter extends CustomPainter {
 
   void _drawStudentsEmpty(
       Canvas canvas, Size size, double centerX, double centerY) {
-    final scale = size.width / 400;
+    final scale = size.width / 800;
 
     // Person icon
     final personPaint = Paint()

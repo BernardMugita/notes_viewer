@@ -210,7 +210,7 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                       height: 1,
                                       color: AppUtils.mainGrey(context)),
                                   Gap(10),
-                                  Expanded(child: DiscussionForum()),
+                                  Expanded(child: DiscussionForum(studyMaterialId: material['id'])),
                                 ],
                               ),
                             ),

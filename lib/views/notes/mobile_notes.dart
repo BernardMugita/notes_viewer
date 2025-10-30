@@ -414,15 +414,13 @@ class _MobileNotesState extends State<MobileNotes> {
                                 child: ElevatedButton(
                                   onPressed: lessonProvider.isLoading
                                       ? null
-                                      : () {
-                                          lessonProvider.createNewLesson(
+                                      : () async {
+                                          final success = await lessonProvider.createNewLesson(
                                               widget.tokenRef,
                                               nameController.text,
                                               widget.unitId);
-                                          if (lessonProvider.success) {
-                                            lessonProvider.getAllLesson(
-                                                widget.tokenRef, widget.unitId);
-                                            Navigator.pop(context);
+                                          if (success) {
+                                            Navigator.of(dialogContext).pop();
                                           }
                                         },
                                   style: ButtonStyle(

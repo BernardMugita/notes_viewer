@@ -7,7 +7,7 @@ class UploadApi {
   final String url = AppUtils.$baseUrl;
 
   Future<Map<String, dynamic>> uploadFile(
-      String token, PlatformFile file, String form) async {
+      String token, PlatformFile file, Map<String, String> form) async {
     try {
       // Create a multipart request
       final request = http.MultipartRequest(
@@ -38,7 +38,7 @@ class UploadApi {
       }
 
       // Add form data
-      request.fields['form'] = form;
+      request.fields['form'] = jsonEncode(form);
 
       // Send the request
       final response = await request.send();

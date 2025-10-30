@@ -299,12 +299,14 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                       color: AppUtils.mainBlue(context),
                                       size: 100)
                                   : lessons.isEmpty
-                                      ? EmptyWidget(
-                                          errorHeading:
-                                              "Empty List of Lessons!",
-                                          errorDescription:
-                                              "No lessons uploaded for this unit.",
-                                          type: EmptyWidgetType.notes,
+                                      ? Center(
+                                          child: EmptyWidget(
+                                            errorHeading:
+                                                "Empty List of Lessons!",
+                                            errorDescription:
+                                                "No lessons uploaded for this unit.",
+                                            type: EmptyWidgetType.notes,
+                                          ),
                                         )
                                       : ListView.builder(
                                           itemCount: toggleProvider
@@ -569,15 +571,13 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                 child: ElevatedButton(
                                   onPressed: lessonProvider.isLoading
                                       ? null
-                                      : () {
-                                          lessonProvider.createNewLesson(
+                                      : () async {
+                                          final success = await lessonProvider.createNewLesson(
                                               tokenRef,
                                               nameController.text,
                                               unitId);
-                                          if (lessonProvider.success) {
-                                            lessonProvider.getAllLesson(
-                                                widget.tokenRef, widget.unitId);
-                                            Navigator.pop(context);
+                                          if (success) {
+                                            Navigator.of(dialogContext).pop();
                                           }
                                         },
                                   style: ButtonStyle(
