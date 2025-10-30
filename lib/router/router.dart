@@ -11,6 +11,7 @@ import 'package:maktaba/views/auth/course/course_view.dart';
 import 'package:maktaba/views/auth/login/login_view.dart';
 import 'package:maktaba/views/auth/reset_password/change_password/change_password_view.dart';
 import 'package:maktaba/views/dashboard/dashboard_view.dart';
+import 'package:maktaba/views/maktaba_admin/maktaba_admin.dart';
 import 'package:maktaba/views/notes/notes_view.dart';
 import 'package:maktaba/views/settings/settings_view.dart';
 import 'package:maktaba/views/splash/splash_screen.dart';
@@ -78,6 +79,10 @@ GoRouter createRouter(
         builder: (context, state) => DashboardView(),
       ),
       GoRoute(
+        path: '/maktaba_admin',
+        builder: (context, state) => MaktabaAdminView(),
+      ),
+      GoRoute(
         path: '/units',
         builder: (context, state) => const UnitsView(),
         routes: [
@@ -130,5 +135,6 @@ class TogglesProviderNotifier extends ChangeNotifier {
   }
 
   bool get rememberSelection => _togglesProvider.rememberSelection;
+
   bool get isLoading => _togglesProvider.isLoading;
 }

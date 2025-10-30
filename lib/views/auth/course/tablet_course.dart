@@ -35,7 +35,7 @@ class _TabletCourseState extends State<TabletCourse> {
         if (token != null) {
           final coursesProvider =
               Provider.of<CoursesProvider>(context, listen: false);
-          await coursesProvider.fetchCourses(token: token);
+          await coursesProvider.getAllCourses(token: token);
 
           setState(() {
             courses = coursesProvider.courses;

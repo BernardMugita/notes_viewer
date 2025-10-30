@@ -77,6 +77,16 @@ class _SideNavigationState extends State<SideNavigation> {
           Expanded(
             child: Column(
               children: [
+                // admin Menu Item
+                if (user.isNotEmpty && user['role'] == 'admin')
+                  _buildNavItem(
+                    context,
+                    route: '/maktaba_admin',
+                    currentRoute: currentRoute,
+                    icon: FluentIcons.guardian_24_regular,
+                    label: 'Dashboard',
+                  ),
+                const Gap(10),
                 // Dashboard Menu Item
                 _buildNavItem(
                   context,

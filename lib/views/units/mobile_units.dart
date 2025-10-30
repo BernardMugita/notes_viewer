@@ -44,7 +44,7 @@ class _MobileUnitsState extends State<MobileUnits> {
       String? token = context.read<AuthProvider>().token;
       if (token != null) {
         tokenRef = token;
-        context.read<CoursesProvider>().fetchCourses(token: token);
+        context.read<CoursesProvider>().getAllCourses(token: token);
         context.read<UnitsProvider>().fetchUserUnits(token);
       }
     });

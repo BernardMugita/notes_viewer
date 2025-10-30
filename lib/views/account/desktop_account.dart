@@ -47,7 +47,7 @@ class _DesktopAccountState extends State<DesktopAccount> {
 
         context
             .read<CoursesProvider>()
-            .fetchCourse(token: token, id: user['course_id']);
+            .getCourse(token: token, id: user['course_id']);
       }
     });
   }

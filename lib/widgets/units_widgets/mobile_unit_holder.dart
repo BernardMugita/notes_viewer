@@ -59,7 +59,7 @@ class _MobileUnitHolderState extends State<MobileUnitHolder> {
       String? token = context.read<AuthProvider>().token;
       if (token != null) {
         tokenRef = token;
-        context.read<CoursesProvider>().fetchCourses(token: token);
+        context.read<CoursesProvider>().getAllCourses(token: token);
 
         nameController.text = widget.unit['name'];
         codeController.text = widget.unit['code'];

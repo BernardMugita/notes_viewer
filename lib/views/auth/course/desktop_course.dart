@@ -18,7 +18,7 @@ class DesktopCourse extends StatefulWidget {
 }
 
 class _DesktopCourseState extends State<DesktopCourse> {
-  List courses = [];
+  List<Map<String, dynamic>> courses = [];
   Map selectedCourse = {};
 
   TextEditingController courseController = TextEditingController();
@@ -35,7 +35,7 @@ class _DesktopCourseState extends State<DesktopCourse> {
         if (token != null) {
           final coursesProvider =
               Provider.of<CoursesProvider>(context, listen: false);
-          await coursesProvider.fetchCourses(token: token);
+          await coursesProvider.getAllCourses(token: token);
 
           setState(() {
             courses = coursesProvider.courses;
