@@ -38,4 +38,58 @@ class CoursesApi {
       throw Exception(e);
     }
   }
+
+  Future<Map<String, dynamic>> addCourse(
+      {required String? token, required Map<String, String> body}) async {
+    try {
+      final addCourseRequest = await http.post(
+        Uri.parse('$url/courses/create'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      return jsonDecode(addCourseRequest.body) as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> updateCourse(
+      {required String? token, required Map<String, String> body}) async {
+    try {
+      final updateCourseRequest = await http.post(
+        Uri.parse('$url/courses/edit_course'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      return jsonDecode(updateCourseRequest.body) as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteCourse(
+      {required String? token, required String id}) async {
+    try {
+      final deleteCourseRequest = await http.post(
+        Uri.parse('$url/courses/delete_course'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{'course_id': id}),
+      );
+
+      return jsonDecode(deleteCourseRequest.body) as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
@@ -67,282 +68,302 @@ class _DesktopNotesState extends State<DesktopNotes> {
 
     return Scaffold(
       backgroundColor: AppUtils.backgroundPanel(context),
-      body: Flex(
-        direction: Axis.horizontal,
-        children: [
-          isMinimized
-              ? Expanded(
-                  flex: 1,
-                  child: SideNavigation(),
-                )
-              : SizedBox(
-                  width: 80,
-                  child: SideNavigation(),
-                ),
-          Expanded(
-            flex: 6,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: 20,
-                  left: MediaQuery.of(context).size.width * 0.1,
-                  right: MediaQuery.of(context).size.width * 0.1,
-                  bottom: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: AppUtils.mainBlue(context),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
+      body: context.watch<LessonsProvider>().isLoading
+          ? SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Lottie.asset("assets/animations/maktaba_loader.json"),
+            )
+          : Flex(
+              direction: Axis.horizontal,
+              children: [
+                isMinimized
+                    ? Expanded(
+                        flex: 1,
+                        child: SideNavigation(),
+                      )
+                    : SizedBox(
+                        width: 80,
+                        child: SideNavigation(),
+                      ),
+                Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 20,
+                        left: MediaQuery.of(context).size.width * 0.1,
+                        right: MediaQuery.of(context).size.width * 0.1,
+                        bottom: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 5,
-                          child: TextField(
-                            controller: searchController,
-                            onChanged: (value) {
-                              toggleProvider.searchAction(
-                                  searchController.text, lessons, 'name');
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(12.5),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: AppUtils.mainWhite(context),
-                                  width: 1.5,
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: AppUtils.mainBlue(context),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: TextField(
+                                  controller: searchController,
+                                  onChanged: (value) {
+                                    toggleProvider.searchAction(
+                                        searchController.text, lessons, 'name');
+                                  },
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(12.5),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppUtils.mainWhite(context),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppUtils.mainWhite(context),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    filled: false,
+                                    prefixIcon: Icon(
+                                      FluentIcons.search_24_regular,
+                                      color: AppUtils.mainWhite(context)
+                                          .withOpacity(0.8),
+                                    ),
+                                    hintText: "Search",
+                                    hintStyle: TextStyle(
+                                        fontSize: 16,
+                                        color: AppUtils.mainWhite(context)
+                                            .withOpacity(0.8)),
+                                  ),
                                 ),
                               ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: AppUtils.mainWhite(context),
-                                  width: 2,
-                                ),
+                              Spacer(),
+                              Row(
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Icon(
+                                        FluentIcons.alert_24_regular,
+                                        size: 25,
+                                        color: AppUtils.mainWhite(context),
+                                      ),
+                                      Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: CircleAvatar(
+                                            radius: 5,
+                                            backgroundColor: context
+                                                    .watch<DashboardProvider>()
+                                                    .isNewActivities
+                                                ? AppUtils.mainRed(context)
+                                                : AppUtils.mainGrey(context),
+                                          ))
+                                    ],
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        context.go('/settings');
+                                      },
+                                      icon: Icon(
+                                        FluentIcons.settings_24_regular,
+                                        size: 25,
+                                        color: AppUtils.mainWhite(context),
+                                      )),
+                                  Gap(10),
+                                  SizedBox(
+                                    height: 40,
+                                    child: VerticalDivider(
+                                      color: AppUtils.mainGrey(context),
+                                    ),
+                                  ),
+                                  Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      if (context
+                                          .watch<UserProvider>()
+                                          .isLoading)
+                                        SizedBox(
+                                          width: 150,
+                                          child: LinearProgressIndicator(
+                                            minHeight: 1,
+                                            color: AppUtils.mainWhite(context),
+                                          ),
+                                        )
+                                      else
+                                        Text(
+                                            user.isNotEmpty
+                                                ? user['username']
+                                                : 'Guest',
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color:
+                                                    AppUtils.mainWhite(context),
+                                                fontWeight: FontWeight.bold)),
+                                      if (context
+                                          .watch<UserProvider>()
+                                          .isLoading)
+                                        SizedBox(
+                                          width: 50,
+                                          child: LinearProgressIndicator(
+                                            minHeight: 1,
+                                            color: AppUtils.mainWhite(context),
+                                          ),
+                                        )
+                                      else
+                                        SizedBox(
+                                          width: 150,
+                                          child: Text(
+                                              user.isNotEmpty
+                                                  ? user['email']
+                                                  : 'guest@email.com',
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  fontSize: 12,
+                                                  color: AppUtils.mainWhite(
+                                                      context))),
+                                        ),
+                                    ],
+                                  ),
+                                  Gap(10),
+                                  CircleAvatar(
+                                    child: Icon(FluentIcons.person_24_regular),
+                                  ),
+                                ],
                               ),
-                              filled: false,
-                              prefixIcon: Icon(
-                                FluentIcons.search_24_regular,
-                                color: AppUtils.mainWhite(context)
-                                    .withOpacity(0.8),
-                              ),
-                              hintText: "Search",
-                              hintStyle: TextStyle(
-                                  fontSize: 16,
-                                  color: AppUtils.mainWhite(context)
-                                      .withOpacity(0.8)),
-                            ),
+                            ],
                           ),
                         ),
-                        Spacer(),
-                        Row(
+                        const Gap(10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Icon(
-                                  FluentIcons.alert_24_regular,
-                                  size: 25,
-                                  color: AppUtils.mainWhite(context),
-                                ),
-                                Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: CircleAvatar(
-                                      radius: 5,
-                                      backgroundColor: context
-                                              .watch<DashboardProvider>()
-                                              .isNewActivities
-                                          ? AppUtils.mainRed(context)
-                                          : AppUtils.mainGrey(context),
-                                    ))
-                              ],
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  context.go('/settings');
-                                },
-                                icon: Icon(
-                                  FluentIcons.settings_24_regular,
-                                  size: 25,
-                                  color: AppUtils.mainWhite(context),
-                                )),
-                            Gap(10),
-                            SizedBox(
-                              height: 40,
-                              child: VerticalDivider(
-                                color: AppUtils.mainGrey(context),
+                            if (toggleProvider.searchMode)
+                              SizedBox(
+                                width: double.infinity,
+                                child: Text(toggleProvider.searchResults.isEmpty
+                                    ? "No results found for '${searchController.text}'"
+                                    : "Search results for '${searchController.text}'"),
                               ),
-                            ),
                             Gap(10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                if (context.watch<UserProvider>().isLoading)
-                                  SizedBox(
-                                    width: 150,
-                                    child: LinearProgressIndicator(
-                                      minHeight: 1,
-                                      color: AppUtils.mainWhite(context),
+                            if (user.isNotEmpty && user['role'] == 'admin')
+                              SizedBox(
+                                width: 150,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    padding: WidgetStatePropertyAll(
+                                        const EdgeInsets.all(20)),
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        AppUtils.mainBlue(context)),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
                                     ),
-                                  )
-                                else
-                                  Text(
-                                      user.isNotEmpty
-                                          ? user['username']
-                                          : 'Guest',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
+                                  ),
+                                  onPressed: () {
+                                    _showDialog(context);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Add Lesson",
+                                        style: TextStyle(
                                           fontSize: 16,
                                           color: AppUtils.mainWhite(context),
-                                          fontWeight: FontWeight.bold)),
-                                if (context.watch<UserProvider>().isLoading)
-                                  SizedBox(
-                                    width: 50,
-                                    child: LinearProgressIndicator(
-                                      minHeight: 1,
-                                      color: AppUtils.mainWhite(context),
-                                    ),
-                                  )
-                                else
-                                  SizedBox(
-                                    width: 150,
-                                    child: Text(
-                                        user.isNotEmpty
-                                            ? user['email']
-                                            : 'guest@email.com',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                            overflow: TextOverflow.ellipsis,
-                                            fontSize: 12,
-                                            color:
-                                                AppUtils.mainWhite(context))),
+                                        ),
+                                      ),
+                                      const Gap(5),
+                                      Icon(
+                                        FluentIcons.book_add_24_regular,
+                                        size: 16,
+                                        color: AppUtils.mainWhite(context),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Gap(20),
+                        Expanded(
+                          // This ensures the scrolling area takes the remaining height
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Flex(
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height,
+                                    child: context
+                                            .watch<LessonsProvider>()
+                                            .isLoading
+                                        ? LoadingAnimationWidget.newtonCradle(
+                                            color: AppUtils.mainBlue(context),
+                                            size: 100)
+                                        : lessons.isEmpty
+                                            ? Center(
+                                                child: EmptyWidget(
+                                                  errorHeading:
+                                                      "Empty List of Lessons!",
+                                                  errorDescription:
+                                                      "No lessons uploaded for this unit.",
+                                                  type: EmptyWidgetType.notes,
+                                                ),
+                                              )
+                                            : ListView.builder(
+                                                itemCount: toggleProvider
+                                                        .searchResults
+                                                        .isNotEmpty
+                                                    ? toggleProvider
+                                                        .searchResults.length
+                                                    : lessons.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  final lesson = toggleProvider
+                                                          .searchResults
+                                                          .isNotEmpty
+                                                      ? toggleProvider
+                                                          .searchResults[index]
+                                                      : lessons[index];
+
+                                                  return DesktopNotesItem(
+                                                      lesson: lesson,
+                                                      selectedLesson:
+                                                          selectedLesson,
+                                                      onPressed: (Map lesson) {
+                                                        setState(() {
+                                                          selectedLesson =
+                                                              lesson;
+                                                        });
+                                                      });
+                                                }),
+                                  ),
+                                ),
                               ],
                             ),
-                            Gap(10),
-                            CircleAvatar(
-                              child: Icon(FluentIcons.person_24_regular),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const Gap(10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (toggleProvider.searchMode)
-                        SizedBox(
-                          width: double.infinity,
-                          child: Text(toggleProvider.searchResults.isEmpty
-                              ? "No results found for '${searchController.text}'"
-                              : "Search results for '${searchController.text}'"),
-                        ),
-                      Gap(10),
-                      if (user.isNotEmpty && user['role'] == 'admin')
-                        SizedBox(
-                          width: 150,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: WidgetStatePropertyAll(
-                                  const EdgeInsets.all(20)),
-                              backgroundColor: WidgetStatePropertyAll(
-                                  AppUtils.mainBlue(context)),
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              _showDialog(context);
-                            },
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Add Lesson",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppUtils.mainWhite(context),
-                                  ),
-                                ),
-                                const Gap(5),
-                                Icon(
-                                  FluentIcons.book_add_24_regular,
-                                  size: 16,
-                                  color: AppUtils.mainWhite(context),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const Gap(20),
-                  Expanded(
-                    // This ensures the scrolling area takes the remaining height
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Flex(
-                        direction: Axis.horizontal,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height,
-                              child: context.watch<LessonsProvider>().isLoading
-                                  ? LoadingAnimationWidget.newtonCradle(
-                                      color: AppUtils.mainBlue(context),
-                                      size: 100)
-                                  : lessons.isEmpty
-                                      ? Center(
-                                          child: EmptyWidget(
-                                            errorHeading:
-                                                "Empty List of Lessons!",
-                                            errorDescription:
-                                                "No lessons uploaded for this unit.",
-                                            type: EmptyWidgetType.notes,
-                                          ),
-                                        )
-                                      : ListView.builder(
-                                          itemCount: toggleProvider
-                                                  .searchResults.isNotEmpty
-                                              ? toggleProvider
-                                                  .searchResults.length
-                                              : lessons.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            final lesson = toggleProvider
-                                                    .searchResults.isNotEmpty
-                                                ? toggleProvider
-                                                    .searchResults[index]
-                                                : lessons[index];
-
-                                            return DesktopNotesItem(
-                                                lesson: lesson,
-                                                selectedLesson: selectedLesson,
-                                                onPressed: (Map lesson) {
-                                                  setState(() {
-                                                    selectedLesson = lesson;
-                                                  });
-                                                });
-                                          }),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -572,10 +593,9 @@ class _DesktopNotesState extends State<DesktopNotes> {
                                   onPressed: lessonProvider.isLoading
                                       ? null
                                       : () async {
-                                          final success = await lessonProvider.createNewLesson(
-                                              tokenRef,
-                                              nameController.text,
-                                              unitId);
+                                          final success = await lessonProvider
+                                              .createNewLesson(tokenRef,
+                                                  nameController.text, unitId);
                                           if (success) {
                                             Navigator.of(dialogContext).pop();
                                           }

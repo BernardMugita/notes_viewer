@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
@@ -12,6 +13,7 @@ import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
+
 // import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:maktaba/widgets/units_widgets/desktop_semester_holder.dart';
@@ -61,36 +63,33 @@ class _DesktopUnitsState extends State<DesktopUnits> {
 
     bool isMinimized = toggleProvider.isSideNavMinimized;
 
-    return Scaffold(
-      backgroundColor: AppUtils.backgroundPanel(context),
-      body: Flex(
-        direction: Axis.horizontal,
-        children: [
-          isMinimized
-              ? Expanded(
-                  flex: 1,
-                  child: SideNavigation(),
-                )
-              : SizedBox(
-                  width: 80,
-                  child: SideNavigation(),
-                ),
-          Expanded(
-            flex: 6,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.1,
-                  right: MediaQuery.of(context).size.width * 0.1,
-                  top: 20,
-                  bottom: 20),
-              child: context.watch<UnitsProvider>().isLoading
-                  ? Center(
-                      child: LoadingAnimationWidget.newtonCradle(
-                        color: AppUtils.mainBlue(context),
-                        size: 100,
+    return context.watch<UnitsProvider>().isLoading
+        ? Center(
+            child: Lottie.asset("assets/animations/maktaba_loader.json"),
+          )
+        : Scaffold(
+            backgroundColor: AppUtils.backgroundPanel(context),
+            body: Flex(
+              direction: Axis.horizontal,
+              children: [
+                isMinimized
+                    ? Expanded(
+                        flex: 1,
+                        child: SideNavigation(),
+                      )
+                    : SizedBox(
+                        width: 80,
+                        child: SideNavigation(),
                       ),
-                    )
-                  : Column(
+                Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.1,
+                        right: MediaQuery.of(context).size.width * 0.1,
+                        top: 20,
+                        bottom: 20),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 20,
                       children: [
@@ -317,11 +316,11 @@ class _DesktopUnitsState extends State<DesktopUnits> {
                         ),
                       ],
                     ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   void _showDialog(BuildContext context,

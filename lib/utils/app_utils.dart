@@ -66,8 +66,8 @@ class AppUtils {
   }
 
   // static const String $appUrl = 'https://philanthropically-farsighted-malik.ngrok-free.dev';
-  // static const String $appUrl = 'https://r1-server.arifulib.co.ke';
-  static const String $appUrl = 'http://127.0.0.1:8000';
+  static const String $appUrl = 'https://r1-server.arifulib.co.ke';
+  // static const String $appUrl = 'http://127.0.0.1:8000';
 
   static const String $baseUrl = '${$appUrl}/r1server';
 
