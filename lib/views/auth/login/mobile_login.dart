@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // New import for FilteringTextInputFormatter
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maktaba/providers/auth_provider.dart';
@@ -133,6 +134,7 @@ class _SignInTabState extends State<SignInTab> {
   String? passwordError;
 
   void _clearEmailError() => setState(() => emailError = null);
+
   void _clearPasswordError() => setState(() => passwordError = null);
 
   @override
@@ -336,12 +338,17 @@ class _SignUpTabState extends State<SignUpTab> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController regNoController = TextEditingController();
+  final TextEditingController yearController = TextEditingController(); // New
+  final TextEditingController semesterController =
+      TextEditingController(); // New
 
   String? usernameError;
   String? emailError;
   String? passwordError;
   String? phoneError;
   String? regNoError;
+  String? yearError; // New
+  String? semesterError; // New
   double _passwordStrength = 0.0;
   final Map<String, bool> _passwordCriteria = {
     '8+ Characters': false,
@@ -364,6 +371,20 @@ class _SignUpTabState extends State<SignUpTab> {
     passwordController.addListener(() => _clearError('password'));
     phoneController.addListener(() => _clearError('phone'));
     regNoController.addListener(() => _clearError('regNo'));
+    yearController.addListener(() => _clearError('year')); // New
+    semesterController.addListener(() => _clearError('semester')); // New
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    phoneController.dispose();
+    regNoController.dispose();
+    yearController.dispose(); // New
+    semesterController.dispose(); // New
+    super.dispose();
   }
 
   void _clearError(String field) {
@@ -383,6 +404,18 @@ class _SignUpTabState extends State<SignUpTab> {
           break;
         case 'regNo':
           regNoError = null;
+          break;
+        case 'year': // New
+          yearError = null;
+          break;
+        case 'semester': // New
+          semesterError = null;
+          break;
+        case 'year': // New
+          yearError = null;
+          break;
+        case 'semester': // New
+          semesterError = null;
           break;
       }
     });
@@ -420,11 +453,13 @@ class _SignUpTabState extends State<SignUpTab> {
       'password': passwordController.text.trim(),
       'phone': phoneController.text.trim(),
       'regNo': regNoController.text.trim(),
+      'year': yearController.text.trim(), // New
+      'semester': semesterController.text.trim(), // New
     };
 
     setState(() {
-      usernameError =
-          emailError = passwordError = phoneError = regNoError = null;
+      usernameError = emailError = passwordError =
+          phoneError = regNoError = yearError = semesterError = null; // Updated
     });
 
     var isValid = true;
@@ -459,6 +494,30 @@ class _SignUpTabState extends State<SignUpTab> {
       isValid = false;
     }
 
+    // New validation for year
+    if (fields['year']!.isEmpty) {
+      setState(() => yearError = 'Year required');
+      isValid = false;
+    } else {
+      final year = int.tryParse(fields['year']!);
+      if (year == null || year < 1 || year > 5) {
+        setState(() => yearError = 'Year must be between 1 and 5');
+        isValid = false;
+      }
+    }
+
+    // New validation for semester
+    if (fields['semester']!.isEmpty) {
+      setState(() => semesterError = 'Semester required');
+      isValid = false;
+    } else {
+      final semester = int.tryParse(fields['semester']!);
+      if (semester == null || (semester != 1 && semester != 2)) {
+        setState(() => semesterError = 'Semester must be 1 or 2');
+        isValid = false;
+      }
+    }
+
     if (fields['password']!.isEmpty) {
       setState(() => passwordError = 'Password required');
       isValid = false;
@@ -469,13 +528,18 @@ class _SignUpTabState extends State<SignUpTab> {
 
     if (isValid) {
       context.read<AuthProvider>().register(
-          fields['username']!,
-          fields['email']!,
-          fields['password']!,
-          fields['phone']!,
-          fields['regNo']!,
-          fields['regYear']!,
-          'test.jpg');
+            fields['username']!,
+            fields['email']!,
+            fields['password']!,
+            fields['phone']!,
+            fields['regNo']!,
+            "",
+            // regYear is not present in mobile_login.dart, passing empty string
+            'test.jpg',
+            int.parse(fields['year']!),
+            // New
+            int.parse(fields['semester']!), // New
+          );
     }
   }
 
@@ -526,6 +590,58 @@ class _SignUpTabState extends State<SignUpTab> {
               label: 'Registration Number',
               error: regNoError,
               icon: FluentIcons.mail_24_regular,
+            ),
+          ),
+          const Gap(20),
+          // New Year field
+          TextField(
+            cursorColor: AppUtils.mainBlue(context),
+            controller: yearController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: _inputDecoration(
+              label: 'Year (1-5)',
+              error: yearError,
+              icon: FluentIcons.calendar_ltr_24_regular,
+            ),
+          ),
+          const Gap(10),
+          // New Semester field
+          TextField(
+            cursorColor: AppUtils.mainBlue(context),
+            controller: semesterController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: _inputDecoration(
+              label: 'Semester (1 or 2)',
+              error: semesterError,
+              icon: FluentIcons.calendar_day_24_regular,
+            ),
+          ),
+          const Gap(20),
+          // New Year field
+          TextField(
+            cursorColor: AppUtils.mainBlue(context),
+            controller: yearController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: _inputDecoration(
+              label: 'Year (1-5)',
+              error: yearError,
+              icon: FluentIcons.calendar_ltr_24_regular,
+            ),
+          ),
+          const Gap(10),
+          // New Semester field
+          TextField(
+            cursorColor: AppUtils.mainBlue(context),
+            controller: semesterController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: _inputDecoration(
+              label: 'Semester (1 or 2)',
+              error: semesterError,
+              icon: FluentIcons.calendar_day_24_regular,
             ),
           ),
           const Gap(20),

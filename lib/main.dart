@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:maktaba/providers/activity_provider.dart';
 import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/comments_provider.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
@@ -42,6 +43,7 @@ void main() async {
   final dashboardProvider = DashboardProvider();
   final activityProvider = ActivityProvider();
   final themeProvider = ThemeProvider();
+  final commentsProvider = CommentsProvider();
 
   // Request permissions (only on mobile platforms)
   await _requestPermissions();
@@ -63,6 +65,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => dashboardProvider),
         ChangeNotifierProvider(create: (_) => activityProvider),
         ChangeNotifierProvider(create: (_) => themeProvider),
+        ChangeNotifierProvider(create: (_) => commentsProvider)
       ],
       child: MyApp(
         authProvider: authProvider,
@@ -122,7 +125,9 @@ class MyApp extends StatelessWidget {
       title: 'Note Viewer',
       routerConfig: router,
       theme: ThemeData(
-        colorScheme: Provider.of<ThemeProvider>(context).isDarkMode
+        colorScheme: Provider
+            .of<ThemeProvider>(context)
+            .isDarkMode
             ? ColorScheme.dark(primary: AppUtils.mainBlack(context))
             : ColorScheme.light(primary: AppUtils.mainWhite(context)),
         useMaterial3: true,

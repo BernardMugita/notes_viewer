@@ -39,19 +39,23 @@ class AuthApi {
       required String phone,
       required String regNo,
       required String regYear,
-      required String image}) async {
+      required String image,
+      required int year,
+      required int semester}) async {
     try {
       final String url = '${AppUtils.$baseUrl}/users/create';
 
       final signUpRequest = await http.post(Uri.parse(url),
-          body: jsonEncode(<String, String>{
+          body: jsonEncode(<String, dynamic>{
             'username': username,
             'email': email,
             'password': password,
             'phone': phone,
             'reg_no': regNo,
             'reg_year': regYear,
-            'img': image
+            'img': image,
+            'current_year': year,
+            'current_semester': semester,
           }));
       return jsonDecode(signUpRequest.body) as Map<String, dynamic>;
     } on DioException catch (e) {

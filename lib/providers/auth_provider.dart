@@ -66,7 +66,7 @@ class AuthProvider extends ChangeNotifier {
 
   // Register user and save token
   Future<Map<String, dynamic>> register(String username, String email,
-      String password, String phone, String regNo, String regYear, String image) async {
+      String password, String phone, String regNo, String regYear, String image, int year, int semester) async {
     isLoading = true;
     success = false;
     error = false;
@@ -81,6 +81,8 @@ class AuthProvider extends ChangeNotifier {
         regNo: regNo,
         regYear: regYear,
         image: image,
+        year: year,
+        semester: semester,
       );
 
       if (registerRequest['status'] == "success") {

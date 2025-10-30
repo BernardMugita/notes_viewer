@@ -1,8 +1,11 @@
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'dart:math';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
@@ -50,6 +53,10 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
     final lessonName = args?['lesson'] as String? ?? 'Lesson';
 
     final user = context.watch<UserProvider>().user;
+
+    Logger logger = Logger();
+
+    logger.log(Level.info, material);
 
     return Scaffold(
       backgroundColor: AppUtils.backgroundPanel(context),
@@ -210,7 +217,9 @@ class _DesktopViewNotesState extends State<DesktopViewNotes> {
                                       height: 1,
                                       color: AppUtils.mainGrey(context)),
                                   Gap(10),
-                                  Expanded(child: DiscussionForum(studyMaterialId: material['id'])),
+                                  Expanded(
+                                      child: DiscussionForum(
+                                          studyMaterialId: material['id'])),
                                 ],
                               ),
                             ),
