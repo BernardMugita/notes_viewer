@@ -36,7 +36,7 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                     border: Border.all(color: AppUtils.mainGrey(context)),
                     borderRadius: BorderRadius.circular(200)),
                 child: CircleAvatar(
-                  radius: 100,
+                  radius: 60,
                   backgroundColor: uploadType == 'notes'
                       ? Colors.purpleAccent.withOpacity(0.2)
                       : uploadType == 'slides'
@@ -69,12 +69,12 @@ class _RecentlyViewedState extends State<RecentlyViewed> {
                                 : uploadType == "student_contributions"
                                     ? Colors.deepOrange
                                     : AppUtils.mainGreen(context),
-                    size: 100,
+                    size: 80,
                   ),
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: MediaQuery.of(context).size.height * 0.185,
                 child: VerticalDivider(
                   color: AppUtils.mainGrey(context),
                   thickness: 1,

@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:gap/gap.dart';
 
 class DesktopRelevantVideos extends StatefulWidget {
   final Map material;
@@ -12,43 +13,93 @@ class DesktopRelevantVideos extends StatefulWidget {
 }
 
 class _DesktopRelevantVideosState extends State<DesktopRelevantVideos> {
+  bool _isHovered = false;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: AppUtils.mainWhite(context),
-          border: Border.all(color: AppUtils.mainGrey(context))),
-      child: Row(
-        spacing: 10,
-        children: [
-          CircleAvatar(
-            backgroundColor: AppUtils.backgroundPanel(context),
-            child: Icon(FluentIcons.video_24_regular,
-                color: AppUtils.mainBlack(context)),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: _isHovered
+              ? AppUtils.mainBlue(context).withOpacity(0.05)
+              : Colors.grey.shade50,
+          border: Border.all(
+            color: _isHovered
+                ? AppUtils.mainBlue(context).withOpacity(0.3)
+                : Colors.grey.shade200,
           ),
-          SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.material['name'],
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 14,
-                      color: AppUtils.mainBlue(context),
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  AppUtils.formatDate(widget.material['created_at']),
-                  style: TextStyle(fontSize: 14),
-                )
-              ],
+        ),
+        child: Row(
+          children: [
+            // Video Icon
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppUtils.mainBlue(context).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                FluentIcons.play_circle_24_filled,
+                color: AppUtils.mainBlue(context),
+                size: 20,
+              ),
             ),
-          ),
-        ],
+            const Gap(12),
+
+            // Video Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.material['name'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: _isHovered
+                          ? AppUtils.mainBlue(context)
+                          : AppUtils.mainBlack(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Gap(4),
+                  Row(
+                    children: [
+                      Icon(
+                        FluentIcons.calendar_24_regular,
+                        size: 12,
+                        color: AppUtils.mainGrey(context),
+                      ),
+                      const Gap(4),
+                      Text(
+                        AppUtils.formatDate(widget.material['created_at']),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppUtils.mainGrey(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Arrow Icon
+            if (_isHovered)
+              Icon(
+                FluentIcons.chevron_right_24_regular,
+                color: AppUtils.mainBlue(context),
+                size: 18,
+              ),
+          ],
+        ),
       ),
     );
   }

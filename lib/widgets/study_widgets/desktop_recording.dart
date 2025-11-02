@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +32,7 @@ class DesktopRecording extends StatefulWidget {
 }
 
 class _DesktopRecordingState extends State<DesktopRecording> {
+  bool _isHovered = false;
   bool isRightClicked = false;
   bool actionMode = false;
   Map selectedRecording = {};
@@ -51,165 +50,192 @@ class _DesktopRecordingState extends State<DesktopRecording> {
     });
   }
 
+  Future<void> onRightClick(PointerDownEvent event) async {
+    if (event.kind == PointerDeviceKind.mouse &&
+        (event.buttons & kSecondaryMouseButton) != 0) {
+      setState(() {
+        isRightClicked = !isRightClicked;
+        actionMode = !actionMode;
+
+        if (selectedRecording.isNotEmpty) {
+          selectedRecording.clear();
+        } else {
+          selectedRecording['id'] = widget.material;
+          isSelectedRecording =
+              selectedRecording['id']['id'] == widget.material['id'];
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String uploadType = 'recordings';
-
     final String url = AppUtils.$serverDir;
-
     final user = context.read<UserProvider>().user;
 
     int? index = (widget.key is ValueKey<int>)
         ? (widget.key as ValueKey<int>).value
         : null;
 
-    Future<void> onRightClick(PointerDownEvent event) async {
-      if (event.kind == PointerDeviceKind.mouse &&
-          (event.buttons & kSecondaryMouseButton) != 0) {
-        setState(() {
-          isRightClicked = !isRightClicked;
-          actionMode = !actionMode;
+    final recordingColor = AppUtils.mainBlue(context);
 
-          if (selectedRecording.isNotEmpty) {
-            selectedRecording.clear();
-          } else {
-            selectedRecording['id'] = widget.material;
-            isSelectedRecording =
-                selectedRecording['id']['id'] == widget.material['id'];
-          }
-        });
-      }
-    }
-
-    return GestureDetector(
-      onTap: () {
-        context.go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
-          "path":
-              "$url/${widget.material['path']}/$uploadType/${widget.fileName}",
-          "material": widget.material,
-          "featured_material": widget.recordings.isEmpty
-              ? widget.contributions
-              : widget.recordings,
-        });
-      },
-      child: Listener(
-        onPointerDown: onRightClick,
-        child: Stack(
-          children: [
-            Container(
-                // width: double.infinity,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () {
+          context
+              .go('/units/notes/${widget.lesson}/${widget.fileName}', extra: {
+            "path":
+                "$url/${widget.material['path']}/$uploadType/${widget.fileName}",
+            "material": widget.material,
+            "featured_material": widget.recordings.isEmpty
+                ? widget.contributions
+                : widget.recordings,
+          });
+        },
+        child: Listener(
+          onPointerDown: onRightClick,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                    color: AppUtils.mainWhite(context),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                        color: isSelectedRecording && actionMode
-                            ? AppUtils.mainBlue(context)
-                            : AppUtils.mainGrey(context))),
-                padding: const EdgeInsets.only(
-                    left: 15, right: 10, top: 10, bottom: 10),
-                margin: const EdgeInsets.only(bottom: 5),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Text(
-                      "${index.toString()}.",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppUtils.mainGrey(context)),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: AppUtils.mainBlueAccent(context),
-                      child: Icon(
-                        widget.icon,
-                        size: 20,
-                        color: AppUtils.mainBlue(context),
-                      ),
-                    ),
-                    SizedBox(
-                        child: Text(widget.material['name'],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: isSelectedRecording && actionMode
-                                    ? AppUtils.mainBlue(context)
-                                    : AppUtils.mainBlack(context),
-                                fontWeight: isSelectedRecording && actionMode
-                                    ? FontWeight.bold
-                                    : FontWeight.normal))),
-                  ],
-                )),
-            if (user.isNotEmpty &&
-                user['role'] == 'admin' &&
-                isSelectedRecording &&
-                actionMode)
-              Positioned(
-                right: 25,
-                top: 5,
-                child: SizedBox(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isRightClicked = false;
-                                // _showDialog(context,
-                                //     courses: courses, token: tokenRef);
-                              });
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    AppUtils.mainGreen(context)),
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5)))),
-                            child: Row(
-                              children: [
-                                Icon(FluentIcons.edit_24_regular,
-                                    color: AppUtils.mainWhite(context)),
-                                const Gap(5),
-                                Text("Edit",
-                                    style: TextStyle(
-                                        color: AppUtils.mainWhite(context))),
-                              ],
-                            )),
-                        Gap(5),
-                        ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isRightClicked = false;
-                                _showDeleteDialog(context);
-                              });
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    AppUtils.mainRed(context)),
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5)))),
-                            child: Row(
-                              children: [
-                                Icon(FluentIcons.delete_24_regular,
-                                    color: AppUtils.mainWhite(context)),
-                                const Gap(5),
-                                Text("Delete",
-                                    style: TextStyle(
-                                        color: AppUtils.mainWhite(context))),
-                              ],
-                            ))
-                      ],
-                    ),
+                  color: _isHovered ? recordingColor : Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelectedRecording && actionMode
+                        ? recordingColor
+                        : _isHovered
+                            ? recordingColor
+                            : Colors.grey.shade200,
+                    width: 1,
                   ),
                 ),
-              )
-          ],
+                child: Row(
+                  children: [
+                    // Index Number
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: _isHovered
+                            ? Colors.white.withOpacity(0.2)
+                            : recordingColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "${index ?? 0}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: _isHovered ? Colors.white : recordingColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(12),
+
+                    // Recording Icon
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: _isHovered
+                            ? Colors.white.withOpacity(0.2)
+                            : recordingColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        widget.icon ?? FluentIcons.play_24_filled,
+                        size: 20,
+                        color: _isHovered ? Colors.white : recordingColor,
+                      ),
+                    ),
+                    const Gap(12),
+
+                    // Recording Name
+                    Expanded(
+                      child: Text(
+                        widget.material['name'] ?? 'Recording',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: _isHovered
+                              ? Colors.white
+                              : isSelectedRecording && actionMode
+                                  ? recordingColor
+                                  : AppUtils.mainBlack(context),
+                          fontWeight:
+                              _isHovered || (isSelectedRecording && actionMode)
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    // Admin Actions
+                    if (user.isNotEmpty &&
+                        user['role'] == 'admin' &&
+                        _isHovered)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: PopupMenuButton<String>(
+                          icon: Icon(
+                            FluentIcons.more_vertical_24_regular,
+                            color: Colors.white,
+                          ),
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              // Edit functionality
+                            } else if (value == 'delete') {
+                              setState(() {
+                                selectedRecording['id'] = widget.material;
+                                isSelectedRecording = true;
+                              });
+                              _showDeleteDialog(context);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  Icon(FluentIcons.edit_24_regular,
+                                      size: 18,
+                                      color: AppUtils.mainBlue(context)),
+                                  const Gap(12),
+                                  const Text('Edit Recording'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(FluentIcons.delete_24_regular,
+                                      size: 18,
+                                      color: AppUtils.mainRed(context)),
+                                  const Gap(12),
+                                  const Text('Delete Recording'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -217,125 +243,144 @@ class _DesktopRecordingState extends State<DesktopRecording> {
 
   void _showDeleteDialog(BuildContext content) {
     showDialog(
-        context: content,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: const EdgeInsets.all(0),
-            content: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppUtils.mainWhite(context),
-                  borderRadius: BorderRadius.circular(5),
+      context: content,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Container(
+            padding: const EdgeInsets.all(28),
+            constraints: BoxConstraints(maxWidth: 400),
+            decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppUtils.mainRed(context).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FluentIcons.delete_24_regular,
+                    color: AppUtils.mainRed(context),
+                    size: 48,
+                  ),
                 ),
-                width: 300,
-                height: 300,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                const Gap(20),
+                Text(
+                  "Delete Recording",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppUtils.mainBlack(context),
+                  ),
+                ),
+                const Gap(12),
+                Text(
+                  "Are you sure you want to delete this recording? This action cannot be undone.",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppUtils.mainGrey(context),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const Gap(24),
+                Row(
                   children: [
-                    Icon(
-                      FluentIcons.delete_24_regular,
-                      color: AppUtils.mainRed(context),
-                      size: 80,
-                    ),
-                    Gap(20),
-                    Text(
-                      "Confirm Delete",
-                      style: TextStyle(
-                          fontSize: 18, color: AppUtils.mainRed(context)),
-                    ),
-                    Text(
-                      "Are you sure you want to delete this recording? Note that this action is irreversible.",
-                      style: TextStyle(fontSize: 18),
-                      textAlign: TextAlign.center,
-                    ),
-                    Spacer(),
                     Expanded(
-                        child: Row(
-                      children: [
-                        Expanded(
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                style: ButtonStyle(
-                                    padding: WidgetStatePropertyAll(
-                                        EdgeInsets.all(10)),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.mainBlueAccent(context)),
-                                    shape: WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5)))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FluentIcons.dismiss_24_filled,
-                                        color: AppUtils.mainRed(context)),
-                                    const Gap(5),
-                                    Text("Cancel",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: AppUtils.mainRed(context))),
-                                  ],
-                                ))),
-                        Gap(10),
-                        Expanded(
-                          child: Consumer<UploadsProvider>(
-                              builder: (context, uploadsProvider, _) {
-                            return ElevatedButton(
-                                onPressed: uploadsProvider.isLoading
-                                    ? null
-                                    : () {
-                                        uploadsProvider.deleteUploadedMaterial(
-                                            tokenRef,
-                                            selectedRecording['id']['id']);
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                style: ButtonStyle(
-                                    padding: WidgetStatePropertyAll(
-                                        EdgeInsets.all(10)),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.mainRed(context)),
-                                    shape: WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5)))),
-                                child: uploadsProvider.isLoading
-                                    ? const SizedBox(
-                                        width: 24,
-                                        height: 24,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2.5,
-                                        ),
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(FluentIcons.delete_24_regular,
-                                              color:
-                                                  AppUtils.mainWhite(context)),
-                                          const Gap(5),
-                                          Text("Delete",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: AppUtils.mainWhite(
-                                                      context))),
-                                        ],
-                                      ));
-                          }),
-                        )
-                      ],
-                    ))
+                      child: OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedRecording = {};
+                            isSelectedRecording = false;
+                          });
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          side: WidgetStatePropertyAll(
+                            BorderSide(color: AppUtils.mainGrey(context)),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: AppUtils.mainBlack(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(12),
+                    Expanded(
+                      child: Consumer<UploadsProvider>(
+                        builder: (context, uploadsProvider, _) {
+                          return ElevatedButton(
+                            onPressed: uploadsProvider.isLoading
+                                ? null
+                                : () {
+                                    uploadsProvider.deleteUploadedMaterial(
+                                        tokenRef,
+                                        selectedRecording['id']['id']);
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                            style: ButtonStyle(
+                              padding: const WidgetStatePropertyAll(
+                                EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                AppUtils.mainRed(context),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            child: uploadsProvider.isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
+                                    ),
+                                  )
+                                : Text(
+                                    "Delete",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
-                )),
-          );
-        });
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

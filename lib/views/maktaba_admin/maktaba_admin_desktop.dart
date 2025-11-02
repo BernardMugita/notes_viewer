@@ -76,20 +76,19 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                       flex: 6,
                       child: SizedBox(
                         height: MediaQuery.of(context).size.height,
-                        child: SingleChildScrollView(
+                        child: Padding(
                           padding: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.05,
-                            right: MediaQuery.of(context).size.width * 0.05,
-                            top: 20,
-                            bottom: 20,
-                          ),
+                              left: MediaQuery.of(context).size.width * 0.1,
+                              right: MediaQuery.of(context).size.width * 0.1,
+                              top: 20,
+                              bottom: 20),
                           child: Column(
                             spacing: 20,
                             children: [
                               _buildTopBar(context),
-                              _buildPageTitle(),
-                              _buildStatsCards(),
-                              _buildContentManagement()
+                              _buildWelcomeCard(),
+                              _buildStatsGrid(),
+                              Expanded(child: _buildCoursesSection(),)
                             ],
                           ),
                         ),
@@ -105,52 +104,57 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
   Widget _buildTopBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(8),
         color: AppUtils.mainBlue(context),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 5,
+          Expanded(
+            flex: 2,
             child: TextField(
               controller: _searchController,
+              style: TextStyle(color: AppUtils.mainWhite(context)),
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(12.5),
-                enabledBorder: UnderlineInputBorder(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context),
+                    color: AppUtils.mainWhite(context).withOpacity(0.3),
                     width: 1.5,
                   ),
                 ),
-                focusedBorder: UnderlineInputBorder(
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
                     color: AppUtils.mainWhite(context),
                     width: 2,
                   ),
                 ),
-                filled: false,
+                filled: true,
+                fillColor: AppUtils.mainWhite(context).withOpacity(0.1),
                 prefixIcon: Icon(
                   FluentIcons.search_24_regular,
                   color: AppUtils.mainWhite(context).withOpacity(0.8),
                 ),
                 hintText: "Search content...",
                 hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: AppUtils.mainWhite(context).withOpacity(0.8),
+                  fontSize: 15,
+                  color: AppUtils.mainWhite(context).withOpacity(0.7),
                 ),
               ),
             ),
           ),
           Spacer(),
           Row(
-            spacing: 10,
+            spacing: 8,
             children: [
               IconButton(
                 onPressed: () {},
                 icon: Icon(
                   FluentIcons.alert_24_regular,
-                  size: 25,
+                  size: 24,
                   color: AppUtils.mainWhite(context),
                 ),
               ),
@@ -160,18 +164,20 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                 },
                 icon: Icon(
                   FluentIcons.settings_24_regular,
-                  size: 25,
+                  size: 24,
                   color: AppUtils.mainWhite(context),
                 ),
               ),
-              Gap(10),
+              Gap(8),
               CircleAvatar(
+                radius: 18,
                 backgroundColor: AppUtils.mainWhite(context),
                 child: Text(
                   'AD',
                   style: TextStyle(
                     color: AppUtils.mainBlue(context),
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -182,26 +188,71 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
     );
   }
 
-  Widget _buildPageTitle() {
+  Widget _buildWelcomeCard() {
     return Container(
       width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 5,
-        children: [
-          Text(
-            'Admin Dashboard',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-            ),
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppUtils.mainBlue(context),
+            AppUtils.mainBlue(context).withOpacity(0.85),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: AppUtils.mainBlue(context).withOpacity(0.3),
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
-          Text(
-            'Manage your Arifu Library content',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
+            children: [
+              Text(
+                'Welcome to Maktaba!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppUtils.mainWhite(context).withOpacity(0.9),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                'Hello, Admin',
+                style: TextStyle(
+                  fontSize: 28,
+                  color: AppUtils.mainWhite(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Gap(4),
+              Text(
+                'Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: AppUtils.mainWhite(context).withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              FluentIcons.book_24_regular,
+              size: 48,
+              color: AppUtils.mainWhite(context),
             ),
           ),
         ],
@@ -209,100 +260,119 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
     );
   }
 
-  Widget _buildStatsCards() {
-    return SizedBox(
-      height: 145,
-      child: Consumer<CoursesProvider>(
-        builder: (context, provider, _) {
-          return Row(
-            spacing: 20,
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  'Courses',
-                  provider.courses.length.toString(),
+  Widget _buildStatsGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Consumer<CoursesProvider>(
+          builder: (context, provider, _) {
+            return Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                _buildStatCard(
+                  'COURSES',
+                  'Total: ${provider.courses.length}',
                   FluentIcons.book_24_regular,
                   Colors.blue,
+                  constraints.maxWidth,
                 ),
-              ),
-              Expanded(
-                child: _buildStatCard(
-                  'Units',
-                  '48',
+                _buildStatCard(
+                  'UNITS',
+                  'Total: 0',
                   FluentIcons.notebook_24_regular,
                   Colors.green,
+                  constraints.maxWidth,
                 ),
-              ),
-              Expanded(
-                child: _buildStatCard(
-                  'Students',
-                  '256',
+                _buildStatCard(
+                  'STUDENTS',
+                  'Total: 0',
                   FluentIcons.people_24_regular,
-                  Colors.orange,
-                ),
-              ),
-              Expanded(
-                child: _buildStatCard(
-                  'Lessons',
-                  '182',
-                  FluentIcons.class_24_regular,
                   Colors.purple,
+                  constraints.maxWidth,
                 ),
-              ),
-            ],
-          );
-        },
-      ),
+                _buildStatCard(
+                  'LESSONS',
+                  'Total: 0',
+                  FluentIcons.bookmark_24_regular,
+                  Colors.amber,
+                  constraints.maxWidth,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+      String title, String value, IconData icon, Color color, double maxWidth) {
+    // Calculate card width: 3 columns for wider tablets, 2 for narrower
+    double cardWidth =
+        maxWidth > 1200 ? (maxWidth - 48) / 4 : (maxWidth - 32) / 3;
+
     return Container(
-      padding: EdgeInsets.all(20),
+      width: cardWidth,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: AppUtils.mainGrey(context)),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 16,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                width: 4,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: color,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                child: Icon(icon, color: color, size: 24),
               ),
-              IconButton(
-                icon: Icon(FluentIcons.more_vertical_24_regular, size: 20),
-                onPressed: () {},
-                color: Colors.grey,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 28,
+                ),
               ),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 2,
+            spacing: 6,
             children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                  letterSpacing: 0.5,
+                ),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -312,52 +382,62 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
     );
   }
 
-  Widget _buildContentManagement() {
+  Widget _buildCoursesSection() {
     return Container(
-      padding: EdgeInsets.all(20),
       width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: AppUtils.mainGrey(context)),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 20,
         children: [
-          // Header with Add Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Courses',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
+                children: [
+                  Text(
+                    'Courses',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  Text(
+                    'Manage your course catalog',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
               ElevatedButton.icon(
                 onPressed: () {
                   _showAddDialog();
                 },
-                icon: Icon(FluentIcons.add_24_regular),
+                icon: Icon(FluentIcons.add_24_regular, size: 20),
                 label: Text('Add Course'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppUtils.mainBlue(context),
                   foregroundColor: AppUtils.mainWhite(context),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  elevation: 2,
                 ),
               ),
             ],
           ),
-          // Course List
-          Container(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: _buildCourseList(),
-          ),
+          _buildCourseList(),
         ],
       ),
     );
@@ -367,64 +447,90 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
     return Consumer<CoursesProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         if (provider.error) {
-          return Center(child: Text(provider.message));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: Column(
+                spacing: 12,
+                children: [
+                  Icon(
+                    FluentIcons.error_circle_24_regular,
+                    color: Colors.red,
+                    size: 56,
+                  ),
+                  Text(
+                    provider.message,
+                    style: const TextStyle(fontSize: 15),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (provider.courses.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: Column(
+                spacing: 16,
+                children: [
+                  Icon(
+                    FluentIcons.book_24_regular,
+                    color: Colors.grey[400],
+                    size: 64,
+                  ),
+                  Text(
+                    'No courses available',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    'Get started by adding your first course',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  const Gap(8),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      _showAddDialog();
+                    },
+                    icon: const Icon(FluentIcons.add_24_regular),
+                    label: const Text('Add your first course'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppUtils.mainBlue(context),
+                      foregroundColor: AppUtils.mainWhite(context),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         return SingleChildScrollView(
           child: Column(
-            spacing: 10,
-            children: [
-              // List Header
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        'Course Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Units',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Students',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 100),
-                  ],
-                ),
-              ),
-              // List Items
-              ...provider.courses.map((course) => _buildCourseItem(course)),
-            ],
+            spacing: 12,
+            children: provider.courses.map((course) {
+              return _buildCourseItem(course);
+            }).toList(),
           ),
         );
       },
@@ -456,57 +562,106 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
       unitsList = course['units'] as List<dynamic>;
     }
 
-    final students = studentsList.length.toString();
-    final units = unitsList.length.toString();
-
     return Container(
-      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: AppUtils.mainGrey(context)),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(units, style: TextStyle(fontSize: 14)),
-          ),
-          Expanded(
-            child: Text(students, style: TextStyle(fontSize: 14)),
-          ),
-          SizedBox(
-            width: 100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              spacing: 5,
-              children: [
-                IconButton(
-                  icon: Icon(FluentIcons.edit_24_regular, size: 20),
-                  onPressed: () {
-                    _showEditDialog(course);
-                  },
-                  color: Colors.blue,
-                ),
-                IconButton(
-                  icon: Icon(FluentIcons.delete_24_regular, size: 20),
-                  onPressed: () {
-                    _showDeleteDialog(course['id'].toString());
-                  },
-                  color: Colors.red,
-                ),
-              ],
-            ),
+        color: AppUtils.mainWhite(context),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
+      ),
+      child: ListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        leading: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppUtils.mainBlue(context).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            FluentIcons.book_24_regular,
+            color: AppUtils.mainBlue(context),
+            size: 28,
+          ),
+        ),
+        title: Text(
+          name,
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Row(
+            spacing: 16,
+            children: [
+              Row(
+                spacing: 6,
+                children: [
+                  Icon(
+                    FluentIcons.notebook_24_regular,
+                    size: 16,
+                    color: Colors.grey[600],
+                  ),
+                  Text(
+                    '${unitsList.length} units',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                spacing: 6,
+                children: [
+                  Icon(
+                    FluentIcons.people_24_regular,
+                    size: 16,
+                    color: Colors.grey[600],
+                  ),
+                  Text(
+                    '${studentsList.length} students',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 4,
+          children: [
+            IconButton(
+              icon: Icon(FluentIcons.edit_24_regular, size: 20),
+              onPressed: () {
+                _showEditDialog(course);
+              },
+              color: Colors.blue,
+              tooltip: 'Edit',
+            ),
+            IconButton(
+              icon: Icon(FluentIcons.delete_24_regular, size: 20),
+              onPressed: () {
+                _showDeleteDialog(course['id'].toString());
+              },
+              color: Colors.red,
+              tooltip: 'Delete',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -523,11 +678,12 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(0),
           content: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             width: MediaQuery.of(context).size.width * 0.4,
+            constraints: BoxConstraints(maxWidth: 500),
             decoration: BoxDecoration(
               color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Form(
               key: _formKey,
@@ -541,7 +697,7 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                       Text(
                         "Add New Course",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           color: AppUtils.mainBlue(context),
                           fontWeight: FontWeight.bold,
                         ),
@@ -558,7 +714,8 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(FluentIcons.book_24_regular),
                       labelText: 'Course Name',
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
                           color: Color.fromARGB(255, 212, 212, 212),
                         ),
@@ -574,7 +731,8 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(FluentIcons.code_24_regular),
                       labelText: 'Course Code',
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
                           color: Color.fromARGB(255, 212, 212, 212),
                         ),
@@ -590,7 +748,8 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(FluentIcons.calendar_24_regular),
                       labelText: 'Course Year',
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
                           color: Color.fromARGB(255, 212, 212, 212),
                         ),
@@ -616,13 +775,15 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                           };
                           await _coursesProvider.addCourse(
                               token: _authProvider.token!, body: body);
-                          Navigator.of(dialogContext).pop();
+                          if (context.mounted) {
+                            Navigator.of(dialogContext).pop();
+                          }
                         }
                       },
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         backgroundColor: WidgetStatePropertyAll(
@@ -667,143 +828,151 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(0),
           content: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             width: MediaQuery.of(context).size.width * 0.4,
+            constraints: BoxConstraints(maxWidth: 500),
             decoration: BoxDecoration(
               color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Edit Course",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: AppUtils.mainBlue(context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(dialogContext).pop(),
-                        icon: const Icon(FluentIcons.dismiss_24_regular),
-                      ),
-                    ],
-                  ),
-                  const Gap(24),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(FluentIcons.book_24_regular),
-                      labelText: 'Course Name',
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 212, 212, 212),
-                        ),
-                      ),
-                      focusColor: AppUtils.mainBlue(context),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter a course name' : null,
-                  ),
-                  const Gap(16),
-                  TextFormField(
-                    controller: _codeController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(FluentIcons.code_24_regular),
-                      labelText: 'Course Code',
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 212, 212, 212),
-                        ),
-                      ),
-                      focusColor: AppUtils.mainBlue(context),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter a course code' : null,
-                  ),
-                  const Gap(16),
-                  TextFormField(
-                    controller: _courseYearController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(FluentIcons.calendar_24_regular),
-                      labelText: 'Course Year',
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 212, 212, 212),
-                        ),
-                      ),
-                      focusColor: AppUtils.mainBlue(context),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter a course year' : null,
-                  ),
-                  const Gap(16),
-                  TextFormField(
-                    controller: _imageController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(FluentIcons.image_24_regular),
-                      labelText: 'Image URL',
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 212, 212, 212),
-                        ),
-                      ),
-                      focusColor: AppUtils.mainBlue(context),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter an image URL' : null,
-                  ),
-                  const Gap(24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final body = {
-                            'course_id': course['id'].toString(),
-                            'name': _nameController.text,
-                            'code': _codeController.text,
-                            'course_year': _courseYearController.text,
-                            'img': _imageController.text,
-                            'students': course['students'].toString(),
-                            'units': course['units'].toString(),
-                          };
-                          logger.log(Level.info, body);
-                          await _coursesProvider.updateCourse(
-                              token: _authProvider.token!, body: body);
-                          Navigator.of(dialogContext).pop();
-                        }
-                      },
-                      style: ButtonStyle(
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Edit Course",
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: AppUtils.mainBlue(context),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          AppUtils.mainBlue(context),
+                        IconButton(
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                          icon: const Icon(FluentIcons.dismiss_24_regular),
                         ),
-                        padding: const WidgetStatePropertyAll(
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      ],
+                    ),
+                    const Gap(24),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(FluentIcons.book_24_regular),
+                        labelText: 'Course Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 212, 212, 212),
+                          ),
                         ),
+                        focusColor: AppUtils.mainBlue(context),
                       ),
-                      child: Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppUtils.mainWhite(context),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Please enter a course name' : null,
+                    ),
+                    const Gap(16),
+                    TextFormField(
+                      controller: _codeController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(FluentIcons.code_24_regular),
+                        labelText: 'Course Code',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 212, 212, 212),
+                          ),
+                        ),
+                        focusColor: AppUtils.mainBlue(context),
+                      ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Please enter a course code' : null,
+                    ),
+                    const Gap(16),
+                    TextFormField(
+                      controller: _courseYearController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(FluentIcons.calendar_24_regular),
+                        labelText: 'Course Year',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 212, 212, 212),
+                          ),
+                        ),
+                        focusColor: AppUtils.mainBlue(context),
+                      ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Please enter a course year' : null,
+                    ),
+                    const Gap(16),
+                    TextFormField(
+                      controller: _imageController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(FluentIcons.image_24_regular),
+                        labelText: 'Image URL',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 212, 212, 212),
+                          ),
+                        ),
+                        focusColor: AppUtils.mainBlue(context),
+                      ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Please enter an image URL' : null,
+                    ),
+                    const Gap(24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final body = {
+                              'course_id': course['id'].toString(),
+                              'name': _nameController.text,
+                              'code': _codeController.text,
+                              'course_year': _courseYearController.text,
+                              'img': _imageController.text,
+                              'students': course['students'].toString(),
+                              'units': course['units'].toString(),
+                            };
+                            await _coursesProvider.updateCourse(
+                                token: _authProvider.token!, body: body);
+                            if (context.mounted) {
+                              Navigator.of(dialogContext).pop();
+                            }
+                          }
+                        },
+                        style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          backgroundColor: WidgetStatePropertyAll(
+                            AppUtils.mainBlue(context),
+                          ),
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                          ),
+                        ),
+                        child: Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppUtils.mainWhite(context),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -819,26 +988,34 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(0),
           content: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
-            width: 400,
+            width: MediaQuery.of(context).size.width * 0.4,
+            constraints: BoxConstraints(maxWidth: 450),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  FluentIcons.delete_24_regular,
-                  color: AppUtils.mainRed(context),
-                  size: 64,
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppUtils.mainRed(context).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    FluentIcons.delete_24_regular,
+                    color: AppUtils.mainRed(context),
+                    size: 48,
+                  ),
                 ),
-                const Gap(16),
+                const Gap(20),
                 Text(
                   "Delete Course",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: AppUtils.mainRed(context),
                   ),
@@ -846,10 +1023,10 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                 const Gap(12),
                 Text(
                   "Are you sure you want to delete this course? This action cannot be undone.",
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 15),
                   textAlign: TextAlign.center,
                 ),
-                const Gap(24),
+                const Gap(28),
                 Row(
                   children: [
                     Expanded(
@@ -866,7 +1043,7 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                           ),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ),
@@ -906,7 +1083,7 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
                               ),
                               shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                             ),

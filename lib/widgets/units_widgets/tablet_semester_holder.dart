@@ -80,7 +80,7 @@ class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
                   top: -40,
                   left: 10,
                   child: Container(
-                    padding:
+                    padding: 
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     color: AppUtils.backgroundPanel(context),
                     child: Text(

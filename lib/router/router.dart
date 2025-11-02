@@ -11,6 +11,7 @@ import 'package:maktaba/views/auth/course/course_view.dart';
 import 'package:maktaba/views/auth/login/login_view.dart';
 import 'package:maktaba/views/auth/reset_password/change_password/change_password_view.dart';
 import 'package:maktaba/views/dashboard/dashboard_view.dart';
+import 'package:maktaba/views/landing_page/landing_page.dart';
 import 'package:maktaba/views/maktaba_admin/maktaba_admin.dart';
 import 'package:maktaba/views/notes/notes_view.dart';
 import 'package:maktaba/views/settings/settings_view.dart';
@@ -30,7 +31,7 @@ GoRouter createRouter(
   LessonsProvider lessonsProvider,
 ) {
   return GoRouter(
-    initialLocation: authProvider.isAuthenticated ? '/dashboard' : '/login',
+    initialLocation: '/',
     refreshListenable: Listenable.merge([
       AuthProviderNotifier(authProvider),
       TogglesProviderNotifier(toggleProvider),
@@ -38,21 +39,32 @@ GoRouter createRouter(
     redirect: (BuildContext context, GoRouterState state) {
       if (authProvider.isLoading || toggleProvider.isLoading) return null;
 
-      if (!authProvider.isAuthenticated) {
-        return state.matchedLocation == '/reset_password'
-            ? '/reset_password'
-            : '/login';
-      }
-      if (authProvider.isAuthenticated && state.matchedLocation == '/login') {
-        return toggleProvider.rememberSelection ? '/dashboard' : '/course';
+      final isAuthenticated = authProvider.isAuthenticated;
+      final isOnLandingPage = state.matchedLocation == '/';
+      final isOnLoginPage = state.matchedLocation == '/login';
+      final isOnResetPassword = state.matchedLocation == '/reset_password';
+
+      if (isAuthenticated) {
+        // Redirect away from login page only (allow landing page access)
+        if (isOnLoginPage) {
+          return toggleProvider.rememberSelection ? '/dashboard' : '/course';
+        }
+        return null; // Allow access to all routes including landing page
       }
 
-      return null; // No redirect
+      if (!isAuthenticated) {
+        if (isOnLandingPage || isOnLoginPage || isOnResetPassword) {
+          return null; // Allow access to public pages
+        }
+        return '/'; // Redirect to landing page for protected routes
+      }
+
+      return null;
     },
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const SplashScreen(),
+        builder: (context, state) => const LandingPageView(),
       ),
       GoRoute(
         path: '/login',

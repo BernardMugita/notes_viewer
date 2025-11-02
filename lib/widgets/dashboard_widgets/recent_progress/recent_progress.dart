@@ -70,7 +70,7 @@ class RecentProgress extends StatelessWidget {
                                       color: AppUtils.mainGrey(context)),
                                   borderRadius: BorderRadius.circular(200)),
                               child: CircleAvatar(
-                                radius: 70,
+                                radius: 50,
                                 backgroundColor: uploadType == 'notes'
                                     ? Colors.purpleAccent.withOpacity(0.2)
                                     : uploadType == 'slides'
@@ -110,7 +110,7 @@ class RecentProgress extends StatelessWidget {
                                                       "student_contributions"
                                                   ? Colors.deepOrange
                                                   : AppUtils.mainGreen(context),
-                                  size: 100,
+                                  size: 80,
                                 ),
                               ),
                             ),

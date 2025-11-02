@@ -1,14 +1,14 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart'; // Added Gap import
+import 'package:gap/gap.dart';
 import 'package:logger/logger.dart';
-import 'package:maktaba/providers/auth_provider.dart'; // Added AuthProvider import
-import 'package:maktaba/providers/comments_provider.dart'; // Added CommentsProvider import
+import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/comments_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
-import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart'; // Added EmptyWidget import
-import 'package:maktaba/utils/enums.dart'; // Added Enums import for EmptyWidgetType
-import 'package:provider/provider.dart'; // Added Provider import
-import 'package:jwt_decoder/jwt_decoder.dart'; // Added JwtDecoder import
+import 'package:maktaba/widgets/app_widgets/alert_widgets/empty_widget.dart';
+import 'package:maktaba/utils/enums.dart';
+import 'package:provider/provider.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DiscussionForum extends StatefulWidget {
   final String studyMaterialId;
@@ -58,18 +58,22 @@ class _DiscussionForumState extends State<DiscussionForum> {
 
         return Column(
           children: [
+            // Comments List
             Expanded(
               child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppUtils.backgroundPanel(context),
-                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: commentsProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppUtils.mainBlue(context),
+                        ),
+                      )
                     : commentsProvider.comments.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: EmptyWidget(
                               errorHeading: "No Comments Yet!",
                               errorDescription:
@@ -81,7 +85,7 @@ class _DiscussionForumState extends State<DiscussionForum> {
                             itemCount: commentsProvider.comments.length,
                             itemBuilder: (context, index) {
                               final comment = commentsProvider.comments[index];
-                              return Forummessage(
+                              return ForumMessage(
                                 username: comment['owner'] ?? 'Anonymous',
                                 timestamp:
                                     AppUtils.formatDate(comment['created_at']),
@@ -93,68 +97,86 @@ class _DiscussionForumState extends State<DiscussionForum> {
                           ),
               ),
             ),
-            const SizedBox(height: 20),
+            const Gap(16),
+
+            // Comment Input
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _commentController,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: 14),
                     decoration: InputDecoration(
-                      hintText: "Type your message",
+                      hintText: "Type your message...",
+                      hintStyle: TextStyle(
+                        color: AppUtils.mainGrey(context),
+                        fontSize: 14,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide:
-                            BorderSide(color: AppUtils.mainGrey(context)),
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide:
-                            BorderSide(color: AppUtils.mainBlue(context)),
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: AppUtils.mainBlue(context),
+                          width: 2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: commentsProvider.isLoading
-                      ? null
-                      : () async {
-                          if (_commentController.text.isNotEmpty) {
-                            bool success;
-                            if (commentsProvider.commentToEdit != null) {
-                              // Editing existing comment
-                              success = await commentsProvider.editComment(
-                                token: _tokenRef,
-                                commentId: commentsProvider.commentToEdit!['id'],
-                                content: _commentController.text,
-                              );
-                              if (success) {
-                                commentsProvider.setCommentToEdit(null);
-                              }
-                            } else {
-                              // Creating new comment
-                              success = await commentsProvider.createComment(
-                                token: _tokenRef,
-                                studyMaterialId: widget.studyMaterialId,
-                                content: _commentController.text,
-                              );
-                            }
-                            if (success) {
-                              _commentController.clear();
-                              // Refresh comments after create/edit
-                              await commentsProvider.getCommentsByMaterial(
-                                token: _tokenRef,
-                                studyMaterialId: widget.studyMaterialId,
-                              );
-                            }
-                          }
-                        },
-                  child: CircleAvatar(
-                    backgroundColor: commentsProvider.isLoading
+                const Gap(12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: commentsProvider.isLoading
                         ? Colors.grey
                         : AppUtils.mainBlue(context),
-                    child: commentsProvider.isLoading
-                        ? const SizedBox(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    onPressed: commentsProvider.isLoading
+                        ? null
+                        : () async {
+                            if (_commentController.text.isNotEmpty) {
+                              bool success;
+                              if (commentsProvider.commentToEdit != null) {
+                                success = await commentsProvider.editComment(
+                                  token: _tokenRef,
+                                  commentId:
+                                      commentsProvider.commentToEdit!['id'],
+                                  content: _commentController.text,
+                                );
+                                if (success) {
+                                  commentsProvider.setCommentToEdit(null);
+                                }
+                              } else {
+                                success = await commentsProvider.createComment(
+                                  token: _tokenRef,
+                                  studyMaterialId: widget.studyMaterialId,
+                                  content: _commentController.text,
+                                );
+                              }
+                              if (success) {
+                                _commentController.clear();
+                                await commentsProvider.getCommentsByMaterial(
+                                  token: _tokenRef,
+                                  studyMaterialId: widget.studyMaterialId,
+                                );
+                              }
+                            }
+                          },
+                    icon: commentsProvider.isLoading
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -162,8 +184,11 @@ class _DiscussionForumState extends State<DiscussionForum> {
                               strokeWidth: 2,
                             ),
                           )
-                        : Icon(FluentIcons.send_24_regular,
-                            color: AppUtils.mainWhite(context)),
+                        : Icon(
+                            FluentIcons.send_24_filled,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                   ),
                 ),
               ],
@@ -175,14 +200,14 @@ class _DiscussionForumState extends State<DiscussionForum> {
   }
 }
 
-class Forummessage extends StatelessWidget {
+class ForumMessage extends StatelessWidget {
   final String username;
   final String timestamp;
   final String content;
   final Map<String, dynamic> comment;
   final String studyMaterialId;
 
-  const Forummessage({
+  const ForumMessage({
     super.key,
     required this.username,
     required this.timestamp,
@@ -201,11 +226,12 @@ class Forummessage extends StatelessWidget {
     final isOwner = comment['user_id'] == currentUserId;
 
     return Container(
-      padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,53 +239,100 @@ class Forummessage extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppUtils.backgroundPanel(context),
-                child: Icon(
-                  FluentIcons.person_24_regular,
-                  color: AppUtils.mainBlack(context),
+                radius: 18,
+                backgroundColor: AppUtils.mainBlue(context).withOpacity(0.1),
+                child: Text(
+                  username[0].toUpperCase(),
+                  style: TextStyle(
+                    color: AppUtils.mainBlue(context),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(username,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(
-                    timestamp,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppUtils.mainGrey(context),
+              const Gap(12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      username,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppUtils.mainBlack(context),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              if (isOwner)
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      commentsProvider.setCommentToEdit(comment);
-                    } else if (value == 'delete') {
-                      _showDeleteConfirmationDialog(
-                          context, commentsProvider);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Text('Edit'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'delete',
-                      child: Text('Delete'),
+                    Text(
+                      timestamp,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppUtils.mainGrey(context),
+                      ),
                     ),
                   ],
                 ),
+              ),
+              if (isOwner)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: PopupMenuButton<String>(
+                    icon: Icon(
+                      FluentIcons.more_vertical_24_regular,
+                      size: 18,
+                      color: AppUtils.mainGrey(context),
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        commentsProvider.setCommentToEdit(comment);
+                      } else if (value == 'delete') {
+                        _showDeleteConfirmationDialog(
+                            context, commentsProvider);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(FluentIcons.edit_24_regular,
+                                size: 18, color: AppUtils.mainBlue(context)),
+                            const Gap(12),
+                            const Text('Edit'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(FluentIcons.delete_24_regular,
+                                size: 18, color: AppUtils.mainRed(context)),
+                            const Gap(12),
+                            const Text('Delete'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
-          const Divider(),
-          Text(content, style: const TextStyle(fontSize: 14)),
+          const Gap(12),
+          Divider(height: 1, color: Colors.grey.shade200),
+          const Gap(12),
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 14,
+              color: AppUtils.mainBlack(context),
+              height: 1.5,
+            ),
+          ),
         ],
       ),
     );
@@ -272,123 +345,129 @@ class Forummessage extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           content: Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(28),
+            constraints: BoxConstraints(maxWidth: 400),
             decoration: BoxDecoration(
               color: AppUtils.mainWhite(context),
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(12),
             ),
-            width: 300,
-            height: 300,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  FluentIcons.delete_24_regular,
-                  color: AppUtils.mainRed(context),
-                  size: 80,
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppUtils.mainRed(context).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FluentIcons.delete_24_regular,
+                    color: AppUtils.mainRed(context),
+                    size: 48,
+                  ),
                 ),
                 const Gap(20),
                 Text(
-                  "Confirm Delete",
+                  "Delete Comment",
                   style: TextStyle(
-                      fontSize: 18, color: AppUtils.mainRed(context)),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppUtils.mainBlack(context),
+                  ),
                 ),
-                const Text(
-                  "Are you sure you want to delete this comment? Note that this action is irreversible.",
-                  style: TextStyle(fontSize: 18),
+                const Gap(12),
+                Text(
+                  "Are you sure you want to delete this comment? This action cannot be undone.",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppUtils.mainGrey(context),
+                    height: 1.5,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const Spacer(),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: ButtonStyle(
-                            padding: const WidgetStatePropertyAll(
-                                EdgeInsets.all(10)),
-                            backgroundColor: WidgetStatePropertyAll(
-                                AppUtils.mainBlueAccent(context)),
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
+                const Gap(24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(FluentIcons.dismiss_24_filled,
-                                  color: AppUtils.mainRed(context)),
-                              const Gap(5),
-                              Text("Cancel",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppUtils.mainRed(context))),
-                            ],
+                          side: WidgetStatePropertyAll(
+                            BorderSide(color: AppUtils.mainGrey(context)),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: AppUtils.mainBlack(context),
                           ),
                         ),
                       ),
-                      const Gap(10),
-                      Expanded(
-                        child: Consumer<CommentsProvider>(
-                          builder: (context, commentsProvider, _) {
-                            return ElevatedButton(
-                              onPressed: commentsProvider.isLoading
-                                  ? null
-                                  : () async {
-                                      Navigator.of(context).pop();
-                                      await commentsProvider.deleteComment(
-                                        token: Provider.of<AuthProvider>(
-                                                context, listen: false)
-                                            .token!,
-                                        commentId: comment['id'],
-                                        studyMaterialId: studyMaterialId,
-                                      );
-                                    },
-                              style: ButtonStyle(
-                                padding: const WidgetStatePropertyAll(
-                                    EdgeInsets.all(10)),
-                                backgroundColor: WidgetStatePropertyAll(
-                                    AppUtils.mainRed(context)),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                    ),
+                    const Gap(12),
+                    Expanded(
+                      child: Consumer<CommentsProvider>(
+                        builder: (context, commentsProvider, _) {
+                          return ElevatedButton(
+                            onPressed: commentsProvider.isLoading
+                                ? null
+                                : () async {
+                                    Navigator.of(context).pop();
+                                    await commentsProvider.deleteComment(
+                                      token: Provider.of<AuthProvider>(context,
+                                              listen: false)
+                                          .token!,
+                                      commentId: comment['id'],
+                                      studyMaterialId: studyMaterialId,
+                                    );
+                                  },
+                            style: ButtonStyle(
+                              padding: const WidgetStatePropertyAll(
+                                EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                AppUtils.mainRed(context),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: commentsProvider.isLoading
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.5,
-                                      ),
-                                    )
-                                  : Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(FluentIcons.delete_24_regular,
-                                            color: AppUtils.mainWhite(context)),
-                                        const Gap(5),
-                                        Text("Delete",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: AppUtils.mainWhite(
-                                                    context))),
-                                      ],
+                            ),
+                            child: commentsProvider.isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
                                     ),
-                            );
-                          },
-                        ),
+                                  )
+                                : Text(
+                                    "Delete",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

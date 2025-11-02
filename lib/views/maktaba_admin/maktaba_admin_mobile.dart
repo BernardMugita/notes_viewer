@@ -170,28 +170,16 @@ class _MaktabaAdminMobileState extends State<MaktabaAdminMobile> {
                     Colors.green,
                   ),
                   _buildSummaryItem(
-                    'NOTES',
-                    'Total: 0',
-                    FluentIcons.note_24_regular,
-                    Colors.purple,
-                  ),
-                  _buildSummaryItem(
-                    'SLIDES',
-                    'Total: 0',
-                    FluentIcons.slide_text_24_regular,
-                    Colors.amber,
-                  ),
-                  _buildSummaryItem(
-                    'RECORDINGS',
-                    'Total: 0',
-                    FluentIcons.video_24_regular,
-                    Colors.cyan,
-                  ),
-                  _buildSummaryItem(
-                    'STUDENT CONTRIBUTIONS',
+                    'STUDENTS',
                     'Total: 0',
                     FluentIcons.people_24_regular,
                     Colors.orange,
+                  ),
+                  _buildSummaryItem(
+                    'LESSONS',
+                    'Total: 0',
+                    FluentIcons.note_24_regular,
+                    Colors.purple,
                   ),
                 ],
               );

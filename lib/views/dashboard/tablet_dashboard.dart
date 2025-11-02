@@ -43,13 +43,6 @@ class _TabletDashboardState extends State<TabletDashboard>
 
   @override
   Widget build(BuildContext context) {
-    final dashData = context.read<DashboardProvider>().dashData;
-
-    bool isNewActivities =
-        dashData.isNotEmpty && dashData['notifications'].isNotEmpty
-            ? dashData['notifications']!['unread']!.isNotEmpty
-            : false;
-
     return WillPopScope(
       onWillPop: () async {
         final shouldExit = await showDialog<bool>(
@@ -81,6 +74,10 @@ class _TabletDashboardState extends State<TabletDashboard>
               (BuildContext context, dashBoardProvider, togglesProvider, _) {
             final dashData = dashBoardProvider.dashData;
             final searchResults = togglesProvider.searchResults;
+            bool isNewActivities =
+                dashData.isNotEmpty && dashData['notifications'].isNotEmpty
+                    ? dashData['notifications']!['unread']!.isNotEmpty
+                    : false;
 
             return dashBoardProvider.isLoading
                 ? Center(
