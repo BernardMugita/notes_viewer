@@ -18,6 +18,7 @@ import 'package:maktaba/views/settings/settings_view.dart';
 import 'package:maktaba/views/splash/splash_screen.dart';
 import 'package:maktaba/views/study/study_view.dart';
 import 'package:maktaba/views/units/units_view.dart';
+import 'package:maktaba/views/units_manager/units_manager.dart';
 import 'package:maktaba/views/view_notes/view_notes_view.dart';
 
 final authProvider = AuthProvider();
@@ -93,6 +94,13 @@ GoRouter createRouter(
       GoRoute(
         path: '/maktaba_admin',
         builder: (context, state) => MaktabaAdminView(),
+        routes: [
+          GoRoute(
+            path: 'units_manager',
+            builder: (context, state) =>
+                const UnitsManagerView(courseId: "courseId"),
+          ),
+        ],
       ),
       GoRoute(
         path: '/units',

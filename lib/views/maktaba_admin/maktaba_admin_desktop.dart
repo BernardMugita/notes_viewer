@@ -562,105 +562,110 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
       unitsList = course['units'] as List<dynamic>;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        leading: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppUtils.mainBlue(context).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            FluentIcons.book_24_regular,
-            color: AppUtils.mainBlue(context),
-            size: 28,
-          ),
+    return GestureDetector(
+      onTap: () {
+        context.go('/maktaba_admin/units_manager');
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppUtils.mainWhite(context),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
-        title: Text(
-          name,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          leading: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppUtils.mainBlue(context).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              FluentIcons.book_24_regular,
+              color: AppUtils.mainBlue(context),
+              size: 28,
+            ),
           ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Row(
-            spacing: 16,
+          title: Text(
+            name,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Row(
+              spacing: 16,
+              children: [
+                Row(
+                  spacing: 6,
+                  children: [
+                    Icon(
+                      FluentIcons.notebook_24_regular,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    Text(
+                      '${unitsList.length} units',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  spacing: 6,
+                  children: [
+                    Icon(
+                      FluentIcons.people_24_regular,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    Text(
+                      '${studentsList.length} students',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4,
             children: [
-              Row(
-                spacing: 6,
-                children: [
-                  Icon(
-                    FluentIcons.notebook_24_regular,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  Text(
-                    '${unitsList.length} units',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+              IconButton(
+                icon: Icon(FluentIcons.edit_24_regular, size: 20),
+                onPressed: () {
+                  _showEditDialog(course);
+                },
+                color: Colors.blue,
+                tooltip: 'Edit',
               ),
-              Row(
-                spacing: 6,
-                children: [
-                  Icon(
-                    FluentIcons.people_24_regular,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  Text(
-                    '${studentsList.length} students',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+              IconButton(
+                icon: Icon(FluentIcons.delete_24_regular, size: 20),
+                onPressed: () {
+                  _showDeleteDialog(course['id'].toString());
+                },
+                color: Colors.red,
+                tooltip: 'Delete',
               ),
             ],
           ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 4,
-          children: [
-            IconButton(
-              icon: Icon(FluentIcons.edit_24_regular, size: 20),
-              onPressed: () {
-                _showEditDialog(course);
-              },
-              color: Colors.blue,
-              tooltip: 'Edit',
-            ),
-            IconButton(
-              icon: Icon(FluentIcons.delete_24_regular, size: 20),
-              onPressed: () {
-                _showDeleteDialog(course['id'].toString());
-              },
-              color: Colors.red,
-              tooltip: 'Delete',
-            ),
-          ],
         ),
       ),
     );
