@@ -23,7 +23,11 @@ class _TabletFileViewerState extends State<TabletFileViewer> {
   Widget build(BuildContext context) {
     final fileExtension = widget.fileName.split('.')[1];
 
-    return fileExtension == 'mp4' || fileExtension == 'webm'
+    return fileExtension == 'mp4' ||
+            fileExtension == 'webm' ||
+            fileExtension == 'hls' ||
+            fileExtension == 'ts' ||
+            fileExtension == 'm3u8'
         ? TabletVideoViewer(
             fileName: widget.fileName,
             material: widget.material,
@@ -48,7 +52,7 @@ class _TabletFileViewerState extends State<TabletFileViewer> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Text(
+                child: const Text(
                   'File not supported',
                   style: TextStyle(fontSize: 20),
                 ),

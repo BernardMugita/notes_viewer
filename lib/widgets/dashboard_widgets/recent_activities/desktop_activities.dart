@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/responsive/responsive_layout.dart';
@@ -23,36 +24,58 @@ class DesktopActivities extends StatelessWidget {
         Map activities = dashboardProvider.dashData['notifications'] ?? {};
 
         List readActivities =
-            activities.isNotEmpty && activities['unread'].isNotEmpty
-                ? List.from(activities['unread'] as List)
-                : [];
+        activities.isNotEmpty && activities['unread'].isNotEmpty
+            ? List.from(activities['unread'] as List)
+            : [];
 
         readActivities.sort((a, b) {
           return b['created_at'].compareTo(a['created_at']);
         });
 
-        return readActivities.isEmpty
-            ? EmptyWidget(
-                errorHeading: "No Activities Loaded",
-                errorDescription: "Activity history may be empty",
-                type: EmptyWidgetType.activities,
-              )
-            : SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * heightDenomenator,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: readActivities.map((activity) {
-                          return Activity(activity: activity);
-                        }).toList(),
-                      )
-                    ],
+        if (readActivities.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 16,
+                children: [
+                  Icon(
+                    FluentIcons.mail_inbox_add_24_regular,
+                    color: Colors.grey[400],
+                    size: 64,
                   ),
-                ),
-              );
+                  Text(
+                    'No recent activities',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    'You\'re all caught up! Check back later for updates',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            spacing: 12,
+            children: readActivities.map((activity) {
+              return Activity(activity: activity);
+            }).toList(),
+          ),
+        );
       },
     );
   }

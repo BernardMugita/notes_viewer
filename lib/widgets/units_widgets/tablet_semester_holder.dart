@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/units_widgets/tablet_unit_holder.dart';
 
@@ -53,50 +54,113 @@ class _TabletSemesterHolderState extends State<TabletSemesterHolder> {
     final groupedUnits = groupUnitsBySemester();
     final sortedSemesters = sortSemesters(groupedUnits);
 
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: sortedSemesters.map<Widget>((semester) {
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 20),
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-            decoration: BoxDecoration(
-                border: Border(
-                    top: BorderSide(
-              color: AppUtils.mainGrey(context),
-            ))),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Column(
-                  spacing: 5,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: groupedUnits[semester]!.map<Widget>((unit) {
-                    return TabletUnitHolder(unit: unit);
-                  }).toList(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: sortedSemesters.map<Widget>((semester) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppUtils.mainGrey(context).withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Semester Header
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
                 ),
-                Positioned(
-                  top: -40,
-                  left: 10,
-                  child: Container(
-                    padding: 
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    color: AppUtils.backgroundPanel(context),
-                    child: Text(
-                      "Semester $semester",
-                      style: TextStyle(
-                        color: AppUtils.mainGrey(context),
-                        fontSize: 18,
+                decoration: BoxDecoration(
+                  color: AppUtils.mainBlue(context).withOpacity(0.05),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppUtils.mainBlue(context),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.calendar_today,
+                        size: 20,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          );
-        }).toList(),
-      ),
+                    const Gap(12),
+                    Text(
+                      "Semester $semester",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppUtils.mainBlack(context),
+                      ),
+                    ),
+                    const Gap(12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppUtils.mainBlue(context).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        "${groupedUnits[semester]!.length} ${groupedUnits[semester]!.length == 1 ? 'Unit' : 'Units'}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppUtils.mainBlue(context),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Units List
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: groupedUnits[semester]!
+                      .asMap()
+                      .entries
+                      .map<Widget>((entry) {
+                    final index = entry.key;
+                    final unit = entry.value;
+                    final isLast = index == groupedUnits[semester]!.length - 1;
+
+                    return Column(
+                      children: [
+                        TabletUnitHolder(unit: unit),
+                        if (!isLast) const Gap(12),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

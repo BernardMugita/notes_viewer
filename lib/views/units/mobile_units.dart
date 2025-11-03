@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
-import 'package:maktaba/widgets/app_widgets/alert_widgets/confirm_exit.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
@@ -24,8 +25,6 @@ class MobileUnits extends StatefulWidget {
 }
 
 class _MobileUnitsState extends State<MobileUnits> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   String tokenRef = '';
 
   TextEditingController nameController = TextEditingController();
@@ -36,6 +35,7 @@ class _MobileUnitsState extends State<MobileUnits> {
 
   String selectedCourseId = '';
   String selectedSemester = '';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -54,208 +54,211 @@ class _MobileUnitsState extends State<MobileUnits> {
   Widget build(BuildContext context) {
     final courses = context.watch<CoursesProvider>().courses;
     final unitsProvider = context.watch<UnitsProvider>();
-    final user = context.watch<UserProvider>().user;
     final units = unitsProvider.units;
+    final user = context.watch<UserProvider>().user;
+    final toggleProvider = context.watch<TogglesProvider>();
 
-    final togglesProvider = context.watch<TogglesProvider>();
-
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => ConfirmExit(),
-        );
-
-        return shouldExit ?? false;
-      },
-      child: Scaffold(
-        backgroundColor: AppUtils.backgroundPanel(context),
-        key: _scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: AppUtils.mainBlue(context),
-          elevation: 3,
-          leading: GestureDetector(
-            onTap: () {
-              _scaffoldKey.currentState?.openDrawer();
-            },
-            child: Icon(
-              FluentIcons.re_order_24_regular,
-              color: AppUtils.mainWhite(context),
-            ),
-          ),
-        ),
-        drawer: const ResponsiveNav(),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: unitsProvider.isLoading
-              ? Center(
-                  child: LoadingAnimationWidget.newtonCradle(
-                    color: AppUtils.mainBlue(context),
-                    size: 100,
+    return context.watch<UnitsProvider>().isLoading
+        ? Center(
+            child: Lottie.asset("assets/animations/maktaba_loader.json"),
+          )
+        : Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: AppUtils.backgroundPanel(context),
+            appBar: AppBar(
+              backgroundColor: AppUtils.mainBlue(context),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  FluentIcons.re_order_dots_vertical_24_regular,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    FluentIcons.alert_24_regular,
+                    size: 24,
+                    color: AppUtils.mainWhite(context),
                   ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 20,
-                  children: [
-                    _buildTopBar(context, togglesProvider, user, false),
-                    if (user.isNotEmpty && user['role'] == 'admin')
-                      ElevatedButton.icon(
-                        style: ButtonStyle(
-                          padding: WidgetStatePropertyAll(
-                            EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 16),
+                ),
+                IconButton(
+                  onPressed: () {
+                    context.go('/settings');
+                  },
+                  icon: Icon(
+                    FluentIcons.settings_24_regular,
+                    size: 24,
+                    color: AppUtils.mainWhite(context),
+                  ),
+                ),
+                const Gap(12),
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppUtils.mainWhite(context),
+                  child: Text(
+                    user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+                    style: TextStyle(
+                      color: AppUtils.mainBlue(context),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const Gap(16),
+              ],
+            ),
+            drawer: const ResponsiveNav(),
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Search Bar
+                  TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      toggleProvider.searchAction(
+                        searchController.text,
+                        context.read<UnitsProvider>().units,
+                        'name',
+                      );
+                    },
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: AppUtils.mainGrey(context).withOpacity(0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: AppUtils.mainBlue(context),
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: AppUtils.mainWhite(context),
+                      prefixIcon: Icon(
+                        FluentIcons.search_24_regular,
+                        color: AppUtils.mainGrey(context).withOpacity(0.8),
+                      ),
+                      hintText: "Search units...",
+                      hintStyle: TextStyle(
+                        fontSize: 15,
+                        color: AppUtils.mainGrey(context).withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                  const Gap(20),
+
+                  // Page Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (toggleProvider.searchMode)
+                            Text(
+                              toggleProvider.searchResults.isEmpty
+                                  ? "No results found"
+                                  : "Search results for '${searchController.text}'",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppUtils.mainGrey(context),
+                              ),
+                            )
+                          else
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Units',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppUtils.mainBlack(context),
+                                  ),
+                                ),
+                                const Gap(4),
+                                Text(
+                                  'Manage your course units',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppUtils.mainGrey(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                      if (user.isNotEmpty &&
+                          user['role'] == 'admin' &&
+                          !toggleProvider.searchMode)
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                            padding: WidgetStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 14),
+                            ),
+                            backgroundColor: WidgetStateProperty.all(
+                                AppUtils.mainBlue(context)),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            elevation: WidgetStateProperty.all(0),
                           ),
-                          backgroundColor: WidgetStatePropertyAll(
-                              AppUtils.mainBlue(context)),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                          onPressed: () => _showDialog(context,
+                              courses: courses, token: tokenRef),
+                          icon: const Icon(
+                            FluentIcons.add_24_regular,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            "Add Unit",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          elevation: WidgetStatePropertyAll(0),
                         ),
-                        onPressed: () => _showDialog(context,
-                            courses: courses, token: tokenRef),
-                        icon: Icon(
-                          FluentIcons.add_24_regular,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        label: Text(
-                          "Add Unit",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            MobileSemesterHolder(
-                                units: togglesProvider.searchResults.isNotEmpty
-                                    ? togglesProvider.searchResults
-                                    : units),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
+                    ],
+                  ),
+                  const Gap(20),
 
-  Widget _buildTopBar(BuildContext context, TogglesProvider togglesProvider,
-      Map<dynamic, dynamic> user, bool isNewActivities) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppUtils.mainBlue(context),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: searchController,
-              style: TextStyle(color: AppUtils.mainWhite(context)),
-              onChanged: (value) {
-                togglesProvider.searchAction(
-                  searchController.text,
-                  context.read<UnitsProvider>().units,
-                  'name',
-                );
-              },
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context).withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context),
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppUtils.mainWhite(context).withOpacity(0.1),
-                prefixIcon: Icon(
-                  FluentIcons.search_24_regular,
-                  color: AppUtils.mainWhite(context).withOpacity(0.8),
-                ),
-                hintText: "Search units...",
-                hintStyle: TextStyle(
-                  fontSize: 15,
-                  color: AppUtils.mainWhite(context).withOpacity(0.7),
-                ),
-              ),
-            ),
-          ),
-          Spacer(),
-          Row(
-            spacing: 8,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      FluentIcons.alert_24_regular,
-                      size: 24,
-                      color: AppUtils.mainWhite(context),
-                    ),
-                  ),
-                  if (isNewActivities)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: AppUtils.mainRed(context),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppUtils.mainBlue(context),
-                            width: 2,
-                          ),
-                        ),
+                  // Units Content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: MobileSemesterHolder(
+                        units: toggleProvider.searchResults.isNotEmpty
+                            ? toggleProvider.searchResults
+                            : units,
                       ),
                     ),
+                  ),
                 ],
               ),
-              IconButton(
-                onPressed: () {
-                  context.go('/settings');
-                },
-                icon: Icon(
-                  FluentIcons.settings_24_regular,
-                  size: 24,
-                  color: AppUtils.mainWhite(context),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+            ),
+          );
   }
 
   void _showDialog(BuildContext context,
       {required List<Map<String, dynamic>> courses, required String token}) {
+    final _formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -268,336 +271,380 @@ class _MobileUnitsState extends State<MobileUnits> {
               AlertDialog(
                 contentPadding: const EdgeInsets.all(0),
                 content: Container(
-                  padding: const EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width,
-                  height: togglesProvider.showCoursesDropDown
-                      ? MediaQuery.of(context).size.height * 0.65
-                      : togglesProvider.showSemesterDropDown
-                          ? MediaQuery.of(context).size.height * 0.85
-                          : MediaQuery.of(context).size.height * 0.55,
+                  padding: const EdgeInsets.all(28),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  constraints: const BoxConstraints(maxWidth: 600),
                   decoration: BoxDecoration(
                     color: AppUtils.mainWhite(context),
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Add Unit",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: AppUtils.mainBlue(context),
-                              fontWeight: FontWeight.bold,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Add New Unit",
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: AppUtils.mainBlue(context),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                              icon: const Icon(FluentIcons.dismiss_24_regular),
+                            ),
+                          ],
+                        ),
+                        const Gap(24),
+
+                        // Unit Name
+                        TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            prefixIcon:
+                                const Icon(FluentIcons.class_24_regular),
+                            labelText: 'Unit Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 212, 212, 212),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppUtils.mainBlue(context),
+                                width: 2,
+                              ),
                             ),
                           ),
-                          IconButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(),
-                            icon: const Icon(FluentIcons.dismiss_24_regular),
+                          validator: (value) => value!.isEmpty
+                              ? 'Please enter a unit name'
+                              : null,
+                        ),
+                        const Gap(16),
+
+                        // Unit Code
+                        TextFormField(
+                          controller: codeController,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(
+                                FluentIcons.number_circle_0_24_regular),
+                            labelText: 'Unit Code',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 212, 212, 212),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppUtils.mainBlue(context),
+                                width: 2,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      Gap(20),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        alignment: WrapAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: TextField(
-                              controller: nameController,
+                          validator: (value) => value!.isEmpty
+                              ? 'Please enter a unit code'
+                              : null,
+                        ),
+                        const Gap(16),
+
+                        // Course Dropdown
+                        Column(
+                          children: [
+                            TextFormField(
+                              controller: courseIdController,
+                              readOnly: true,
+                              onTap: () {
+                                togglesProvider.toggleCoursesDropDown();
+                              },
                               decoration: InputDecoration(
                                 prefixIcon:
-                                    const Icon(FluentIcons.class_24_regular),
-                                labelText: 'Unit name',
-                                border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                    const Icon(FluentIcons.book_24_regular),
+                                labelText: 'Course',
+                                suffixIcon: Icon(
+                                  togglesProvider.showCoursesDropDown
+                                      ? FluentIcons.chevron_up_24_regular
+                                      : FluentIcons.chevron_down_24_regular,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                focusColor: AppUtils.mainBlue(context),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: TextField(
-                              controller: codeController,
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(
-                                    FluentIcons.number_circle_0_24_regular),
-                                labelText: 'Unit code',
-                                border: const OutlineInputBorder(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 212, 212, 212),
+                                    color: AppUtils.mainBlue(context),
+                                    width: 2,
                                   ),
                                 ),
-                                focusColor: AppUtils.mainBlue(context),
                               ),
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please select a course'
+                                  : null,
                             ),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                TextField(
-                                  controller: courseIdController,
-                                  decoration: InputDecoration(
-                                    contentPadding:
-                                        const EdgeInsets.only(right: 10),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
+                            if (togglesProvider.showCoursesDropDown)
+                              Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(8),
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: AppUtils.mainWhite(context),
+                                  border: Border.all(
+                                    color: AppUtils.mainGrey(context)
+                                        .withOpacity(0.3),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: courses.map<Widget>((course) {
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedCourseId = course['id'];
+                                          courseIdController.text =
+                                              course['name'];
+                                        });
                                         togglesProvider.toggleCoursesDropDown();
                                       },
-                                      icon: togglesProvider.showCoursesDropDown
-                                          ? const Icon(
-                                              FluentIcons.chevron_up_24_regular)
-                                          : const Icon(FluentIcons
-                                              .chevron_down_24_regular),
-                                    ),
-                                    prefixIcon:
-                                        const Icon(FluentIcons.book_24_regular),
-                                    labelText: 'Course',
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: 
-                                            Color.fromARGB(255, 212, 212, 212),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color:
+                                              selectedCourseId == course['id']
+                                                  ? AppUtils.mainBlue(context)
+                                                      .withOpacity(0.1)
+                                                  : Colors.transparent,
+                                        ),
+                                        child: Text(
+                                          course['name'],
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: selectedCourseId ==
+                                                    course['id']
+                                                ? AppUtils.mainBlue(context)
+                                                : AppUtils.mainBlack(context),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    focusColor: AppUtils.mainBlue(context),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Gap(16),
+
+                        // Semester Dropdown
+                        Column(
+                          children: [
+                            TextFormField(
+                              controller: semesterController,
+                              readOnly: true,
+                              onTap: () {
+                                togglesProvider.toggleSemesterDropDown();
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon:
+                                    const Icon(FluentIcons.calendar_24_regular),
+                                labelText: 'Semester',
+                                suffixIcon: Icon(
+                                  togglesProvider.showSemesterDropDown
+                                      ? FluentIcons.chevron_up_24_regular
+                                      : FluentIcons.chevron_down_24_regular,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 212, 212, 212),
                                   ),
                                 ),
-                                if (togglesProvider.showCoursesDropDown)
-                                  Container(
-                                    padding: const EdgeInsets.all(20),
-                                    margin: EdgeInsets.only(top: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: AppUtils.mainWhite(context),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color.fromARGB(
-                                              255, 229, 229, 229),
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: courses.map<Widget>((course) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedCourseId = course[
-                                                  'id']; // Set the course ID
-                                              courseIdController.text = course[
-                                                  'name']; // Update the course name in the text field
-                                            });
-                                            togglesProvider
-                                                .toggleCoursesDropDown();
-                                          },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                course['name'],
-                                                style: const TextStyle(
-                                                    fontSize: 16),
-                                              ),
-                                              const Divider(
-                                                color: Color.fromARGB(
-                                                    255, 209, 209, 209),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  )
-                              ],
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: AppUtils.mainBlue(context),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please select a semester'
+                                  : null,
                             ),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                TextField(
-                                  controller: semesterController,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
+                            if (togglesProvider.showSemesterDropDown)
+                              Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: AppUtils.mainWhite(context),
+                                  border: Border.all(
+                                    color: AppUtils.mainGrey(context)
+                                        .withOpacity(0.3),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: semesters.map<Widget>((semester) {
+                                    final isSelected =
+                                        selectedSemester == semester;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedSemester = semester;
+                                          semesterController.text = semester;
+                                        });
                                         togglesProvider
                                             .toggleSemesterDropDown();
                                       },
-                                      icon: togglesProvider.showSemesterDropDown
-                                          ? const Icon(
-                                              FluentIcons.chevron_up_24_regular)
-                                          : const Icon(FluentIcons
-                                              .chevron_down_24_regular),
-                                    ),
-                                    prefixIcon: const Icon(
-                                        FluentIcons.calendar_24_regular),
-                                    labelText: 'Semester',
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: 
-                                            Color.fromARGB(255, 212, 212, 212),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: isSelected
+                                              ? AppUtils.mainBlue(context)
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? AppUtils.mainBlue(context)
+                                                : AppUtils.mainGrey(context)
+                                                    .withOpacity(0.3),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          semester,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isSelected
+                                                ? Colors.white
+                                                : AppUtils.mainBlack(context),
+                                            fontWeight: isSelected
+                                                ? FontWeight.w600
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    focusColor: AppUtils.mainBlue(context),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Gap(24),
+
+                        // Submit Button
+                        Consumer<UnitsProvider>(
+                            builder: (context, unitProvider, child) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: unitProvider.isLoading
+                                  ? null
+                                  : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        final success =
+                                            await unitProvider.addUnit(
+                                          token,
+                                          nameController.text,
+                                          'anat.png',
+                                          codeController.text,
+                                          selectedCourseId,
+                                          [],
+                                          [],
+                                          semesterController.text,
+                                        );
+                                        if (success) {
+                                          Navigator.of(dialogContext).pop();
+                                        }
+                                      }
+                                    },
+                              style: ButtonStyle(
+                                shape: WidgetStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                if (togglesProvider.showSemesterDropDown)
-                                  Container(
-                                    padding: const EdgeInsets.all(20),
-                                    margin: EdgeInsets.only(top: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: AppUtils.mainWhite(context),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color.fromARGB(
-                                              255, 229, 229, 229),
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      alignment: WrapAlignment.spaceEvenly,
-                                      children: 
-                                          semesters.map<Widget>((semester) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedSemester = 
-                                                  semester; // Update selected semester
-                                              semesterController.text = 
-                                                  semester;
-                                              togglesProvider
-                                                  .toggleSemesterDropDown(); // Close the dropdown
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 100,
-                                            // padding: const EdgeInsets.all(5),
-                                            decoration: BoxDecoration(
-                                              borderRadius: 
-                                                  BorderRadius.circular(5),
-                                              border: Border.all(
-                                                color: selectedSemester == 
-                                                        semester
-                                                    ? AppUtils.mainBlue(context)
-                                                    : AppUtils.mainGrey(
-                                                        context),
-                                              ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Checkbox(
-                                                  value: selectedSemester == 
-                                                      semester,
-                                                  onChanged: (selected) {
-                                                    setState(() {
-                                                      selectedSemester = 
-                                                          semester; // Update the selected semester
-                                                    });
-                                                  },
-                                                ),
-                                                const Gap(5),
-                                                Text(
-                                                  semester,
-                                                  style: const TextStyle(
-                                                      fontSize: 16),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Gap(10),
-                      Consumer<UnitsProvider>(
-                          builder: (context, unitProvider, child) {
-                        return SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: unitProvider.isLoading
-                                ? null
-                                : () async {
-                                    final success = await unitProvider.addUnit(
-                                        token,
-                                        nameController.text,
-                                        'anat.png',
-                                        codeController.text,
-                                        selectedCourseId,
-                                        [],
-                                        [],
-                                        semesterController.text);
-                                    if (success) {
-                                      Navigator.of(dialogContext).pop();
-                                    }
-                                  },
-                            style: ButtonStyle(
-                              shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5))),
-                              backgroundColor: WidgetStatePropertyAll(
-                                unitProvider.isLoading
-                                    ? Colors.grey
-                                    : AppUtils.mainBlue(context),
+                                backgroundColor: WidgetStateProperty.all(
+                                  unitProvider.isLoading
+                                      ? Colors.grey
+                                      : AppUtils.mainBlue(context),
+                                ),
+                                padding: WidgetStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 24),
+                                ),
                               ),
-                              padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                  top: 10, bottom: 10, left: 10, right: 10)),
-                            ),
-                            child: unitProvider.isLoading
-                                ? const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.5,
-                                    ),
-                                  )
-                                : Text('Add Unit',
-                                    style: TextStyle(
+                              child: unitProvider.isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2.5,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Add Unit',
+                                      style: TextStyle(
                                         fontSize: 16,
-                                        color: AppUtils.mainWhite(context))),
-                          ),
-                        );
-                      })
-                    ],
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                 ),
               ),
               if (context.watch<UnitsProvider>().success)
                 Positioned(
-                    top: 20,
-                    right: 20,
-                    child: SuccessWidget(
-                        message: context.watch<UnitsProvider>().message))
+                  top: 20,
+                  right: 20,
+                  left: 20,
+                  child: SuccessWidget(
+                      message: context.watch<UnitsProvider>().message),
+                )
               else if (context.watch<UnitsProvider>().error)
                 Positioned(
                   top: 20,
                   right: 20,
+                  left: 20,
                   child: FailedWidget(
                       message: context.watch<UnitsProvider>().message),
                 )

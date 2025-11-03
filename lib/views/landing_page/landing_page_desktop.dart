@@ -246,19 +246,19 @@ class LandingPageDesktop extends StatelessWidget {
                         title: 'Dashboard',
                         description:
                             'Track your progress and recent activities',
-                        imagePath: 'assets/screenshots/dashboard.png',
+                        imagePath: 'assets/images/dashboard.png',
                       ),
                       const SizedBox(width: 30),
                       ScreenshotCard(
                         title: 'Course Selection',
                         description: 'Choose from available courses seamlessly',
-                        imagePath: 'assets/screenshots/courses.png',
+                        imagePath: 'assets/images/select-course.png',
                       ),
                       const SizedBox(width: 30),
                       ScreenshotCard(
                         title: 'Study Materials',
                         description: 'Access notes, videos, and presentations',
-                        imagePath: 'assets/screenshots/materials.png',
+                        imagePath: 'assets/images/study-material.png',
                       ),
                     ],
                   ),
@@ -541,7 +541,7 @@ class ScreenshotCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(color: AppUtils.mainBlue(context), width: 2.0),
+              // border: Border.all(color: AppUtils.mainBlue(context), width: 2.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -551,25 +551,8 @@ class ScreenshotCard extends StatelessWidget {
               ],
             ),
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.screenshot,
-                    size: 64,
-                    color: AppUtils.mainBlue(context).withOpacity(0.3),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppUtils.mainGrey(context),
-                    ),
-                  ),
-                ],
-              ),
+              child: Image.asset(
+                imagePath),
             ),
           ),
           const SizedBox(height: 20),

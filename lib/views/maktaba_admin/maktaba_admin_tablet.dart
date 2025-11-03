@@ -7,7 +7,9 @@ import 'package:logger/logger.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
+import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,7 @@ class MaktabaAdminTablet extends StatefulWidget {
 
 class _MaktabaAdminTabletState extends State<MaktabaAdminTablet> {
   final TextEditingController _searchController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late CoursesProvider _coursesProvider;
   late AuthProvider _authProvider;
   Logger logger = Logger();
@@ -46,135 +49,117 @@ class _MaktabaAdminTabletState extends State<MaktabaAdminTablet> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
+
     return Scaffold(
       backgroundColor: AppUtils.backgroundPanel(context),
+      appBar: AppBar(
+        backgroundColor: AppUtils.mainBlue(context),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            FluentIcons.re_order_dots_vertical_24_regular,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              FluentIcons.alert_24_regular,
+              size: 24,
+              color: AppUtils.mainWhite(context),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.go('/settings');
+            },
+            icon: Icon(
+              FluentIcons.settings_24_regular,
+              size: 24,
+              color: AppUtils.mainWhite(context),
+            ),
+          ),
+          const Gap(12),
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: AppUtils.mainWhite(context),
+            child: Text(
+              user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+              style: TextStyle(
+                color: AppUtils.mainBlue(context),
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const Gap(16),
+        ],
+      ),
       body: Consumer<TogglesProvider>(
         builder: (BuildContext context, togglesProvider, _) {
-          bool isMinimized = togglesProvider.isSideNavMinimized;
-
-          return Flex(
-            direction: Axis.horizontal,
-            children: [
-              isMinimized
-                  ? Expanded(
-                      flex: 1,
-                      child: SideNavigation(),
-                    )
-                  : SizedBox(
-                      width: 80,
-                      child: SideNavigation(),
-                    ),
-              Expanded(
-                flex: 6,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.04,
-                      vertical: 20,
-                    ),
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        _buildTopBar(context),
-                        _buildWelcomeCard(),
-                        _buildStatsGrid(),
-                        _buildCoursesSection(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.04,
+              vertical: 20,
+            ),
+            child: Column(
+              spacing: 20,
+              children: [
+                _buildTopBar(context),
+                _buildWelcomeCard(),
+                _buildStatsGrid(),
+                _buildCoursesSection(),
+              ],
+            ),
           );
         },
       ),
+      drawer: ResponsiveNav(),
     );
   }
 
   Widget _buildTopBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppUtils.mainBlue(context),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: _searchController,
-              style: TextStyle(color: AppUtils.mainWhite(context)),
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context).withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context),
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppUtils.mainWhite(context).withOpacity(0.1),
-                prefixIcon: Icon(
-                  FluentIcons.search_24_regular,
-                  color: AppUtils.mainWhite(context).withOpacity(0.8),
-                ),
-                hintText: "Search content...",
-                hintStyle: TextStyle(
-                  fontSize: 15,
-                  color: AppUtils.mainWhite(context).withOpacity(0.7),
-                ),
-              ),
-            ),
+    return TextField(
+      // controller: searchController,
+      // onChanged: (value) {
+      //   toggleProvider.searchAction(
+      //     searchController.text,
+      //     context.read<UnitsProvider>().units,
+      //     'name',
+      //   );
+      // },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainGrey(context).withOpacity(0.3),
+            width: 1.5,
           ),
-          Spacer(),
-          Row(
-            spacing: 8,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  FluentIcons.alert_24_regular,
-                  size: 24,
-                  color: AppUtils.mainWhite(context),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  context.go('/settings');
-                },
-                icon: Icon(
-                  FluentIcons.settings_24_regular,
-                  size: 24,
-                  color: AppUtils.mainWhite(context),
-                ),
-              ),
-              Gap(8),
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: AppUtils.mainWhite(context),
-                child: Text(
-                  'AD',
-                  style: TextStyle(
-                    color: AppUtils.mainBlue(context),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ],
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainBlue(context),
+            width: 2,
           ),
-        ],
+        ),
+        filled: true,
+        fillColor: AppUtils.mainWhite(context),
+        prefixIcon: Icon(
+          FluentIcons.search_24_regular,
+          color: AppUtils.mainGrey(context).withOpacity(0.8),
+        ),
+        hintText: "Search units...",
+        hintStyle: TextStyle(
+          fontSize: 15,
+          color: AppUtils.mainGrey(context).withOpacity(0.7),
+        ),
       ),
     );
   }
@@ -275,31 +260,17 @@ class _MaktabaAdminTabletState extends State<MaktabaAdminTablet> {
                   constraints.maxWidth,
                 ),
                 _buildStatCard(
-                  'NOTES',
-                  'Total: 0',
-                  FluentIcons.note_24_regular,
-                  Colors.purple,
-                  constraints.maxWidth,
-                ),
-                _buildStatCard(
-                  'SLIDES',
-                  'Total: 0',
-                  FluentIcons.slide_text_24_regular,
-                  Colors.amber,
-                  constraints.maxWidth,
-                ),
-                _buildStatCard(
-                  'RECORDINGS',
-                  'Total: 0',
-                  FluentIcons.video_24_regular,
-                  Colors.cyan,
-                  constraints.maxWidth,
-                ),
-                _buildStatCard(
-                  'STUDENT CONTRIBUTIONS',
+                  'STUDENTS',
                   'Total: 0',
                   FluentIcons.people_24_regular,
                   Colors.orange,
+                  constraints.maxWidth,
+                ),
+                _buildStatCard(
+                  'LESSONS',
+                  'Total: 0',
+                  FluentIcons.note_24_regular,
+                  Colors.purple,
                   constraints.maxWidth,
                 ),
               ],
@@ -312,9 +283,9 @@ class _MaktabaAdminTabletState extends State<MaktabaAdminTablet> {
 
   Widget _buildStatCard(
       String title, String value, IconData icon, Color color, double maxWidth) {
-    // Calculate card width: 3 columns for wider tablets, 2 for narrower
+
     double cardWidth =
-        maxWidth > 700 ? (maxWidth - 32) / 3 : (maxWidth - 16) / 2;
+        maxWidth > 700 ? (maxWidth - 32) / 2 : (maxWidth - 16) / 2;
 
     return Container(
       width: cardWidth,

@@ -365,72 +365,159 @@ class _DesktopDashboardState extends State<DesktopDashboard>
 
   Widget _buildActivitiesSection() {
     return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 20,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: AppUtils.mainGrey(context).withOpacity(0.3),
+          // Header Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
+                children: [
+                  Text(
+                    'Activities',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  Text(
+                    'Track your recent notifications and history',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              // Optional: Add a filter or action button
+              IconButton(
+                onPressed: () {
+                  // Add filter or refresh functionality
+                },
+                icon: Icon(
+                  FluentIcons.filter_24_regular,
+                  color: AppUtils.mainBlue(context),
                 ),
+                tooltip: 'Filter',
               ),
+            ],
+          ),
+
+          // Custom Tab Header
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AppUtils.mainGrey(context).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorWeight: 3,
-              indicatorColor: AppUtils.mainBlue(context),
-              labelColor: AppUtils.mainBlue(context),
-              labelStyle: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelColor: Colors.grey[600],
-              tabs: [
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 8,
-                    children: [
-                      Icon(FluentIcons.clock_24_regular, size: 20),
-                      Text("Recent Activities"),
-                    ],
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildTabButton(
+                    label: 'Recent Activities',
+                    icon: FluentIcons.clock_24_regular,
+                    isSelected: _tabController.index == 0,
+                    onTap: () {
+                      _tabController.animateTo(0);
+                    },
                   ),
                 ),
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 8,
-                    children: [
-                      Icon(FluentIcons.history_24_regular, size: 20),
-                      Text("Activity History"),
-                    ],
+                const SizedBox(width: 4),
+                Expanded(
+                  child: _buildTabButton(
+                    label: 'Activity History',
+                    icon: FluentIcons.history_24_regular,
+                    isSelected: _tabController.index == 1,
+                    onTap: () {
+                      _tabController.animateTo(1);
+                    },
                   ),
                 ),
               ],
             ),
           ),
+
+          // Tab Content
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.325,
             child: TabBarView(
               controller: _tabController,
               children: [
-                SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
-                  child: DesktopActivities(),
-                ),
-                SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
-                  child: ActivityHistory(),
-                ),
+                _buildTabContent(DesktopActivities()),
+                _buildTabContent(ActivityHistory()),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppUtils.mainWhite(context) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 8,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected ? AppUtils.mainBlue(context) : Colors.grey[600],
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color:
+                    isSelected ? AppUtils.mainBlue(context) : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabContent(Widget child) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: child,
       ),
     );
   }

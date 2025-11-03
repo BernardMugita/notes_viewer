@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:maktaba/providers/auth_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/responsive_nav.dart';
 import 'package:provider/provider.dart';
@@ -47,21 +48,57 @@ class _MaktabaAdminMobileState extends State<MaktabaAdminMobile> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppUtils.backgroundPanel(context),
       appBar: AppBar(
         backgroundColor: AppUtils.mainBlue(context),
-        elevation: 3,
-        leading: GestureDetector(
-          onTap: () {
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            FluentIcons.re_order_dots_vertical_24_regular,
+            color: Colors.white,
+          ),
+          onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          child: Icon(
-            FluentIcons.re_order_24_regular,
-            color: AppUtils.mainWhite(context),
-          ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              FluentIcons.alert_24_regular,
+              size: 24,
+              color: AppUtils.mainWhite(context),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.go('/settings');
+            },
+            icon: Icon(
+              FluentIcons.settings_24_regular,
+              size: 24,
+              color: AppUtils.mainWhite(context),
+            ),
+          ),
+          const Gap(12),
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: AppUtils.mainWhite(context),
+            child: Text(
+              user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+              style: TextStyle(
+                color: AppUtils.mainBlue(context),
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const Gap(16),
+        ],
       ),
       body: Column(
         children: [
@@ -73,7 +110,6 @@ class _MaktabaAdminMobileState extends State<MaktabaAdminMobile> {
                 children: [
                   _buildWelcomeCard(),
                   _buildSummaryCard(),
-                  _buildContinueCard(),
                   _buildCoursesSection(),
                 ],
               ),
@@ -244,36 +280,6 @@ class _MaktabaAdminMobileState extends State<MaktabaAdminMobile> {
               icon,
               color: color,
               size: 24,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContinueCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            FluentIcons.play_circle_24_regular,
-            color: AppUtils.mainBlue(context),
-            size: 24,
-          ),
-          const Gap(12),
-          Text(
-            'Continue where you left off',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppUtils.mainBlue(context),
-              fontWeight: FontWeight.w500,
             ),
           ),
         ],

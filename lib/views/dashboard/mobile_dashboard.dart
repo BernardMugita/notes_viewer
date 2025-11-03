@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
+import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/confirm_exit.dart';
 import 'package:maktaba/widgets/app_widgets/search/search_results.dart';
@@ -43,6 +44,7 @@ class _MobileDashboardState extends State<MobileDashboard>
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
     return WillPopScope(
       onWillPop: () async {
         final shouldExit = await showDialog<bool>(
@@ -57,16 +59,50 @@ class _MobileDashboardState extends State<MobileDashboard>
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),
-          elevation: 3,
-          leading: GestureDetector(
-            onTap: () {
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              FluentIcons.re_order_dots_vertical_24_regular,
+              color: Colors.white,
+            ),
+            onPressed: () {
               _scaffoldKey.currentState?.openDrawer();
             },
-            child: Icon(
-              FluentIcons.re_order_24_regular,
-              color: AppUtils.mainWhite(context),
-            ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                FluentIcons.alert_24_regular,
+                size: 24,
+                color: AppUtils.mainWhite(context),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                context.go('/settings');
+              },
+              icon: Icon(
+                FluentIcons.settings_24_regular,
+                size: 24,
+                color: AppUtils.mainWhite(context),
+              ),
+            ),
+            const Gap(12),
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: AppUtils.mainWhite(context),
+              child: Text(
+                user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+                style: TextStyle(
+                  color: AppUtils.mainBlue(context),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const Gap(16),
+          ],
         ),
         drawer: const ResponsiveNav(),
         body: Consumer2<DashboardProvider, TogglesProvider>(
@@ -112,104 +148,42 @@ class _MobileDashboardState extends State<MobileDashboard>
 
   Widget _buildTopBar(BuildContext context, TogglesProvider togglesProvider,
       Map<dynamic, dynamic> dashData, bool isNewActivities) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppUtils.mainBlue(context),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: _searchController,
-              style: TextStyle(color: AppUtils.mainWhite(context)),
-              onChanged: (value) {
-                togglesProvider.searchAction(
-                  _searchController.text,
-                  dashData['notifications']['read'],
-                  'title',
-                );
-              },
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context).withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppUtils.mainWhite(context),
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppUtils.mainWhite(context).withOpacity(0.1),
-                prefixIcon: Icon(
-                  FluentIcons.search_24_regular,
-                  color: AppUtils.mainWhite(context).withOpacity(0.8),
-                ),
-                hintText: "Search activities...",
-                hintStyle: TextStyle(
-                  fontSize: 15,
-                  color: AppUtils.mainWhite(context).withOpacity(0.7),
-                ),
-              ),
-            ),
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        togglesProvider.searchAction(
+          _searchController.text,
+          dashData['notifications']['read'],
+          'title',
+        );
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainGrey(context).withOpacity(0.3),
+            width: 1.5,
           ),
-          Spacer(),
-          Row(
-            spacing: 8,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      FluentIcons.alert_24_regular,
-                      size: 24,
-                      color: AppUtils.mainWhite(context),
-                    ),
-                  ),
-                  if (isNewActivities)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: AppUtils.mainRed(context),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppUtils.mainBlue(context),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  context.go('/settings');
-                },
-                icon: Icon(
-                  FluentIcons.settings_24_regular,
-                  size: 24,
-                  color: AppUtils.mainWhite(context),
-                ),
-              ),
-            ],
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainBlue(context),
+            width: 2,
           ),
-        ],
+        ),
+        filled: true,
+        fillColor: AppUtils.mainWhite(context),
+        prefixIcon: Icon(
+          FluentIcons.search_24_regular,
+          color: AppUtils.mainGrey(context).withOpacity(0.8),
+        ),
+        hintText: "Search maktaba...",
+        hintStyle: TextStyle(
+          fontSize: 15,
+          color: AppUtils.mainGrey(context).withOpacity(0.7),
+        ),
       ),
     );
   }

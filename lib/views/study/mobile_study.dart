@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
 import 'package:maktaba/providers/theme_provider.dart';
 import 'package:maktaba/providers/toggles_provider.dart';
@@ -178,26 +180,62 @@ class _MobileStudyState extends State<MobileStudy> {
           key: _scaffoldKey,
           appBar: AppBar(
             backgroundColor: AppUtils.mainBlue(context),
-            elevation: 3,
-            leading: GestureDetector(
-              onTap: () {
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                FluentIcons.re_order_dots_vertical_24_regular,
+                color: Colors.white,
+              ),
+              onPressed: () {
                 _scaffoldKey.currentState?.openDrawer();
               },
-              child: Icon(
-                FluentIcons.re_order_24_regular,
-                color: AppUtils.mainWhite(context),
-              ),
             ),
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  FluentIcons.alert_24_regular,
+                  size: 24,
+                  color: AppUtils.mainWhite(context),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  context.go('/settings');
+                },
+                icon: Icon(
+                  FluentIcons.settings_24_regular,
+                  size: 24,
+                  color: AppUtils.mainWhite(context),
+                ),
+              ),
+              const Gap(12),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppUtils.mainWhite(context),
+                child: Text(
+                  user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+                  style: TextStyle(
+                    color: AppUtils.mainBlue(context),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              const Gap(16),
+            ],
           ),
           drawer: const ResponsiveNav(),
           backgroundColor: AppUtils.backgroundPanel(context),
           body: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(16),
                 child: lessonsProvider.isLoading
-                    ? LoadingAnimationWidget.newtonCradle(
-                        color: AppUtils.mainBlue(context), size: 100)
+                    ? Center(
+                        child: Lottie.asset(
+                            "assets/animations/maktaba_loader.json"),
+                      )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -208,240 +246,192 @@ class _MobileStudyState extends State<MobileStudy> {
                                 Text(
                                   "Units/Notes/${lesson['name']}",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: AppUtils.mainGrey(context),
-                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const Gap(5),
+                                const Gap(8),
                                 Text(
-                                  "${lesson['name']} Notes",
+                                  lesson['name'] ?? "Lesson name",
                                   style: TextStyle(
-                                    fontSize: 24,
-                                    color: AppUtils.mainBlue(context),
+                                    fontSize: 28,
+                                    color: AppUtils.mainBlack(context),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
-                          const Gap(10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (user.isNotEmpty &&
-                                  user['role'] == 'admin' &&
-                                  !toggleProvider.searchMode)
-                                Row(
-                                  spacing: 10,
-                                  children: [
-                                    if (!sortMode)
-                                      SizedBox(
-                                        width: 150,
-                                        child: TextButton(
-                                          style: ButtonStyle(
-                                            padding: WidgetStatePropertyAll(
-                                                const EdgeInsets.all(10)),
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                    AppUtils.mainBlue(context)),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            _showDialog(context);
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            spacing: 5,
-                                            children: [
-                                              Text(
-                                                "Upload file",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: AppUtils.mainWhite(
-                                                      context),
-                                                ),
-                                              ),
-                                              const Gap(5),
-                                              Icon(
-                                                FluentIcons.book_add_24_regular,
-                                                size: 16,
-                                                color:
-                                                    AppUtils.mainWhite(context),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    else
-                                      SizedBox(
-                                        width: 180,
-                                        child: TextButton(
-                                          style: ButtonStyle(
-                                            padding: WidgetStatePropertyAll(
-                                                const EdgeInsets.all(10)),
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                    AppUtils.mainRed(context)),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            resetToDefault();
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            spacing: 5,
-                                            children: [
-                                              Text(
-                                                "Reset to default",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: AppUtils.mainWhite(
-                                                      context),
-                                                ),
-                                              ),
-                                              const Gap(5),
-                                              Icon(
-                                                FluentIcons.book_add_24_regular,
-                                                size: 16,
-                                                color:
-                                                    AppUtils.mainWhite(context),
-                                              ),
-                                            ],
-                                          ),
+                          const Gap(20),
+                          if (user.isNotEmpty &&
+                              user['role'] == 'admin' &&
+                              !toggleProvider.searchMode)
+                            Row(
+                              children: [
+                                if (!sortMode)
+                                  ElevatedButton.icon(
+                                    style: ButtonStyle(
+                                      padding: WidgetStateProperty.all(
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 14),
+                                      ),
+                                      backgroundColor: WidgetStateProperty.all(
+                                          AppUtils.mainBlue(context)),
+                                      shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                       ),
-                                    if (sortMode)
-                                      SizedBox(
-                                        width: 170,
-                                        child: TextButton(
-                                          style: ButtonStyle(
-                                            padding: WidgetStatePropertyAll(
-                                                const EdgeInsets.all(10)),
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                    AppUtils.mainGreen(
-                                                        context)),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            addSort();
-                                          },
-                                          child: lessonsProvider.isSortLoading
-                                              ? SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                )
-                                              : Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  spacing: 5,
-                                                  children: [
-                                                    Text(
-                                                      "Save Changes",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            AppUtils.mainWhite(
-                                                                context),
-                                                      ),
-                                                    ),
-                                                    const Gap(5),
-                                                    Icon(
-                                                      FluentIcons
-                                                          .save_24_regular,
-                                                      size: 16,
-                                                      color: AppUtils.mainWhite(
-                                                          context),
-                                                    ),
-                                                  ],
-                                                ),
+                                      elevation: WidgetStateProperty.all(0),
+                                    ),
+                                    onPressed: () {
+                                      _showDialog(context);
+                                    },
+                                    icon: const Icon(
+                                      FluentIcons.book_add_24_regular,
+                                      size: 20,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      "Upload file",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  )
+                                else ...[
+                                  ElevatedButton.icon(
+                                    style: ButtonStyle(
+                                      padding: WidgetStateProperty.all(
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 14),
+                                      ),
+                                      backgroundColor: WidgetStateProperty.all(
+                                          AppUtils.mainRed(context)),
+                                      shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
-                                      )
-                                  ],
-                                ),
-                            ],
-                          ),
+                                      ),
+                                      elevation: WidgetStateProperty.all(0),
+                                    ),
+                                    onPressed: resetToDefault,
+                                    icon: const Icon(
+                                      FluentIcons.arrow_reset_24_regular,
+                                      size: 20,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      "Reset",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  const Gap(12),
+                                  ElevatedButton.icon(
+                                    style: ButtonStyle(
+                                      padding: WidgetStateProperty.all(
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 14),
+                                      ),
+                                      backgroundColor: WidgetStateProperty.all(
+                                          AppUtils.mainGreen(context)),
+                                      shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      elevation: WidgetStateProperty.all(0),
+                                    ),
+                                    onPressed:
+                                        lessonsProvider.isSortLoading ? null : addSort,
+                                    icon: lessonsProvider.isSortLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            FluentIcons.save_24_regular,
+                                            size: 20,
+                                            color: Colors.white,
+                                          ),
+                                    label: const Text(
+                                      "Save",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           const Gap(20),
                           Expanded(
-                            child: SizedBox(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      !toggleProvider.searchMode
-                                          ? "Study material"
-                                          : "Search results for '${searchController.text}'",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppUtils.mainGrey(context),
-                                          fontWeight: FontWeight.bold)),
-                                  const Gap(20),
-                                  if (isMaterialsEmpty)
-                                    Expanded(
-                                      child: Center(
-                                        child: EmptyWidget(
-                                            errorHeading: "How Empty!",
-                                            errorDescription:
-                                                "There's no study material for this lesson",
-                                            type: EmptyWidgetType.notes),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  !toggleProvider.searchMode
+                                      ? "Study material"
+                                      : "Search results for '${searchController.text}'",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: AppUtils.mainBlack(context),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gap(16),
+                                if (isMaterialsEmpty)
+                                  Expanded(
+                                    child: Center(
+                                      child: EmptyWidget(
+                                        errorHeading: "How Empty!",
+                                        errorDescription:
+                                            "There's no study material for this lesson",
+                                        type: EmptyWidgetType.notes,
                                       ),
-                                    )
-                                  else
-                                    SizedBox(
-                                      height: isAdmin
-                                          ? MediaQuery.of(context).size.height *
-                                              0.65
-                                          : MediaQuery.of(context).size.height *
-                                              0.7,
-                                      width: double.infinity,
-                                      child: isAdmin
-                                          ? ReorderableListView(
-                                              clipBehavior: Clip.none,
-                                              onReorder: (oldIndex, newIndex) {
-                                                setState(() {
-                                                  sortMode = true;
-                                                  if (newIndex > oldIndex) {
-                                                    newIndex -= 1;
-                                                  }
-                                                  final item = allMaterial
-                                                      .removeAt(oldIndex);
-                                                  allMaterial.insert(
-                                                      newIndex, item);
-                                                });
-                                              },
-                                              children: [
-                                                for (int i = 0;
-                                                    i < allMaterial.length;
-                                                    i++)
-                                                  _buildMaterialItem(
-                                                      allMaterial[i], i),
-                                              ],
-                                            )
-                                          : ListView(
-                                              children: children,
-                                            ),
                                     ),
-                                ],
-                              ),
+                                  )
+                                else
+                                  Expanded(
+                                    child: isAdmin
+                                        ? ReorderableListView(
+                                            clipBehavior: Clip.none,
+                                            onReorder: (oldIndex, newIndex) {
+                                              setState(() {
+                                                sortMode = true;
+                                                if (newIndex > oldIndex) {
+                                                  newIndex -= 1;
+                                                }
+                                                final item = allMaterial
+                                                    .removeAt(oldIndex);
+                                                allMaterial.insert(
+                                                    newIndex, item);
+                                              });
+                                            },
+                                            children: [
+                                              for (int i = 0;
+                                                  i < allMaterial.length;
+                                                  i++)
+                                                _buildMaterialItem(
+                                                    allMaterial[i], i),
+                                            ],
+                                          )
+                                        : ListView(
+                                            children: children,
+                                          ),
+                                  ),
+                              ],
                             ),
                           ),
                         ],
@@ -449,10 +439,11 @@ class _MobileStudyState extends State<MobileStudy> {
               ),
               if (context.watch<LessonsProvider>().sortSuccess)
                 Positioned(
-                    top: 20,
-                    right: 20,
-                    child: SuccessWidget(
-                        message: context.watch<LessonsProvider>().sortMessage))
+                  top: 20,
+                  right: 20,
+                  child: SuccessWidget(
+                      message: context.watch<LessonsProvider>().sortMessage),
+                )
               else if (context.watch<LessonsProvider>().sortError)
                 Positioned(
                   top: 20,
@@ -513,276 +504,385 @@ class _MobileStudyState extends State<MobileStudy> {
   void _showDialog(
     BuildContext context,
   ) {
+    final _formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return Consumer<LessonsProvider>(
-            builder: (context, lessonsProvider, _) {
-          return Stack(
-            children: [
-              AlertDialog(
-                contentPadding: const EdgeInsets.all(0),
-                content: Container(
-                  padding: const EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width,
-                  height:
-                      context.watch<TogglesProvider>().showUploadTypeDropdown
-                          ? MediaQuery.of(context).size.height * 0.75
-                          : MediaQuery.of(context).size.height * 0.6,
-                  decoration: BoxDecoration(
-                    color: AppUtils.mainWhite(context),
-                    borderRadius: BorderRadius.circular(5),
+          builder: (context, lessonsProvider, _) {
+            return Stack(
+              children: [
+                AlertDialog(
+                  contentPadding: const EdgeInsets.all(0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Upload file",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: AppUtils.mainBlue(context),
-                                fontWeight: FontWeight.bold,
+                  content: Container(
+                    padding: const EdgeInsets.all(28),
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    decoration: BoxDecoration(
+                      color: AppUtils.mainWhite(context),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Upload New File",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  color: AppUtils.mainBlue(context),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                              icon: const Icon(FluentIcons.dismiss_24_regular),
-                            ),
-                          ],
-                        ),
-                        Gap(20),
-                        GestureDetector(
+                              IconButton(
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                icon: const Icon(
+                                    FluentIcons.dismiss_24_regular),
+                              ),
+                            ],
+                          ),
+                          const Gap(24),
+
+                          // File Picker
+                          InkWell(
                             onTap: pickFile,
+                            borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 10, bottom: 10),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppUtils.mainBlack(context),
+                                  color: AppUtils.mainGrey(context)
+                                      .withOpacity(0.3),
                                 ),
-                                borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.mainWhite(context),
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.grey.shade50,
                               ),
                               child: isUploading
-                                  ? LoadingAnimationWidget.staggeredDotsWave(
-                                      color: AppUtils.mainBlue(context),
-                                      size: 40,
+                                  ? Center(
+                                      child: LoadingAnimationWidget
+                                          .staggeredDotsWave(
+                                        color: AppUtils.mainBlue(context),
+                                        size: 40,
+                                      ),
                                     )
                                   : Row(
                                       children: [
-                                        Icon(Icons.upload_file_outlined),
-                                        Gap(5),
-                                        Text(selectedFileName ?? "Select file",
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: AppUtils.mainBlue(context)
+                                                .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Icon(
+                                            FluentIcons.arrow_upload_24_regular,
+                                            color: AppUtils.mainBlue(context),
+                                          ),
+                                        ),
+                                        const Gap(12),
+                                        Expanded(
+                                          child: Text(
+                                            selectedFileName ??
+                                                "Click to select file",
                                             style: TextStyle(
-                                              fontSize: 16,
-                                            )),
+                                              fontSize: 15,
+                                              color: selectedFileName != null
+                                                  ? AppUtils.mainBlack(context)
+                                                  : AppUtils.mainGrey(context),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                            )),
-                        Gap(10),
-                        SizedBox(
-                          child: TextField(
+                            ),
+                          ),
+                          const Gap(16),
+
+                          // File Name
+                          TextFormField(
                             controller: nameController,
                             decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.notes),
+                              prefixIcon: const Icon(
+                                  FluentIcons.document_24_regular),
                               labelText: 'File name',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.mainBlue(context),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainBlue(context),
+                                  width: 2,
+                                ),
+                              ),
                             ),
+                            validator: (value) =>
+                                value!.isEmpty ? 'Please enter a file name' : null,
                           ),
-                        ),
-                        Gap(10),
-                        SizedBox(
-                          child: TextField(
+                          const Gap(16),
+
+                          // Description
+                          TextFormField(
                             controller: descriptionController,
                             maxLines: 3,
                             decoration: InputDecoration(
                               alignLabelWithHint: true,
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.only(bottom: 40),
+                                child: Icon(FluentIcons.text_32_regular),
+                              ),
                               labelText: 'Description',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
                                   color: Color.fromARGB(255, 212, 212, 212),
                                 ),
                               ),
-                              focusColor: AppUtils.mainBlue(context),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: AppUtils.mainBlue(context),
+                                  width: 2,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        Gap(10),
-                        Consumer<TogglesProvider>(builder:
-                            (BuildContext context, togglesProvider, _) {
-                          return Column(
-                            children: [
-                              SizedBox(
-                                child: TextField(
-                                  controller: uploadTypeController,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                        FluentIcons.collections_24_regular),
-                                    labelText: 'Select Upload type',
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        togglesProvider
-                                            .toggleUploadTypeDropDown();
-                                      },
-                                      icon: togglesProvider
-                                              .showUploadTypeDropdown
-                                          ? const Icon(
-                                              FluentIcons.chevron_up_24_regular)
-                                          : const Icon(FluentIcons
-                                              .chevron_down_24_regular),
-                                    ),
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 212, 212, 212),
-                                      ),
-                                    ),
-                                    focusColor: AppUtils.mainBlue(context),
-                                  ),
-                                ),
-                              ),
-                              Gap(10),
-                              if (togglesProvider.showUploadTypeDropdown)
-                                Container(
-                                  padding: const EdgeInsets.all(20),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppUtils.mainWhite(context),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color.fromARGB(
-                                            255, 229, 229, 229),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        uploadTypes.map<Widget>((uploadType) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            uploadTypeController.text =
-                                                uploadType;
-                                          });
-                                          togglesProvider
-                                              .toggleUploadTypeDropDown();
-                                        },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              uploadType,
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const Divider(
-                                              color: Color.fromARGB(
-                                                  255, 209, 209, 209),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                            ],
-                          );
-                        }),
-                        Spacer(),
-                        Consumer<UploadsProvider>(
-                            builder: (context, uploadsProvider, child) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: uploadsProvider.isLoading
-                                  ? null
-                                  : () async {
-                                      final Map<String, String> form = {
-                                        'name': nameController.text,
-                                        'unit_id': unitIdRef,
-                                        'lesson_id': lessonIdRef,
-                                        'description':
-                                            descriptionController.text,
-                                        'duration': '7.30',
-                                        'type': uploadTypeController.text
-                                      };
+                          const Gap(16),
 
-                                      final success = await uploadsProvider.uploadNewFile(
-                                          tokenRef,
-                                          selectedFile!,
-                                          form);
-
-                                      if (success) {
-                                        context
-                                            .read<LessonsProvider>()
-                                            .getLesson(tokenRef, lessonIdRef);
-                                        Navigator.of(dialogContext).pop();
-                                      }
+                          // Upload Type Dropdown
+                          Consumer<TogglesProvider>(
+                            builder: (BuildContext context, togglesProvider, _) {
+                              return Column(
+                                children: [
+                                  TextFormField(
+                                    controller: uploadTypeController,
+                                    readOnly: true,
+                                    onTap: () {
+                                      togglesProvider
+                                          .toggleUploadTypeDropDown();
                                     },
-                              style: ButtonStyle(
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5))),
-                                backgroundColor: WidgetStatePropertyAll(
-                                  uploadsProvider.isLoading
-                                      ? Colors.grey
-                                      : AppUtils.mainBlue(context),
-                                ),
-                                padding: WidgetStatePropertyAll(EdgeInsets.only(
-                                    top: 10, bottom: 10, left: 10, right: 10)),
-                              ),
-                              child: uploadsProvider.isLoading
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.5,
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                          FluentIcons.collections_24_regular),
+                                      labelText: 'Upload type',
+                                      suffixIcon: Icon(
+                                        togglesProvider.showUploadTypeDropdown
+                                            ? FluentIcons.chevron_up_24_regular
+                                            : FluentIcons
+                                                .chevron_down_24_regular,
                                       ),
-                                    )
-                                  : Text('Upload',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppUtils.mainWhite(context))),
-                            ),
-                          );
-                        })
-                      ]),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 212, 212, 212),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: AppUtils.mainBlue(context),
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    validator: (value) => value!.isEmpty
+                                        ? 'Please select upload type'
+                                        : null,
+                                  ),
+                                  if (togglesProvider.showUploadTypeDropdown)
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 8),
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: AppUtils.mainWhite(context),
+                                        border: Border.all(
+                                          color: AppUtils.mainGrey(context)
+                                              .withOpacity(0.3),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black
+                                                .withOpacity(0.1),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        children: uploadTypes
+                                            .map<Widget>((uploadType) {
+                                          return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                uploadTypeController.text =
+                                                    uploadType;
+                                              });
+                                              togglesProvider
+                                                  .toggleUploadTypeDropDown();
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 12,
+                                                  horizontal: 12),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: uploadTypeController
+                                                            .text ==
+                                                        uploadType
+                                                    ? AppUtils.mainBlue(
+                                                            context)
+                                                        .withOpacity(0.1)
+                                                    : Colors.transparent,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    uploadType
+                                                        .toString()
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      color:
+                                                          uploadTypeController
+                                                                      .text ==
+                                                                  uploadType
+                                                              ? AppUtils
+                                                                  .mainBlue(
+                                                                      context)
+                                                              : AppUtils
+                                                                  .mainBlack(
+                                                                      context),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                          const Gap(24),
+
+                          // Submit Button
+                          Consumer<UploadsProvider>(
+                            builder: (context, uploadsProvider, child) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: uploadsProvider.isLoading ||
+                                          isUploading
+                                      ? null
+                                      : () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            final Map<String, String> form = {
+                                              'name': nameController.text,
+                                              'unit_id': unitIdRef,
+                                              'lesson_id': lessonIdRef,
+                                              'description':
+                                                  descriptionController.text,
+                                              'duration': '7.30',
+                                              'type':
+                                                  uploadTypeController.text
+                                            };
+
+                                            final success =
+                                                await uploadsProvider
+                                                    .uploadNewFile(tokenRef,
+                                                        selectedFile!, form);
+
+                                            if (success) {
+                                              context
+                                                  .read<LessonsProvider>()
+                                                  .getLesson(
+                                                      tokenRef, lessonIdRef);
+                                              Navigator.of(dialogContext).pop();
+                                            }
+                                          }
+                                        },
+                                  style: ButtonStyle(
+                                    shape: WidgetStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    backgroundColor: WidgetStateProperty.all(
+                                      uploadsProvider.isLoading
+                                          ? Colors.grey
+                                          : AppUtils.mainBlue(context),
+                                    ),
+                                    padding: WidgetStateProperty.all(
+                                      const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 24),
+                                    ),
+                                  ),
+                                  child: uploadsProvider.isLoading
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2.5,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Upload',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              if (context.watch<UploadsProvider>().success)
-                Positioned(
+                if (context.watch<UploadsProvider>().success)
+                  Positioned(
                     top: 20,
                     right: 20,
                     child: SuccessWidget(
-                        message: context.watch<UploadsProvider>().message))
-              else if (context.watch<UploadsProvider>().error)
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: FailedWidget(
-                      message: context.watch<UploadsProvider>().message),
-                )
-            ],
-          );
-        });
+                        message: context.watch<UploadsProvider>().message),
+                  )
+                else if (context.watch<UploadsProvider>().error)
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: FailedWidget(
+                        message: context.watch<UploadsProvider>().message),
+                  )
+              ],
+            );
+          },
+        );
       },
     );
   }
