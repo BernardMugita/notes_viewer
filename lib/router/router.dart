@@ -7,18 +7,20 @@ import 'package:maktaba/providers/toggles_provider.dart';
 import 'package:maktaba/providers/units_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/views/account/account_view.dart';
+import 'package:maktaba/views/admin/maktaba_admin/maktaba_admin.dart';
 import 'package:maktaba/views/auth/course/course_view.dart';
 import 'package:maktaba/views/auth/login/login_view.dart';
 import 'package:maktaba/views/auth/reset_password/change_password/change_password_view.dart';
 import 'package:maktaba/views/dashboard/dashboard_view.dart';
 import 'package:maktaba/views/landing_page/landing_page.dart';
-import 'package:maktaba/views/maktaba_admin/maktaba_admin.dart';
 import 'package:maktaba/views/notes/notes_view.dart';
 import 'package:maktaba/views/settings/settings_view.dart';
 import 'package:maktaba/views/splash/splash_screen.dart';
 import 'package:maktaba/views/study/study_view.dart';
 import 'package:maktaba/views/units/units_view.dart';
-import 'package:maktaba/views/units_manager/units_manager.dart';
+import 'package:maktaba/views/admin/lessons_manager/lessons_manager.dart';
+import 'package:maktaba/views/admin/material_manager/material_manager.dart';
+import 'package:maktaba/views/admin/units_manager/units_manager.dart';
 import 'package:maktaba/views/view_notes/view_notes_view.dart';
 
 final authProvider = AuthProvider();
@@ -96,9 +98,29 @@ GoRouter createRouter(
         builder: (context, state) => MaktabaAdminView(),
         routes: [
           GoRoute(
-            path: 'units_manager',
-            builder: (context, state) =>
-                const UnitsManagerView(courseId: "courseId"),
+            path: 'units_manager/:courseId',
+            builder: (context, state) {
+              final courseId = state.pathParameters['courseId']!;
+              return UnitsManagerView(courseId: courseId);
+            },
+            routes: [
+              GoRoute(
+                path: 'lessons_manager/:unitId',
+                builder: (context, state) {
+                  final unitId = state.pathParameters['unitId']!;
+                  return LessonsManagerView(unitId: unitId);
+                },
+                routes: [
+                  GoRoute(
+                    path: 'material_manager/:lessonId',
+                    builder: (context, state) {
+                      final lessonId = state.pathParameters['lessonId']!;
+                      return MaterialManagerView(lessonId: lessonId);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

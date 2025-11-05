@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:logger/logger.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:http/http.dart' as http;
 
 class UnitsApi {
+  Logger logger = Logger();
+
   Future<Map<String, dynamic>> addNewUnit({
     required String token,
     required String name,
@@ -73,6 +76,27 @@ class UnitsApi {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
+      );
+
+      return jsonDecode(getUserUnitsRequest.body);
+    } catch (e) {
+      throw Exception('Failed to get user units $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getUnitsByCourse({required String token, required String courseId}) async {
+    final url = AppUtils.$baseUrl;
+
+    try {
+      final getUserUnitsRequest = await http.post(
+        Uri.parse('$url/units/get_units_by_course'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          'course_id': courseId,
+        }),
       );
 
       return jsonDecode(getUserUnitsRequest.body);

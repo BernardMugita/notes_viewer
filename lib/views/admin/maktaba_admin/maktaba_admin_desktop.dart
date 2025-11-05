@@ -564,7 +564,7 @@ class _MaktabaAdminDesktopState extends State<MaktabaAdminDesktop> {
 
     return GestureDetector(
       onTap: () {
-        context.go('/maktaba_admin/units_manager');
+        context.go('/maktaba_admin/units_manager/${course['id']}');
       },
       child: Container(
         decoration: BoxDecoration(

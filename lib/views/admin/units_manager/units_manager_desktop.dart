@@ -16,9 +16,8 @@ import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
 
 class UnitsManagerDesktop extends StatefulWidget {
-  const UnitsManagerDesktop({
-    super.key,
-  });
+  final String courseId;
+  const UnitsManagerDesktop({super.key, required this.courseId});
 
   @override
   State<UnitsManagerDesktop> createState() => _UnitsManagerDesktopState();
@@ -41,7 +40,7 @@ class _UnitsManagerDesktopState extends State<UnitsManagerDesktop> {
       String? token = context.read<AuthProvider>().token;
       if (token != null) {
         tokenRef = token;
-        context.read<UnitsProvider>().fetchUserUnits(tokenRef);
+        context.read<UnitsProvider>().getUnitsByCourse(tokenRef, widget.courseId);
       }
     });
   }
@@ -353,6 +352,10 @@ class _UnitsManagerDesktopState extends State<UnitsManagerDesktop> {
         ],
       ),
       child: ListTile(
+        onTap: () {
+          context.go(
+              '/maktaba_admin/units_manager/${widget.courseId}/lessons_manager/${unit['id']}');
+        },
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         leading: Container(
@@ -423,7 +426,7 @@ class _UnitsManagerDesktopState extends State<UnitsManagerDesktop> {
     final _nameController = TextEditingController();
     final _codeController = TextEditingController();
     final _semesterController = TextEditingController();
-    final _selectedCourseId = '';
+    final _selectedCourseId = widget.courseId;
     final _courseIdController = TextEditingController();
     final courses = context.watch<CoursesProvider>().courses;
 
@@ -527,104 +530,7 @@ class _UnitsManagerDesktopState extends State<UnitsManagerDesktop> {
                         ),
                         const Gap(16),
 
-                        // Course Dropdown
-                        Column(
-                          children: [
-                            TextFormField(
-                              controller: _courseIdController,
-                              readOnly: true,
-                              onTap: () {
-                                togglesProvider.toggleCoursesDropDown();
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon:
-                                    const Icon(FluentIcons.book_24_regular),
-                                labelText: 'Course',
-                                suffixIcon: Icon(
-                                  togglesProvider.showCoursesDropDown
-                                      ? FluentIcons.chevron_up_24_regular
-                                      : FluentIcons.chevron_down_24_regular,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 212, 212, 212),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: AppUtils.mainBlue(context),
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              validator: (value) => value!.isEmpty
-                                  ? 'Please select a course'
-                                  : null,
-                            ),
-                            if (togglesProvider.showCoursesDropDown)
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                padding: const EdgeInsets.all(8),
-                                constraints: BoxConstraints(maxHeight: 200),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: AppUtils.mainWhite(context),
-                                  border: Border.all(
-                                    color: AppUtils.mainGrey(context)
-                                        .withOpacity(0.3),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: ListView(
-                                  shrinkWrap: true,
-                                  children: courses.map<Widget>((course) {
-                                    return InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedCourseId = course['id'];
-                                          _courseIdController.text =
-                                              course['name'];
-                                        });
-                                        togglesProvider.toggleCoursesDropDown();
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12, horizontal: 12),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color:
-                                              selectedCourseId == course['id']
-                                                  ? AppUtils.mainBlue(context)
-                                                      .withOpacity(0.1)
-                                                  : Colors.transparent,
-                                        ),
-                                        child: Text(
-                                          course['name'],
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: selectedCourseId ==
-                                                    course['id']
-                                                ? AppUtils.mainBlue(context)
-                                                : AppUtils.mainBlack(context),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const Gap(16),
+
 
                         // Semester Dropdown
                         Column(
@@ -749,7 +655,7 @@ class _UnitsManagerDesktopState extends State<UnitsManagerDesktop> {
                                           _nameController.text,
                                           'anat.png',
                                           _codeController.text,
-                                          _selectedCourseId,
+                                          widget.courseId,
                                           [],
                                           [],
                                           _semesterController.text,

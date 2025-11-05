@@ -99,7 +99,8 @@ class UnitsProvider extends ChangeNotifier {
         message = "Failed to fetch units";
         notifyListeners();
       }
-    } catch (e) {
+    }
+    catch (e) {
       error = true;
       isLoading = false;
       message = "Failed to fetch units $e";
@@ -107,6 +108,36 @@ class UnitsProvider extends ChangeNotifier {
     }
 
     return {};
+  }
+
+  Future<void> getUnitsByCourse(String token, String courseId) async {
+    isLoading = true;
+    error = false;
+    success = false;
+    notifyListeners();
+
+    try {
+      final fetchRequest =
+          await unitsApi.getUnitsByCourse(token: token, courseId: courseId);
+
+      if (fetchRequest['status'] == 'success') {
+        isLoading = false;
+        success = true;
+        units = fetchRequest['units'];
+        notifyListeners();
+      } else {
+        error = true;
+        isLoading = false;
+        message = "Failed to fetch units";
+        notifyListeners();
+      }
+    }
+    catch (e) {
+      error = true;
+      isLoading = false;
+      message = "Failed to fetch units $e";
+      notifyListeners();
+    }
   }
 
   Future<Map<String, dynamic>> editUserUnit(String token, Map newUnit) async {

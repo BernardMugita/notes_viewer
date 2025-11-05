@@ -10,7 +10,6 @@ import 'package:maktaba/providers/user_provider.dart';
 import 'package:maktaba/utils/app_utils.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/failed_widget.dart';
 import 'package:maktaba/widgets/app_widgets/alert_widgets/success_widget.dart';
-// import 'package:maktaba/widgets/app_widgets/membership_banner/membership_banner.dart';
 import 'package:maktaba/widgets/app_widgets/platform_widgets/platform_details.dart';
 import 'package:maktaba/widgets/app_widgets/navigation/side_navigation.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +30,8 @@ class _DesktopAccountState extends State<DesktopAccount> {
 
   Map user = {};
   Map course = {};
-
   String tokenRef = '';
+  String selectedTab = 'account'; // 'account' or 'membership'
 
   @override
   void initState() {
@@ -42,9 +41,7 @@ class _DesktopAccountState extends State<DesktopAccount> {
       if (token != null) {
         tokenRef = token;
         context.read<UserProvider>().fetchUserDetails(token);
-
         user = context.read<UserProvider>().user;
-
         context
             .read<CoursesProvider>()
             .getCourse(token: token, id: user['course_id']);
@@ -69,792 +66,970 @@ class _DesktopAccountState extends State<DesktopAccount> {
   Widget build(BuildContext context) {
     bool isLoading = context.watch<UserProvider>().isLoading;
     bool isMinimized = context.watch<TogglesProvider>().isSideNavMinimized;
-
     course = context.watch<CoursesProvider>().course;
 
     return Scaffold(
-        backgroundColor: AppUtils.backgroundPanel(context),
-        body: Flex(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            direction: Axis.horizontal,
-            children: [
-              isMinimized
-                  ? Expanded(
-                      flex: 1,
-                      child: SideNavigation(),
-                    )
-                  : SizedBox(
-                      width: 80,
-                      child: SideNavigation(),
-                    ),
-              Expanded(
-                  flex: 6,
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.1,
-                          right: MediaQuery.of(context).size.width * 0.1,
-                          top: 20,
-                          bottom: 20),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Consumer<TogglesProvider>(
-                            //     builder: (context, toggleProvider, _) {
-                            //   return toggleProvider.isBannerDismissed
-                            //       ? SizedBox()
-                            //       : MembershipBanner();
-                            // }),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: AppUtils.mainBlue(context),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "User Account",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: AppUtils.mainWhite(context),
-                                      fontWeight: FontWeight.bold,
+      backgroundColor: AppUtils.backgroundPanel(context),
+      body: Flex(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        direction: Axis.horizontal,
+        children: [
+          isMinimized
+              ? Expanded(flex: 1, child: SideNavigation())
+              : SizedBox(width: 80, child: SideNavigation()),
+          Expanded(
+            flex: 6,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.1,
+                right: MediaQuery.of(context).size.width * 0.1,
+                top: 20,
+                bottom: 20,
+              ),
+              child: Column(
+                spacing: 20,
+                children: [
+                  // Top Bar
+                  _buildTopBar(
+                    context,
+                    user,
+                    context.watch<DashboardProvider>().isNewActivities,
+                  ),
+
+                  // Main Content
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 20,
+                      children: [
+                        // Profile Sidebar
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            spacing: 20,
+                            children: [
+                              // Profile Card
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: AppUtils.mainWhite(context),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: Colors.grey.shade200),
+                                ),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 60,
+                                      backgroundColor:
+                                          AppUtils.mainBlue(context)
+                                              .withOpacity(0.1),
+                                      child: Text(
+                                        user.isNotEmpty
+                                            ? user['username'][0].toUpperCase()
+                                            : 'G',
+                                        style: TextStyle(
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppUtils.mainBlue(context),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Row(
-                                    children: [
-                                      Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Icon(
-                                            FluentIcons.alert_24_regular,
-                                            size: 25,
-                                            color: AppUtils.mainWhite(context),
-                                          ),
-                                          Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: CircleAvatar(
-                                                radius: 5,
-                                                backgroundColor: context
-                                                        .watch<
-                                                            DashboardProvider>()
-                                                        .isNewActivities
-                                                    ? AppUtils.mainRed(context)
-                                                    : AppUtils.mainGrey(
-                                                        context),
-                                              ))
-                                        ],
+                                    const Gap(16),
+                                    Text(
+                                      user.isNotEmpty
+                                          ? user['username']
+                                          : 'Guest',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppUtils.mainBlack(context),
                                       ),
-                                      IconButton(
-                                          onPressed: () {
-                                            context.go('/settings');
-                                          },
-                                          icon: Icon(
-                                            FluentIcons.settings_24_regular,
-                                            size: 25,
-                                            color: AppUtils.mainWhite(context),
-                                          )),
-                                      Gap(10),
-                                      SizedBox(
-                                        height: 40,
-                                        child: VerticalDivider(
-                                          color: AppUtils.mainGrey(context),
-                                        ),
+                                    ),
+                                    const Gap(4),
+                                    Text(
+                                      user.isNotEmpty
+                                          ? user['email']
+                                          : 'guest@email.com',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: AppUtils.mainGrey(context),
                                       ),
-                                      Gap(10),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          if (context
-                                              .watch<UserProvider>()
-                                              .isLoading)
-                                            SizedBox(
-                                              width: 150,
-                                              child: LinearProgressIndicator(
-                                                minHeight: 1,
-                                                color:
-                                                    AppUtils.mainWhite(context),
-                                              ),
-                                            )
-                                          else
-                                            Text(
-                                                user.isNotEmpty
-                                                    ? user['username']
-                                                    : 'Guest',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: AppUtils.mainWhite(
-                                                        context),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          if (context
-                                              .watch<UserProvider>()
-                                              .isLoading)
-                                            SizedBox(
-                                              width: 50,
-                                              child: LinearProgressIndicator(
-                                                minHeight: 1,
-                                                color:
-                                                    AppUtils.mainWhite(context),
-                                              ),
-                                            )
-                                          else
-                                            SizedBox(
-                                              width: 150,
-                                              child: Text(
-                                                  user.isNotEmpty
-                                                      ? user['email']
-                                                      : 'guest@email.com',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      fontSize: 12,
-                                                      color: AppUtils.mainWhite(
-                                                          context))),
-                                            ),
-                                        ],
-                                      ),
-                                      Gap(10),
-                                      CircleAvatar(
-                                        child:
-                                            Icon(FluentIcons.person_24_regular),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const Gap(20),
-                            Flex(
-                              direction: Axis.horizontal,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 100,
-                                        backgroundColor:
-                                            AppUtils.mainWhite(context),
-                                        child: Icon(
-                                          FluentIcons.person_24_regular,
-                                          size: 100,
-                                          color: AppUtils.mainGrey(context),
-                                        ),
-                                      ),
-                                      Gap(40),
-                                      Consumer<TogglesProvider>(builder:
-                                          (context, toggleProvider, child) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            toggleProvider.toggleAccountView();
-                                          },
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Icon(FluentIcons
-                                                        .person_accounts_24_regular),
-                                                    Gap(5),
-                                                    Text("Account Details")
-                                                  ],
-                                                ),
-                                                Gap(5),
-                                                Divider(
-                                                  thickness: 0.5,
-                                                  color: AppUtils.mainBlue(
-                                                      context),
-                                                ),
-                                                Gap(5),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                      Consumer<TogglesProvider>(builder: (
-                                        context,
-                                        toggleProvider,
-                                        child,
-                                      ) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            toggleProvider
-                                                .toggleMembershipView();
-                                          },
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Icon(FluentIcons
-                                                        .people_community_24_regular),
-                                                    Gap(5),
-                                                    Text("Account Memberships")
-                                                  ],
-                                                ),
-                                                Gap(5),
-                                                Divider(
-                                                  thickness: 0.5,
-                                                  color: AppUtils.mainBlue(
-                                                      context),
-                                                ),
-                                                Gap(5),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      })
-                                    ],
-                                  ),
+
+                              // Navigation Tabs
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppUtils.mainWhite(context),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: Colors.grey.shade200),
                                 ),
-                                Gap(40),
-                                Expanded(
-                                    flex: 3,
-                                    child: Consumer<TogglesProvider>(builder: (
+                                child: Column(
+                                  spacing: 4,
+                                  children: [
+                                    _buildNavTab(
                                       context,
-                                      toggleProvider,
-                                      child,
-                                    ) {
-                                      return Container(
-                                        padding: const EdgeInsets.all(20),
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.8,
-                                        decoration: BoxDecoration(
-                                            color: AppUtils.mainWhite(context),
-                                            border: Border.all(
-                                                color:
-                                                    AppUtils.mainGrey(context)),
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: toggleProvider.accountView
-                                                ? [
-                                                    Row(
-                                                      children: [
-                                                        Text("Account Details",
-                                                            style: TextStyle(
-                                                                fontSize: 18,
-                                                                color: AppUtils
-                                                                    .mainBlue(
-                                                                        context),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                        Spacer(),
-                                                        ElevatedButton(
-                                                          style: ButtonStyle(
-                                                            padding:
-                                                                WidgetStatePropertyAll(
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        10)),
-                                                            backgroundColor:
-                                                                WidgetStatePropertyAll(
-                                                                    AppUtils.mainBlue(
-                                                                        context)),
-                                                            shape:
-                                                                WidgetStatePropertyAll(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            _showDialog(
-                                                                context, user);
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                "Edit Account",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: AppUtils
-                                                                      .mainWhite(
-                                                                          context),
-                                                                ),
-                                                              ),
-                                                              const Gap(5),
-                                                              Icon(
-                                                                FluentIcons
-                                                                    .person_edit_24_regular,
-                                                                size: 14,
-                                                                color: AppUtils
-                                                                    .mainWhite(
-                                                                        context),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Gap(30),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title: 'Username',
-                                                        value: isLoading
-                                                            ? 'username'
-                                                            : user.isNotEmpty
-                                                                ? user[
-                                                                    'username']
-                                                                : 'Details not found'),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title: 'Email',
-                                                        value: isLoading
-                                                            ? 'email'
-                                                            : user.isNotEmpty
-                                                                ? user['email']
-                                                                : 'Details not found'),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title: 'Phone',
-                                                        value: isLoading
-                                                            ? 'phone'
-                                                            : user.isNotEmpty
-                                                                ? user['phone']
-                                                                : 'Details not found'),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title:
-                                                            'Registration number',
-                                                        value: isLoading
-                                                            ? 'reg_no'
-                                                            : user.isNotEmpty
-                                                                ? user['reg_no']
-                                                                : 'Details not found'),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title: 'Course',
-                                                        value: isLoading
-                                                            ? 'course'
-                                                            : course.isNotEmpty
-                                                                ? course['name']
-                                                                : 'Details not found'),
-                                                    _buildAccountDetails(
-                                                        context,
-                                                        title: 'Date Joined',
-                                                        value: isLoading
-                                                            ? '0/0/2025'
-                                                            : user.isNotEmpty
-                                                                ? AppUtils
-                                                                    .formatDate(
-                                                                        user[
-                                                                            'created_at'])
-                                                                : 'Details not found'),
-                                                    Spacer(),
-                                                    Text("Account status:"),
-                                                    Gap(5),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  top: 5,
-                                                                  bottom: 5,
-                                                                  left: 10,
-                                                                  right: 10),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                              color: const Color
-                                                                  .fromARGB(87,
-                                                                  255, 25, 0)),
-                                                          child: Text(
-                                                            "Not verified",
-                                                            style: TextStyle(
-                                                                color: AppUtils
-                                                                    .mainRed(
-                                                                        context)),
-                                                          ),
-                                                        ),
-                                                        ElevatedButton(
-                                                          style: ButtonStyle(
-                                                            padding:
-                                                                WidgetStatePropertyAll(
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            10,
-                                                                        right:
-                                                                            10,
-                                                                        top: 5,
-                                                                        bottom:
-                                                                            5)),
-                                                            backgroundColor:
-                                                                WidgetStatePropertyAll(
-                                                                    AppUtils.mainBlue(
-                                                                        context)),
-                                                            shape:
-                                                                WidgetStatePropertyAll(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          onPressed: () {},
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                "Verify Account",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: AppUtils
-                                                                      .mainWhite(
-                                                                          context),
-                                                                ),
-                                                              ),
-                                                              const Gap(5),
-                                                              Icon(
-                                                                FluentIcons
-                                                                    .checkmark_circle_24_filled,
-                                                                size: 16,
-                                                                color: AppUtils
-                                                                    .mainWhite(
-                                                                        context),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Gap(10),
-                                                    Divider(
-                                                      color: AppUtils.mainGrey(
-                                                          context),
-                                                    ),
-                                                    Gap(5),
-                                                    Text(
-                                                      "Acknowledgment",
-                                                      style: TextStyle(
-                                                          color:
-                                                              AppUtils.mainBlue(
-                                                                  context)),
-                                                    ),
-                                                    Gap(5),
-                                                    Text(
-                                                      "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                                      style: TextStyle(
-                                                          color:
-                                                              AppUtils.mainGrey(
-                                                                  context)),
-                                                    ),
-                                                    Text("Powered by Labs")
-                                                  ]
-                                                : toggleProvider.membershipView
-                                                    ? [
-                                                        Text(
-                                                            "Account Membership",
-                                                            style: TextStyle(
-                                                                fontSize: 18,
-                                                                color: AppUtils
-                                                                    .mainBlue(
-                                                                        context),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                        Gap(30),
-                                                        Spacer(),
-                                                        Gap(10),
-                                                        Divider(
-                                                          color:
-                                                              AppUtils.mainGrey(
-                                                                  context),
-                                                        ),
-                                                        Gap(5),
-                                                        Text(
-                                                          "Acknowledgment",
-                                                          style: TextStyle(
-                                                              color: AppUtils
-                                                                  .mainBlue(
-                                                                      context)),
-                                                        ),
-                                                        Gap(5),
-                                                        Text(
-                                                          "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
-                                                          style: TextStyle(
-                                                              color: AppUtils
-                                                                  .mainGrey(
-                                                                      context)),
-                                                        ),
-                                                        Text("Powered by Labs")
-                                                      ]
-                                                    : []),
-                                      );
-                                    })),
-                                Expanded(
-                                  flex: 2,
-                                  child: SizedBox(),
+                                      icon: FluentIcons.person_24_regular,
+                                      label: 'Account Details',
+                                      isSelected: selectedTab == 'account',
+                                      onTap: () => setState(
+                                          () => selectedTab = 'account'),
+                                    ),
+                                    _buildNavTab(
+                                      context,
+                                      icon: FluentIcons
+                                          .people_community_24_regular,
+                                      label: 'Membership',
+                                      isSelected: selectedTab == 'membership',
+                                      onTap: () => setState(
+                                          () => selectedTab = 'membership'),
+                                    ),
+                                  ],
                                 ),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.8,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [PlatformDetails()],
-                                      ),
-                                    ))
-                              ],
-                            )
-                          ])))
-            ]));
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Main Content Area
+                        Expanded(
+                          flex: 5,
+                          child: Container(
+                            padding: const EdgeInsets.all(28),
+                            decoration: BoxDecoration(
+                              color: AppUtils.mainWhite(context),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: selectedTab == 'account'
+                                ? _buildAccountDetails(context, isLoading)
+                                : _buildMembershipDetails(context),
+                          ),
+                        ),
+
+                        // Platform Details
+                        Expanded(
+                          flex: 2,
+                          child: PlatformDetails(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildAccountDetails(BuildContext context,
-      {required String title, required String value}) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(5),
-            margin: const EdgeInsets.only(bottom: 30),
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: AppUtils.mainGrey(context))),
-                borderRadius: BorderRadius.circular(5)),
-            child: context.watch<UserProvider>().isLoading
-                ? SizedBox(
-                    width: double.infinity,
-                    child: LinearProgressIndicator(),
-                  )
-                : Text(value)),
-        Positioned(
-            top: -10,
-            left: 5,
-            child: Container(
-              padding: const EdgeInsets.only(left: 5, right: 5),
+  Widget _buildTopBar(
+      BuildContext context, Map<dynamic, dynamic> user, bool isNewActivities) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: AppUtils.mainBlue(context),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          Text(
+            "User Account",
+            style: TextStyle(
+              fontSize: 20,
               color: AppUtils.mainWhite(context),
-              child: context.watch<UserProvider>().isLoading
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: LinearProgressIndicator(),
-                    )
-                  : Text(
-                      title,
-                      style: TextStyle(
-                          color: AppUtils.mainGrey(context), fontSize: 12),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          Row(
+            spacing: 8,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      FluentIcons.alert_24_regular,
+                      size: 24,
+                      color: AppUtils.mainWhite(context),
                     ),
-            ))
+                  ),
+                  if (isNewActivities)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: AppUtils.mainRed(context),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppUtils.mainBlue(context),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              IconButton(
+                onPressed: () => context.go('/settings'),
+                icon: Icon(
+                  FluentIcons.settings_24_regular,
+                  size: 24,
+                  color: AppUtils.mainWhite(context),
+                ),
+              ),
+              Gap(8),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppUtils.mainWhite(context),
+                child: Text(
+                  user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+                  style: TextStyle(
+                    color: AppUtils.mainBlue(context),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavTab(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppUtils.mainBlue(context).withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected
+                  ? AppUtils.mainBlue(context)
+                  : AppUtils.mainGrey(context),
+            ),
+            const Gap(12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: isSelected
+                    ? AppUtils.mainBlue(context)
+                    : AppUtils.mainBlack(context),
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountDetails(BuildContext context, bool isLoading) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppUtils.mainBlue(context).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                FluentIcons.person_24_filled,
+                size: 20,
+                color: AppUtils.mainBlue(context),
+              ),
+            ),
+            const Gap(12),
+            Text(
+              "Account Details",
+              style: TextStyle(
+                fontSize: 22,
+                color: AppUtils.mainBlack(context),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Spacer(),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                ),
+                backgroundColor:
+                    WidgetStatePropertyAll(AppUtils.mainBlue(context)),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                elevation: WidgetStatePropertyAll(0),
+              ),
+              onPressed: () => _showDialog(context, user),
+              icon: Icon(
+                FluentIcons.edit_24_regular,
+                size: 18,
+                color: Colors.white,
+              ),
+              label: Text(
+                "Edit Account",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Gap(24),
+        Divider(color: Colors.grey.shade200, height: 1),
+        const Gap(24),
+
+        // Account Info Cards
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 16,
+              children: [
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.person_24_regular,
+                  label: 'Username',
+                  value: isLoading
+                      ? 'Loading...'
+                      : user.isNotEmpty
+                          ? user['username']
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.mail_24_regular,
+                  label: 'Email',
+                  value: isLoading
+                      ? 'Loading...'
+                      : user.isNotEmpty
+                          ? user['email']
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.call_24_regular,
+                  label: 'Phone',
+                  value: isLoading
+                      ? 'Loading...'
+                      : user.isNotEmpty
+                          ? user['phone']
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.document_24_regular,
+                  label: 'Registration Number',
+                  value: isLoading
+                      ? 'Loading...'
+                      : user.isNotEmpty
+                          ? user['reg_no']
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.book_24_regular,
+                  label: 'Course',
+                  value: isLoading
+                      ? 'Loading...'
+                      : course.isNotEmpty
+                          ? course['name']
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+                _buildInfoCard(
+                  context,
+                  icon: FluentIcons.calendar_24_regular,
+                  label: 'Date Joined',
+                  value: isLoading
+                      ? 'Loading...'
+                      : user.isNotEmpty
+                          ? AppUtils.formatDate(user['created_at'])
+                          : 'Not available',
+                  isLoading: isLoading,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const Gap(24),
+
+        // Account Status
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Account Status",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppUtils.mainGrey(context),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Gap(12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppUtils.mainRed(context).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.warning_24_filled,
+                          size: 16,
+                          color: AppUtils.mainRed(context),
+                        ),
+                        const Gap(8),
+                        Text(
+                          "Not Verified",
+                          style: TextStyle(
+                            color: AppUtils.mainRed(context),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    style: ButtonStyle(
+                      padding: WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                      backgroundColor: WidgetStatePropertyAll(
+                        AppUtils.mainGreen(context),
+                      ),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {},
+                    icon: Icon(
+                      FluentIcons.checkmark_circle_24_filled,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      "Verify Account",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        const Gap(24),
+
+        // Acknowledgment
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    FluentIcons.info_24_regular,
+                    size: 18,
+                    color: AppUtils.mainBlue(context),
+                  ),
+                  const Gap(8),
+                  Text(
+                    "Acknowledgment",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppUtils.mainBlack(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(12),
+              Text(
+                "This platform was designed under the visionary leadership of Francis Flynn Chacha.",
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppUtils.mainGrey(context),
+                  height: 1.5,
+                ),
+              ),
+              const Gap(8),
+              Row(
+                children: [
+                  Text(
+                    "Powered by ",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppUtils.mainGrey(context),
+                    ),
+                  ),
+                  Text(
+                    "Labs",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppUtils.mainBlue(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _buildMembershipDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppUtils.mainBlue(context).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                FluentIcons.people_community_24_filled,
+                size: 20,
+                color: AppUtils.mainBlue(context),
+              ),
+            ),
+            const Gap(12),
+            Text(
+              "Account Membership",
+              style: TextStyle(
+                fontSize: 22,
+                color: AppUtils.mainBlack(context),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const Gap(24),
+        Divider(color: Colors.grey.shade200, height: 1),
+        const Gap(24),
+
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  FluentIcons.people_community_24_regular,
+                  size: 64,
+                  color: AppUtils.mainGrey(context).withOpacity(0.5),
+                ),
+                const Gap(16),
+                Text(
+                  "Membership Coming Soon",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppUtils.mainBlack(context),
+                  ),
+                ),
+                const Gap(8),
+                Text(
+                  "Membership features will be available here",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppUtils.mainGrey(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isLoading,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppUtils.mainBlue(context).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: AppUtils.mainBlue(context),
+            ),
+          ),
+          const Gap(16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppUtils.mainGrey(context),
+                  ),
+                ),
+                const Gap(4),
+                isLoading
+                    ? Container(
+                        width: 120,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      )
+                    : Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: AppUtils.mainBlack(context),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   void _showDialog(BuildContext context, Map user) {
     showDialog(
-        context: context,
-        builder: (context) {
-          return Stack(
-            children: [
-              AlertDialog(
-                contentPadding: const EdgeInsets.all(0),
-                content: Container(
-                  padding: const EdgeInsets.all(20),
-                  height: MediaQuery.of(context).size.height * 0.85,
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  decoration: BoxDecoration(
-                    color: AppUtils.mainWhite(context),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+      context: context,
+      builder: (context) {
+        return Stack(
+          children: [
+            AlertDialog(
+              contentPadding: const EdgeInsets.all(0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              content: Container(
+                padding: const EdgeInsets.all(28),
+                width: MediaQuery.of(context).size.width * 0.35,
+                constraints: BoxConstraints(maxWidth: 600),
+                decoration: BoxDecoration(
+                  color: AppUtils.mainWhite(context),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Header
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Edit your account details",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppUtils.mainBlue(context))),
+                          Text(
+                            "Edit Account Details",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppUtils.mainBlue(context),
+                            ),
+                          ),
                           IconButton(
                             onPressed: () => Navigator.of(context).pop(),
                             icon: const Icon(FluentIcons.dismiss_24_regular),
                           ),
                         ],
                       ),
-                      Gap(30),
-                      SizedBox(
-                        width: double.infinity,
+                      const Gap(24),
+
+                      // Profile Picture Section
+                      Center(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             CircleAvatar(
-                              radius: 100,
-                              backgroundColor: AppUtils.mainBlueAccent(context),
-                              child: Icon(
-                                FluentIcons.person_24_regular,
-                                size: 100,
-                                color: AppUtils.mainGrey(context),
+                              radius: 60,
+                              backgroundColor:
+                                  AppUtils.mainBlue(context).withOpacity(0.1),
+                              child: Text(
+                                user.isNotEmpty
+                                    ? user['username'][0].toUpperCase()
+                                    : 'G',
+                                style: TextStyle(
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppUtils.mainBlue(context),
+                                ),
                               ),
                             ),
-                            Gap(20),
-                            SizedBox(
-                              width: 200,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    padding: WidgetStatePropertyAll(
-                                        const EdgeInsets.all(20)),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppUtils.mainBlue(context)),
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
+                            const Gap(16),
+                            OutlinedButton.icon(
+                              style: ButtonStyle(
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                ),
+                                side: WidgetStatePropertyAll(
+                                  BorderSide(color: AppUtils.mainBlue(context)),
+                                ),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  onPressed: () {},
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FluentIcons.image_24_regular,
-                                        color: AppUtils.mainWhite(context),
-                                      ),
-                                      Gap(10),
-                                      Text("Browse",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  AppUtils.mainWhite(context))),
-                                    ],
-                                  )),
-                            )
+                                ),
+                              ),
+                              onPressed: () {},
+                              icon: Icon(
+                                FluentIcons.image_24_regular,
+                                size: 18,
+                                color: AppUtils.mainBlue(context),
+                              ),
+                              label: Text(
+                                "Change Photo",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppUtils.mainBlue(context),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      Gap(20),
-                      TextField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(FluentIcons.mail_24_regular),
-                          labelText: 'Email',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.mainBlue(context),
-                        ),
-                      ),
-                      Gap(10),
-                      TextField(
+                      const Gap(32),
+
+                      // Form Fields
+                      TextFormField(
                         controller: usernameController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(FluentIcons.person_24_regular),
                           labelText: 'Username',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.mainBlue(context),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: AppUtils.mainBlue(context),
+                              width: 2,
+                            ),
+                          ),
                         ),
                       ),
-                      Gap(10),
-                      TextField(
+                      const Gap(16),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(FluentIcons.mail_24_regular),
+                          labelText: 'Email',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: AppUtils.mainBlue(context),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Gap(16),
+                      TextFormField(
                         controller: phoneController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(FluentIcons.call_24_regular),
                           labelText: 'Phone',
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          focusColor: AppUtils.mainBlue(context),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: AppUtils.mainBlue(context),
+                              width: 2,
+                            ),
+                          ),
                         ),
                       ),
-                      Spacer(),
+                      const Gap(24),
+
+                      // Save Button
                       Consumer<UserProvider>(
-                          builder: (context, userProvider, child) {
-                        return ElevatedButton(
-                            style: ButtonStyle(
-                              padding: WidgetStatePropertyAll(
-                                  const EdgeInsets.all(20)),
-                              backgroundColor: WidgetStatePropertyAll(
-                                  AppUtils.mainBlue(context)),
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                        builder: (context, userProvider, child) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              style: ButtonStyle(
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 16),
+                                ),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  userProvider.isLoading
+                                      ? Colors.grey
+                                      : AppUtils.mainBlue(context),
+                                ),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
                               ),
-                            ),
-                            onPressed: userProvider.isLoading
-                                ? null
-                                : () {
-                                    userProvider.editUserDetails(
+                              onPressed: userProvider.isLoading
+                                  ? null
+                                  : () {
+                                      userProvider.editUserDetails(
                                         tokenRef,
                                         emailController.text,
                                         usernameController.text,
                                         phoneController.text,
-                                        'user.png');
-                                    if (userProvider.success) {
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    }
-                                  },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  FluentIcons.save_24_regular,
-                                  color: AppUtils.mainWhite(context),
+                                        'user.png',
+                                      );
+                                      if (userProvider.success) {
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          Navigator.of(context).pop();
+                                        });
+                                      }
+                                    },
+                              icon: userProvider.isLoading
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Icon(
+                                      FluentIcons.save_24_regular,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                              label: Text(
+                                "Save Changes",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                Gap(10),
-                                Text("Save Changes",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppUtils.mainWhite(context))),
-                              ],
-                            ));
-                      })
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
               ),
-              if (context.watch<UserProvider>().success)
-                Positioned(
-                    top: 20,
-                    right: 20,
-                    child: SuccessWidget(
-                        message: context.watch<UserProvider>().message))
-              else if (context.watch<UserProvider>().error)
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: FailedWidget(
-                      message: context.watch<UserProvider>().message),
-                )
-            ],
-          );
-        });
+            ),
+            if (context.watch<UserProvider>().success)
+              Positioned(
+                top: 20,
+                right: 20,
+                child: SuccessWidget(
+                  message: context.watch<UserProvider>().message,
+                ),
+              )
+            else if (context.watch<UserProvider>().error)
+              Positioned(
+                top: 20,
+                right: 20,
+                child: FailedWidget(
+                  message: context.watch<UserProvider>().message,
+                ),
+              )
+          ],
+        );
+      },
+    );
   }
 }
