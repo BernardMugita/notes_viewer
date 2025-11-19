@@ -85,6 +85,8 @@ class AuthProvider extends ChangeNotifier {
         semester: semester,
       );
 
+      print(registerRequest);
+
       if (registerRequest['status'] == "success") {
         token = registerRequest['token'];
         await _saveToken(token!); // Save token persistently
@@ -115,6 +117,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       final loginRequest =
           await authApi.signIN(email: email, password: password);
+
+      print(loginRequest);
 
       if (loginRequest['status'] == "success") {
         isLoading = false;

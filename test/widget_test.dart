@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:maktaba/main.dart';
 import 'package:maktaba/providers/activity_provider.dart';
 import 'package:maktaba/providers/auth_provider.dart';
+import 'package:maktaba/providers/comments_provider.dart';
 import 'package:maktaba/providers/courses_provider.dart';
 import 'package:maktaba/providers/dashboard_provider.dart';
 import 'package:maktaba/providers/lessons_provider.dart';
@@ -20,46 +21,41 @@ import 'package:maktaba/providers/uploads_provider.dart';
 import 'package:maktaba/providers/user_provider.dart';
 
 void main() {
+  final authProvider = AuthProvider();
+  final toggleProvider = TogglesProvider();
+  final lessonsProvider = LessonsProvider();
+  final coursesProvider = CoursesProvider();
+  final unitsProvider = UnitsProvider();
+  final userProvider = UserProvider();
+  final uploadsProvider = UploadsProvider();
+  final dashboardProvider = DashboardProvider();
+  final activityProvider = ActivityProvider();
+  final themeProvider = ThemeProvider();
+  final commentsProvider = CommentsProvider();
+
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Create mock instances of the required providers
-    final authProvider = AuthProvider();
-    final toggleProvider = TogglesProvider();
-    final coursesProvider = CoursesProvider();
-    final unitsProvider = UnitsProvider();
-    final userProvider = UserProvider();
-    final lessonsProvider = LessonsProvider();
-    final uploadsProvider = UploadsProvider();
-    final dashboardProvider = DashboardProvider();
-    final activityProvider = ActivityProvider();
-    final themeProvider = ThemeProvider();
-
-    // Initialize providers with default values if necessary
-    await authProvider.checkLogin();
-    await toggleProvider.loadRememberSelection();
-
-    // Build our app and trigger a frame
+    // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp(
-      authProvider: authProvider,
-      toggleProvider: toggleProvider,
-      coursesProvider: coursesProvider,
-      unitsProvider: unitsProvider,
-      userProvider: userProvider,
-      lessonsProvider: lessonsProvider,
-      uploadsProvider: uploadsProvider,
-      dashboardProvider: dashboardProvider,
-      activityProvider: activityProvider,
-      themeProvider: themeProvider,
-    ));
+        authProvider: authProvider,
+        toggleProvider: toggleProvider,
+        lessonsProvider: lessonsProvider,
+        coursesProvider: coursesProvider,
+        unitsProvider: unitsProvider,
+        userProvider: userProvider,
+        uploadsProvider: uploadsProvider,
+        dashboardProvider: dashboardProvider,
+        activityProvider: activityProvider,
+        themeProvider: themeProvider));
 
-    // Verify that our counter starts at 0
+    // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame
+    // Tap the '+' icon and trigger a frame.
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented
+    // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });

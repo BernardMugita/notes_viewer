@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:maktaba/utils/app_utils.dart';
 
 class LessonApi {
   final url = AppUtils.$baseUrl;
+  Logger logger = Logger();
 
   Future<Map<String, dynamic>> createLesson(
       {required String token,

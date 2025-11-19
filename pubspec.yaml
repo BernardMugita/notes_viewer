@@ -52,7 +52,6 @@ dependencies:
   flutter_pdfview: ^1.4.0
   path: ^1.9.0
   permission_handler: ^11.3.1
-  external_path: ^2.0.1
   webview_flutter: ^4.10.0
   video_player: ^2.9.2
   flutter_html: ^3.0.0-beta.2

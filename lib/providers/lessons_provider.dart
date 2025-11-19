@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:maktaba/services/lesson_api.dart';
 
 class LessonsProvider extends ChangeNotifier {
@@ -15,6 +16,7 @@ class LessonsProvider extends ChangeNotifier {
   Map<String, dynamic> lesson = {};
 
   LessonApi lessonApi = LessonApi();
+  Logger logger = Logger();
 
   void setUploadMode() {
     uploadMode = true;
@@ -50,6 +52,7 @@ class LessonsProvider extends ChangeNotifier {
     } catch (e) {
       error = true;
       message = "Error adding lesson! $e";
+      logger.e(e);
       isLoading = false;
       notifyListeners();
       return false;

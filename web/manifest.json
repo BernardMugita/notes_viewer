@@ -1,11 +1,11 @@
 {
-    "name": "maktaba",
-    "short_name": "maktaba",
+    "name": "maktaba_v2",
+    "short_name": "maktaba_v2",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Maktaba by Arifu Library.",
+    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
