@@ -60,86 +60,44 @@ class _MobileDashboardState extends State<MobileDashboard>
         appBar: AppBar(
           backgroundColor: AppUtils.mainBlue(context),
           elevation: 0,
-          toolbarHeight: 70,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: IconButton(
-              icon: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  FluentIcons.re_order_dots_vertical_24_regular,
-                  color: Colors.white,
-                  size: 22,
-                ),
-              ),
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
+          leading: IconButton(
+            icon: Icon(
+              FluentIcons.re_order_dots_vertical_24_regular,
+              color: Colors.white,
             ),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
           ),
           actions: [
             IconButton(
               onPressed: () {},
-              icon: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  FluentIcons.alert_24_regular,
-                  size: 20,
-                  color: AppUtils.mainWhite(context),
-                ),
+              icon: Icon(
+                FluentIcons.alert_24_regular,
+                size: 24,
+                color: AppUtils.mainWhite(context),
               ),
             ),
             IconButton(
               onPressed: () {
                 context.go('/settings');
               },
-              icon: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  FluentIcons.settings_24_regular,
-                  size: 20,
-                  color: AppUtils.mainWhite(context),
-                ),
+              icon: Icon(
+                FluentIcons.settings_24_regular,
+                size: 24,
+                color: AppUtils.mainWhite(context),
               ),
             ),
             const Gap(12),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: AppUtils.mainWhite(context),
-                child: Text(
-                  user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
-                  style: TextStyle(
-                    color: AppUtils.mainBlue(context),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: AppUtils.mainWhite(context),
+              child: Text(
+                user.isNotEmpty ? user['username'][0].toUpperCase() : 'G',
+                style: TextStyle(
+                  color: AppUtils.mainBlue(context),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -165,15 +123,16 @@ class _MobileDashboardState extends State<MobileDashboard>
                     ),
                   )
                 : SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
-                      spacing: 24,
+                      spacing: 20,
                       children: [
                         _buildTopBar(context, togglesProvider, dashData,
                             isNewActivities),
                         if (togglesProvider.searchMode)
                           _buildSearchResults(searchResults),
                         if (!togglesProvider.searchMode) ...[
+                          // _buildWelcomeSection(dashData),
                           _buildStatsCards(dashData),
                           _buildRecentProgress(),
                           _buildActivitiesSection(),
@@ -189,63 +148,120 @@ class _MobileDashboardState extends State<MobileDashboard>
 
   Widget _buildTopBar(BuildContext context, TogglesProvider togglesProvider,
       Map<dynamic, dynamic> dashData, bool isNewActivities) {
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        togglesProvider.searchAction(
+          _searchController.text,
+          dashData['notifications']['read'],
+          'title',
+        );
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainGrey(context).withOpacity(0.3),
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: AppUtils.mainBlue(context),
+            width: 2,
+          ),
+        ),
+        filled: true,
+        fillColor: AppUtils.mainWhite(context),
+        prefixIcon: Icon(
+          FluentIcons.search_24_regular,
+          color: AppUtils.mainGrey(context).withOpacity(0.8),
+        ),
+        hintText: "Search maktaba...",
+        hintStyle: TextStyle(
+          fontSize: 15,
+          color: AppUtils.mainGrey(context).withOpacity(0.7),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection(Map<dynamic, dynamic> dashData) {
+    final user = dashData['user'] ?? {};
+    final userName = user['name'] ?? 'User';
+
     return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            AppUtils.mainBlue(context),
+            AppUtils.mainBlue(context).withOpacity(0.85),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppUtils.mainBlue(context).withOpacity(0.08),
-            blurRadius: 20,
+            color: AppUtils.mainBlue(context).withOpacity(0.3),
+            blurRadius: 10,
             offset: Offset(0, 4),
           ),
         ],
       ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          togglesProvider.searchAction(
-            _searchController.text,
-            dashData['notifications']['read'],
-            'title',
-          );
-        },
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: AppUtils.mainGrey(context).withOpacity(0.2),
-              width: 1.5,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 8,
+              children: [
+                Text(
+                  'Welcome back!',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppUtils.mainWhite(context).withOpacity(0.9),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  'Hello, $userName',
+                  style: TextStyle(
+                    fontSize: 28,
+                    color: AppUtils.mainWhite(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Gap(4),
+                Text(
+                  'Today is ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: AppUtils.mainWhite(context).withOpacity(0.9),
+                  ),
+                ),
+              ],
             ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: AppUtils.mainBlue(context),
-              width: 2.5,
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppUtils.mainWhite(context).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
             ),
-          ),
-          filled: true,
-          fillColor: AppUtils.mainWhite(context),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 12),
             child: Icon(
-              FluentIcons.search_24_regular,
-              color: AppUtils.mainGrey(context).withOpacity(0.6),
-              size: 22,
+              FluentIcons.home_24_regular,
+              size: 48,
+              color: AppUtils.mainWhite(context),
             ),
           ),
-          hintText: "Search maktaba...",
-          hintStyle: TextStyle(
-            fontSize: 15,
-            color: AppUtils.mainGrey(context).withOpacity(0.5),
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -266,69 +282,46 @@ class _MobileDashboardState extends State<MobileDashboard>
     return Container(
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppUtils.mainGrey(context).withOpacity(0.15),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppUtils.mainBlue(context).withOpacity(0.06),
-            blurRadius: 24,
-            offset: Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
       ),
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
               border: Border(
                 bottom: BorderSide(
-                  color: AppUtils.mainGrey(context).withOpacity(0.12),
-                  width: 1.5,
+                  color: AppUtils.mainGrey(context).withOpacity(0.3),
                 ),
               ),
             ),
             child: TabBar(
               controller: _tabController,
               indicatorWeight: 3,
-              indicatorSize: TabBarIndicatorSize.tab,
               indicatorColor: AppUtils.mainBlue(context),
               labelColor: AppUtils.mainBlue(context),
               labelStyle: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                letterSpacing: -0.2,
               ),
-              unselectedLabelColor: Colors.grey[500],
-              unselectedLabelStyle: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
+              unselectedLabelColor: Colors.grey[600],
               tabs: [
                 Tab(
-                  height: 56,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 8,
                     children: [
-                      Icon(FluentIcons.clock_24_regular, size: 18),
+                      Icon(FluentIcons.clock_24_regular, size: 14),
                       Text("Recent Activities"),
                     ],
                   ),
                 ),
                 Tab(
-                  height: 56,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 8,
                     children: [
-                      Icon(FluentIcons.history_24_regular, size: 18),
+                      Icon(FluentIcons.history_24_regular, size: 14),
                       Text("Activity History"),
                     ],
                   ),
@@ -342,11 +335,11 @@ class _MobileDashboardState extends State<MobileDashboard>
               controller: _tabController,
               children: [
                 SingleChildScrollView(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(16),
                   child: DesktopActivities(),
                 ),
                 SingleChildScrollView(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(16),
                   child: ActivityHistory(),
                 ),
               ],
@@ -359,72 +352,32 @@ class _MobileDashboardState extends State<MobileDashboard>
 
   Widget _buildSearchResults(List<dynamic> searchResults) {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppUtils.mainWhite(context),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppUtils.mainGrey(context).withOpacity(0.15),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppUtils.mainBlue(context).withOpacity(0.06),
-            blurRadius: 24,
-            offset: Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppUtils.mainGrey(context).withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 20,
+        spacing: 16,
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppUtils.mainBlue(context).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  FluentIcons.search_24_regular,
-                  color: AppUtils.mainBlue(context),
-                  size: 22,
-                ),
+              Icon(
+                FluentIcons.search_24_regular,
+                color: AppUtils.mainBlue(context),
+                size: 24,
               ),
-              Gap(14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Search Results",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppUtils.mainGrey(context).withOpacity(0.7),
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Gap(2),
-                    Text(
-                      "'${_searchController.text}'",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+              Gap(12),
+              Text(
+                "Search results for '${_searchController.text}'",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
-          ),
-          Divider(
-            color: AppUtils.mainGrey(context).withOpacity(0.15),
-            thickness: 1,
           ),
           SearchResults(
             searchResults: searchResults,
